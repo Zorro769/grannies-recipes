@@ -1,0 +1,117 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <style>
+            body{
+                font-family: 'Times New Roman', Times, serif;
+                background-color: black;
+                color: yellow;
+            }
+            td
+            {
+                border:1px solid yellow;
+            }
+            table {
+                border:1px solid yellow;
+                width:100%;
+                height:100%;
+            }
+            .img-pc{
+                border: 0;
+                float: left;
+                margin: 10px 15px 25px 30px;
+            }
+ label {
+            display: inline-block;
+            min-width: 50px; /* Adjust the width as needed for proper alignment */ /* Align the text to the right for labels */
+        }
+        input[type="text"],
+    input[type="email"],
+    input[type="tel"] {
+        width: 300px; /* Adjust the width as needed for the input fields */
+    }
+        </style>
+    </head>
+    <body>
+        <table>
+            <tr>
+                <td rowspan="2">
+                        <img src="/Images/image_1.jpg" class="img-pc" alt="pc-image" usemap="#computer-navigation">
+                    <!-- <a href="#" id="xyLink" onfocus="toggleXY();" accesskey="z"></a> -->
+                    
+                </td>
+                <td width="140">
+                    <ul style="list-style-type:square">
+                        <li>"Can you feel my heart"</li>
+                        <li>"Люди, як кораблі"</li>
+                        <li>"Вишенька черешенька"</li>
+                        <li>"Ой зелене жито, зелене"</li>
+                    </ul>
+                    <ul style="list-style-type:circle;">
+                        <li>Plaing drums</li>
+                        <li>Swimming</li>
+                        <li>Reading books</li>
+                        <li>Listening music</li>
+                    </ul>
+                    <ul style="list-style-type:disk;">
+                        <li>Dog</li>
+                        <li>Horse</li>
+                        <li>Elephant</li>
+                        <li>Owl</li>
+                    </ul>
+                    <ul style="list-style-type:square;">
+                        <li>Spider Plant</li>
+                        <li>Orchid</li>
+                        <li>Parsley</li>
+                        <li>Ferns</li>
+                    </ul>
+                    <ul style="list-style-type:circle;">
+                        <li>Euro Track Simulator 2</li>
+                        <li>Farming Simulator 2019</li>
+                        <li>Valorant</li>
+                        <li>Coutner Strike 1.6</li>
+                    </ul>
+                    <ol style="list-style-type:upper-roman;">
+                        <li>OOP</li>
+                        <li>Web design</li>
+                        <li>Mobile developing</li>
+                        <li>English</li>
+                    </ol>
+                </td>
+            </tr>
+        </table>
+        <map name="computer-navigation">
+            <!-- Circle Area -->
+            <area shape="circle" coords="303,161,30" href="desctiption.html" alt="Favorite Image Circle">
+            
+            <!-- Rectangle Area -->
+            <area shape="rect" coords="112,129,260,178" href="desctiption.html" alt="Favorite Songs Rectangle">
+            
+            <!-- Polygon Area -->
+            <area shape="poly" coords="93,26,202,25,198,108, 101, 111" href="desctiption.html" alt="Favorite Activities Polygon">
+        </map>
+ <form action="#">
+        <div  style="text-align: left;display: inline-block;">
+        <p style="font-size: 20px;">Будь ласка, надайте інформацію про себе</p>
+        <p style="font-size: 15px;">(Поля, відмічені знаком *, обов'язкові до заповнення)</p>
+        <label for="name">Ім'я*:</label>
+        <input style="width: 300px;" type="text" id="name" required><br><br>
+        <label for="email">E-mail:</label>
+        <input type="email" id="email"><br><br>
+        <label for="number">Тел:</label>
+        <input type="tel" id="number"><br>
+        <label for="answer">Відповідь краще надіслати у</label><br>
+        <input type="radio" name="answer" value="email">електронному листі<br>
+        <input type="radio" name="answer" value="sms">SMS<br>
+        <textarea name="answers" id="answers" cols="46" rows="10" placeholder="Будь ласка, впишіть сюда текст запитання"></textarea><br>
+        <div style="text-align: center;">
+            <input type="submit" name="send-question" value="Надіслати запитання">
+        </div>
+    </div>
+    </form>
+    </body>
+    </html>
