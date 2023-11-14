@@ -108,11 +108,21 @@ const RecipeDetail = () => {
             <div className='flex flex-col gap-5' >
               <p className='text-green-500 text-2xl underline mt-10'>Instructions</p>
               <ol className='text-white'>
-                {recipe?.instructions.split('\n').map((instruction, index) => (
-                  <li key={index} className='flex flex-row mt-5'><div className='h-full inline-block'><AiFillPushpin className='text-green-800 text-xl mr-2 inline-block'/></div>
-                  <div className = 'h-full inline-block'>{instruction}</div>
-                  </li>
-                ))}
+              {recipe?.instructions.split('</li>').map((item, index) => {
+                if (item.trim() !== '') {
+                  const instruction = item.replace(/<\/?li>|<\/?ol>/g , '').replace(/^\s+|\s+$/g, '');
+                  return (
+                    <li key={index} className='flex items-center mt-5'>
+                      <div className='h-full inline-block'>
+                        <AiFillPushpin className='text-green-800 text-xl mr-2 inline-block' />
+                      </div>
+                      <div className='h-full inline-block'>{instruction}</div>
+                    </li>
+                  );
+                }
+                return null;
+              })}
+
               </ol>
             </div>
           </div>
