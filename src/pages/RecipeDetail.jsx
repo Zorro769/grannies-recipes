@@ -30,7 +30,6 @@ const RecipeDetail = () => {
   useEffect(() => {
     const getRecipe = async (id) => {
       try {
-        const respone = await axiosPrivate.get("/users/allusers");
         setLoading(true)
       
         const data = await fetchRecipe(id)
