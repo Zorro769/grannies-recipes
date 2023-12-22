@@ -7,7 +7,7 @@ const Footer = () => {
             <div className="container mx-auto px-20 lg:px-20 py-20 flex flex-col gap-10 md:flex-row justify-between border-t border-slate-800">
                 <div className="flex">
                     <p className="font-bold text-center">
-                        Flavor<span className="text-green-500 text-xl">Verse</span>
+                        Granny's<span className="text-green-500 text-xl">Recipes</span>
                     </p>
                 </div>
 
@@ -48,41 +48,6 @@ const Footer = () => {
                     </div>
                 </div>
 
-                <div>
-                    <p>LEGAL</p>
-                    <div className='flex flex-col text-start mb-4 md:mb-0 text-[14px]'>
-                        <a
-                            href='#'
-                            className='block md:inline-block py-2 hover:text-gray-500'
-                        >
-                            Terms and Conditions
-                        </a>
-                        <a
-                            href='#'
-                            className='block md:inline-block py-2 hover:text-gray-500'
-                        >
-                            License Agreement
-                        </a>
-                        <a
-                            href='#'
-                            className='block md:inline-block py-2 hover:text-gray-500'
-                        >
-                            Privacy Policy
-                        </a>
-                        <a
-                            href='#'
-                            className='block md:inline-block py-2 hover:text-gray-500'
-                        >
-                            Copyright Information
-                        </a>
-                        <a
-                            href='#'
-                            className='block md:inline-block py-2 hover:text-gray-500'
-                        >
-                            Cookies Policy
-                        </a>
-                    </div>
-                </div>
 
                 <div className="flex flex-col">
                     <p>SOCIAL MEDIA</p>

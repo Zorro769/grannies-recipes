@@ -5,21 +5,29 @@ import Searchbar from './SearchBar'
 import RecipeCard from './RecipeCard'
 import { fetchRecipes } from '../utils'
 import Button from './Button'
-
+import CreateRecipe from './CreateRecipe'
+import Dialog from '@mui/material/Dialog';
+import { GrAdd } from "react-icons/gr";
 const Recipes = () => {
     const [recipes, setRecipes] = useState([])
-    const [query, setQuery] = useState('Vegan')
+    const [query, setQuery] = useState('Dessert,Vegan')
     const [limit, setLimit] = useState(30)
     const [loading, setLaoding] = useState(false)
+    const [openDialog, setOpenDialog] = useState(false);
 
     const handleChange = (e) => {
         setQuery(e.target.value)
     }
-
+    const closeCreateRecipeDialog = () => {
+        setOpenDialog(false);
+    }
+    const openCreateRecipeDialog = () => {
+        setOpenDialog(true);
+    }
     const fetchRecipe = async () => {
         // try {
             const data = await fetchRecipes({ query, limit })
-            console.log("Data")
+
             setRecipes(data)
             setLaoding(false)
         // } catch (error) {
@@ -43,10 +51,12 @@ const Recipes = () => {
         setLaoding(true)
 
         fetchRecipe()
-       
+      }, [])
 
-    }, [])
 
+      const createRecipeClick = () => {
+
+      }
     if (loading) {
         return (
             <Loading />
@@ -65,7 +75,10 @@ const Recipes = () => {
                 </form>
 
             </div>
-
+            <div className='text-white text-right'>
+                    <button onClick={openCreateRecipeDialog}><span className='text-[#1FB137] text-base text-5xl'>+  </span><span className='text-[#1FB137] text-base font-bold'>Create your recipe</span></button>
+                </div>
+            
             {
                 recipes?.length > 0 ? (
                     <>
@@ -89,6 +102,14 @@ const Recipes = () => {
                     <p className='text-center'>No Recipe Found</p>
                 </div>
             }
+            <Dialog
+        open={openDialog}
+        onClose={closeCreateRecipeDialog}
+        fullWidth
+        maxWidth='lg'
+        PaperProps={{ style: { height: '750px' } }}>
+        <CreateRecipe />
+      </Dialog>
         </div>
     )
 }

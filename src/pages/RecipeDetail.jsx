@@ -3,43 +3,60 @@ import { useParams } from 'react-router-dom'
 import { fetchRecipe, fetchRecipes } from '../utils'
 import Loading from '../components/Loading'
 import Header from '../components/Header'
+// import useRefreshToken from "../hooks/useRefreshToken";
+import axios, { axiosPrivate } from "../api/axios";
 
 import { AiFillPushpin, AiOutlineConsoleSql } from "react-icons/ai"
 import { BsPatchCheck } from "react-icons/bs"
 import RecipeCard from '../components/RecipeCard'
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import useAuth from "../context/AuthProvider";
 
 
 const RecipeDetail = () => {
   const [recipe, setRecipe] = useState(null)
   const [recipes, setRecipes] = useState([])
   const [loading, setLoading] = useState(false)
+  const [containsLI, setContainsLI] = useState(false); // Declare containsLI stat
+  const axiosPrivate = useAxiosPrivate();
 
-  const { id } = useParams()
+  // const refresh = useRefreshToken();
 
-  const getRecipe = async (id) => {
-    try {
-      setLoading(true)
+ 
     
-      const data = await fetchRecipe(id)
-      console.log(data);
-      setRecipe(data)
 
-      const recommend = await fetchRecipes({ query: recipe?.label, limit: 5 })
-
-      setRecipes(recommend)
-
-      setLoading(false)
-
-    } catch (error) {
-      console.log(error)
-
-      setLoading(false)
-    }
-  }
-
+  
+  const { id } = useParams()
   useEffect(() => {
-    getRecipe(id)
+    const getRecipe = async (id) => {
+      try {
+        const respone = await axiosPrivate.get("/users/allusers");
+        setLoading(true)
+      
+        const data = await fetchRecipe(id)
+  
+        setRecipe(data)
+  
+        const recommend = await fetchRecipes({ query: recipe?.label, limit: 5 })
+  
+        setRecipes(recommend)
+  
+        setLoading(false)
+        const containsLIValue  = recipe?.instructions.includes("<li>") || recipe?.instructions.includes("\n");
+        setContainsLI(containsLIValue );
+      } catch (error) {
+        console.log(error)
+  
+        setLoading(false)
+      }
+    }
+    getRecipe(id);
   }, [id])
+  
+
+  // useEffect(() => {
+  //   getRecipe(id)
+  // }, [id])
 
 
   if (loading) {
@@ -49,6 +66,7 @@ const RecipeDetail = () => {
       </div>
     );
   }
+  // getRecipe(id);
   return (
     <div className='w-full'>
       <Header
@@ -104,28 +122,46 @@ const RecipeDetail = () => {
                 
               }
             </div>
-
             <div className='flex flex-col gap-5' >
               <p className='text-green-500 text-2xl underline mt-10'>Instructions</p>
               <ol className='text-white'>
-              {recipe?.instructions.split('</li>').map((item, index) => {
-                const cleanedInstruction = item.replace(/<\/?li>|<\/?ol>/g, '').trim();
-
-                if (cleanedInstruction !== '') {
-                  return (
-                    <li key={index} className='flex items-center mt-5'>
-                      <div className='h-full inline-block'>
-                        <AiFillPushpin className='text-green-800 text-xl mr-2 inline-block' />
-                      </div>
-                      <div className='h-full inline-block'>{cleanedInstruction}</div>
-                    </li>
-                  );
-                }
-
-                return null;
-              })}
-
-
+                
+              {
+               
+                 !containsLI ? (
+                    recipe?.instructions.split(/\./).map((item, index) => {
+                      const cleanedInstruction = item.trim();
+                    
+                      if (cleanedInstruction !== '') {
+                        return (
+                          <li key={index} className='flex items-center mt-5'>
+                            <div className='h-full inline-block'>
+                              <AiFillPushpin className='text-green-800 text-xl mr-2 inline-block' />
+                            </div>
+                            <div className='h-full inline-block'>{cleanedInstruction}</div>
+                          </li>
+                        );
+                      }
+                
+                      return null;
+                    })
+                  ) : (
+                    recipe?.instructions.split(/\n|<\/?li>/).map((item, index) => {
+                      const cleanedInstruction = item.replace(/<\/?li>|<\/?ol>/g, '').trim();
+                      if (cleanedInstruction !== '') {
+                        return (
+                          <li key={index} className='flex items-center mt-5'>
+                            <div className='h-full inline-block'>
+                              <AiFillPushpin className='text-green-800 text-xl mr-2 inline-block' />
+                            </div>
+                            <div className='h-full inline-block'>{cleanedInstruction}</div>
+                          </li>
+                        );
+                      }
+                      return null;
+                    })
+                  )
+              }
               </ol>
             </div>
           </div>
@@ -154,5 +190,4 @@ const RecipeDetail = () => {
     </div>
   )
 }
-
 export default RecipeDetail

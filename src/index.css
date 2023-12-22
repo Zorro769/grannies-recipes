@@ -86,3 +86,65 @@ body {
     box-shadow: 0 0 0 0 rgba(178, 212, 252, 0.7);
   }
 }
+body, html,select,div {
+  scrollbar-width: thin; /* For Firefox */
+  scrollbar-color: #1FB137 #1F1F1F; /* For Firefox */
+
+  /* For webkit browsers (Chrome, Safari, etc.) */
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #1f2220;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: #000000;
+  }
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.radio-container {
+  display: flex;
+  align-items: center;
+}
+
+.radio-input {
+  /* Hide the default radio button */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  /* Style the replacement radio button */
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #1FB137;
+  background-color: #000;
+  outline: none;
+  margin-right: 8px;
+  position: relative;
+}
+
+.radio-input:checked::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #1FB137;
+}
+
+/* Style the text next to the radio button */
+.label-text {
+  color: #1FB137;
+  font-weight: bold;
+}
