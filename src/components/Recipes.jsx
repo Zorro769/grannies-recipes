@@ -13,7 +13,7 @@ const Recipes = () => {
     const [query, setQuery] = useState('Dessert,Vegan')
     const [limit, setLimit] = useState(30)
     const [loading, setLaoding] = useState(false)
-    const [openDialog, setOpenDialog] = useState(false);
+    const [openDialog, setOpenDialog] = useState(true);
 
     const handleChange = (e) => {
         setQuery(e.target.value)

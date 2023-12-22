@@ -28,11 +28,9 @@ const reader = new FileReader();
     // .filter((ingredient) => ingredient.original.trim() !== '')
     // .map((ingredient) => ({ original: ingredient.original }));
     console.log(selectedFile);
-    ingredients.map((ingredient) => {
-        formData.append('extendedIngredients', JSON.stringify(ingredient));
-      });
+
       
-      formData.append('extendedIngredients', JSON.stringify([]));
+      formData.append('extendedIngredients',JSON.stringify(ingredients));
     formData.append('title', name);
     formData.append('cuisine', cuisine);
     formData.append('dishType', dishType);

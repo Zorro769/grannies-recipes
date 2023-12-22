@@ -48,7 +48,7 @@ function App() {
             <Route index element={<Home flag = {false}/>} />
             <Route path='/new-password' element={<Home flag = {true}/>} />
             {/* <Route path='/home/new-password' element={<HomeWithChangePassword />} /> */}
-            <Route path='recipes/:id' element={<RequireAuth />}>
+            <Route path='recipes/:id' >
               <Route index element={<RecipeDetail/>}/>
             </Route>
           </Route>

@@ -30,8 +30,6 @@ const Register = () => {
             if(accessToken){
                 alert("Register successfully")
             }
-
-            setAuth({accessToken});
             localStorage.setItem('accessToken', accessToken);
                 
             setEmail('');
