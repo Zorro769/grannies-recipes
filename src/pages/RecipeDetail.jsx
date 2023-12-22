@@ -145,7 +145,7 @@ const RecipeDetail = () => {
                       return null;
                     })
                   ) : (
-                    recipe?.instructions.split(/\n|<\/?li>/).map((item, index) => {
+                    recipe?.instructions.split(/\n|<\/?li>|<\/?ol>/).map((item, index) => {
                       const cleanedInstruction = item.replace(/<\/?li>|<\/?ol>/g, '').trim();
                       if (cleanedInstruction !== '') {
                         return (
