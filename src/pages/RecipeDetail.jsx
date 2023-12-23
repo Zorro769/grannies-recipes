@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { fetchRecipe, fetchRecipes } from '../utils'
+import { fetchRecipe, fetchRecipes, fetchRecommendRecipes } from '../utils'
 import Loading from '../components/Loading'
 import Header from '../components/Header'
 // import useRefreshToken from "../hooks/useRefreshToken";
@@ -20,12 +20,6 @@ const RecipeDetail = () => {
   const [containsLI, setContainsLI] = useState(false); // Declare containsLI stat
   const axiosPrivate = useAxiosPrivate();
 
-  // const refresh = useRefreshToken();
-
- 
-    
-
-  
   const { id } = useParams()
   useEffect(() => {
     const getRecipe = async (id) => {
@@ -34,9 +28,9 @@ const RecipeDetail = () => {
       
         const data = await fetchRecipe(id)
   
-        setRecipe(data)
+        await setRecipe(data)
   
-        const recommend = await fetchRecipes({ query: recipe?.label, limit: 5 })
+        const recommend = await fetchRecommendRecipes({ id })
   
         setRecipes(recommend)
   
@@ -145,8 +139,8 @@ const RecipeDetail = () => {
                       return null;
                     })
                   ) : (
-                    recipe?.instructions.split(/\n|<\/?li>|<\/?ol>/).map((item, index) => {
-                      const cleanedInstruction = item.replace(/<\/?li>|<\/?ol>/g, '').trim();
+                    recipe?.instructions.split(/\n|<\/li>|<\/ol>/).map((item, index) => {
+                      const cleanedInstruction = item.replace(/<\/li>|<\/ol>/g, '').trim();
                       if (cleanedInstruction !== '') {
                         return (
                           <li key={index} className='flex items-center mt-5'>

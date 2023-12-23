@@ -13,6 +13,30 @@ export async function fetchRecipes (filter){
     
     return data?.results;
 }
+export async function fetchRandomRecipes (filter){
+    const { limit } = filter;
+
+    const url = `https://api.spoonacular.com/recipes/random?apiKey=${process.env.REACT_APP_API}&number=${limit}`;
+    
+    const response = await fetch(url);
+
+    const data = await response.json();
+    console.log(data?.results);
+    
+    return data?.results;
+}
+export async function fetchRecommendRecipes (filter){
+    const {id} = filter;
+
+    const url = `https://api.spoonacular.com/recipes/${id}/similar?apiKey=${process.env.REACT_APP_API}`;
+    
+    const response = await fetch(url);
+
+    const data = await response.json();
+    console.log(data?.results);
+    
+    return data?.results;
+}
 //https://api.spoonacular.com/recipes/random?apiKey=${process.env.REACT_APP_EDAMAM_API_KEY}`
 export async function fetchRecipe(id){
 
