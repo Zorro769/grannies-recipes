@@ -24,7 +24,6 @@ const useAxiosPrivate = () => {
                     prevRequest.sent = true;
                     try {
                         const newAccessToken = await refreshToken();
-                        console.log('New access token: ' + newAccessToken);
                         // Use the returned Promise to ensure the state has been updated
                        localStorage.setItem('accessToken', newAccessToken);
                         prevRequest.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`;

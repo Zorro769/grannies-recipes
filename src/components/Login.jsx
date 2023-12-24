@@ -46,7 +46,6 @@ const Login = ({ onClose, handleButtonClick  }) => {
             setEmail('');
             setPassword('');
         } catch (err) {
-            console.log(err)
         }
     }
   return (

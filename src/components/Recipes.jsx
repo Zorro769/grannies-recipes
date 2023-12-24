@@ -31,7 +31,6 @@ const Recipes = () => {
             setRecipes(data)
             setLaoding(false)
         // } catch (error) {
-            // console.log(error)
         // } finally {
             setLaoding(false)
         // }

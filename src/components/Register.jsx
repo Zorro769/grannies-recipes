@@ -35,7 +35,6 @@ const Register = () => {
             setEmail('');
             setPassword('');
         } catch (err) {
-            console.log(err)
         }
     }
   return (

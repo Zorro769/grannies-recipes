@@ -9,7 +9,6 @@ export async function fetchRecipes (filter){
     const response = await fetch(url);
 
     const data = await response.json();
-    console.log(data?.results);
     
     return data?.results;
 }
@@ -21,7 +20,6 @@ export async function fetchRandomRecipes (filter){
     const response = await fetch(url);
 
     const data = await response.json();
-    console.log(data?.results);
     
     return data?.results;
 }
@@ -33,7 +31,6 @@ export async function fetchRecommendRecipes (filter){
     const response = await fetch(url);
 
     const data = await response.json();
-    console.log(data?.results);
     
     return data?.results;
 }

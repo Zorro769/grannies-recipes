@@ -21,6 +21,8 @@ const RecipeDetail = () => {
   const axiosPrivate = useAxiosPrivate();
 
   const { id } = useParams()
+  const containsLIValue  = recipe?.instructions.includes("<li>") || recipe?.instructions.includes("\n");
+  
   useEffect(() => {
     const getRecipe = async (id) => {
       try {
@@ -35,16 +37,15 @@ const RecipeDetail = () => {
         setRecipes(recommend)
   
         setLoading(false)
-        const containsLIValue  = recipe?.instructions.includes("<li>") || recipe?.instructions.includes("\n");
-        setContainsLI(containsLIValue );
+        await setContainsLI(containsLIValue );
+        console.log("Contains LI after set" + containsLI)
       } catch (error) {
-        console.log(error)
   
         setLoading(false)
       }
     }
     getRecipe(id);
-  }, [id])
+  }, [id, containsLIValue])
   
 
   // useEffect(() => {
@@ -122,7 +123,9 @@ const RecipeDetail = () => {
               {
                
                  !containsLI ? (
+                  
                     recipe?.instructions.split(/\./).map((item, index) => {
+                      console.log("Contains LI False: " + containsLI);
                       const cleanedInstruction = item.trim();
                     
                       if (cleanedInstruction !== '') {
@@ -140,7 +143,8 @@ const RecipeDetail = () => {
                     })
                   ) : (
                     recipe?.instructions.split(/\n|<\/li>|<\/ol>/).map((item, index) => {
-                      const cleanedInstruction = item.replace(/<\/li>|<\/ol>/g, '').trim();
+                      console.log("Contains LI: " + containsLI);
+                      const cleanedInstruction = item.replace(/<li>|<ol>/g, '').trim();
                       if (cleanedInstruction !== '') {
                         return (
                           <li key={index} className='flex items-center mt-5'>

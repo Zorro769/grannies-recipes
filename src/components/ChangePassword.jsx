@@ -10,15 +10,13 @@ const ChangePassword = ({onClose}) => {
     e.preventDefault();
     try{
       const response = await axiosPrivate.post("/users/change-password", {email:localStorage.getItem('email'),password: password});
-      console.log(response.data);
+  
       if (response.data === 'Password changed successfully'){
-        console.log(response.data);
         onClose();
         navigate('/', { state: { showLoginDialog: false }, replace: true });    
       }
     }
     catch (err) {
-      console.log(err.message);
       setErrMsg(err.message);
     }
   }

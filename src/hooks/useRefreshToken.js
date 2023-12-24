@@ -10,10 +10,7 @@ const useRefreshToken = () => {
             withCredentials: true,
             credentials: 'include',
         });
-        console.log('Old token' + auth.accessToken);
         await setAuth((prev) => {
-            console.log(JSON.stringify(prev));
-            console.log(response.data.accessToken);
             return { ...prev, accessToken: response.data.accessToken };
         });
         localStorage.setItem('accessToken', response.data.accessToken);

@@ -27,7 +27,6 @@ const reader = new FileReader();
     // const formattedIngredients = ingredients
     // .filter((ingredient) => ingredient.original.trim() !== '')
     // .map((ingredient) => ({ original: ingredient.original }));
-    console.log(selectedFile);
 
       
       formData.append('extendedIngredients',JSON.stringify(ingredients));
@@ -40,14 +39,12 @@ const reader = new FileReader();
     formData.append('vegetarian', vegetarian);
 
     if (selectedFile) {
-        console.log(selectedFile.name)
         reader.onload = (readerEvent) => {
             formData.append('image', readerEvent.target.result)
           }
       }
       
     try {
-        console.log(localStorage.getItem('accessToken'));
         await axiosPrivate.get('/users/allusers')
         const response = await axiosPrivate.post('/recipes', formData,);
       } catch (error) {
@@ -56,8 +53,6 @@ const reader = new FileReader();
   }
 
   const handleFileChange = (e) => {
-    console.log('Hello')
-    console.log(e.target.files[0]);
     setSelectedFile(e.target.files[0]);
     reader.readAsDataURL(e.target.files[0]);
     setIsSelected(true);

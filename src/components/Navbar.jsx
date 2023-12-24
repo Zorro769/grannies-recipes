@@ -45,7 +45,6 @@ const location = useLocation();
 
   const handleLoginDialogClose = () => {
     setLoginOpenDialog(false);
-    console.log(openLoginDialog);
   };
 
   const handleDialogClose = () => {

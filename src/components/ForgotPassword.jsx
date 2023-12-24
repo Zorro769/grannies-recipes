@@ -10,7 +10,6 @@ const ForgotPassword = () => {
       localStorage.setItem('email', email);
         await axiosPrivate.post('/users/forget-password', {email: email});
     } catch (err) {
-        console.log(err)
     }
 }
   
