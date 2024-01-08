@@ -3,39 +3,51 @@ import { BiSearchAlt2 } from 'react-icons/bi'
 import Loading from './Loading'
 import Searchbar from './SearchBar'
 import RecipeCard from './RecipeCard'
-import { fetchRecipes } from '../utils'
-import Button from './Button'
+import { fetchRandomRecipes } from '../utils'
 import CreateRecipe from './CreateRecipe'
 import Dialog from '@mui/material/Dialog';
-import { GrAdd } from "react-icons/gr";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import InfoDialog from './InfoDialog'
 const Recipes = () => {
+    const axiosPrivate = useAxiosPrivate();
     const [recipes, setRecipes] = useState([])
     const [query, setQuery] = useState('Dessert,Vegan')
     const [limit, setLimit] = useState(30)
     const [loading, setLaoding] = useState(false)
     const [openDialog, setOpenDialog] = useState(false);
+    const [favourites, setFavourites] = useState([]);
+    const [infoDialog, setInfoDialog] = useState(false);
 
     const handleChange = (e) => {
         setQuery(e.target.value)
     }
-    const closeCreateRecipeDialog = () => {
+    const closeDialog = () => {
         setOpenDialog(false);
+        setInfoDialog(false);
     }
     const openCreateRecipeDialog = () => {
-        setOpenDialog(true);
+        if(localStorage.getItem('accessToken'))
+            setOpenDialog(true);
+        else
+            setInfoDialog(true)
     }
     const fetchRecipe = async () => {
-        // try {
-            const data = await fetchRecipes({ query, limit })
-
+        try {
+            const data = await fetchRandomRecipes({ query, limit })
+            console.log(data);
             setRecipes(data)
             setLaoding(false)
-        // } catch (error) {
-        // } finally {
-            setLaoding(false)
-        // }
+        } catch (error) {
+            console.log(error);
+        } 
+        setLaoding(false)
     }
-
+    const fetchFavourites = async () => {
+        if(localStorage.getItem('accessToken')){
+            const data = await axiosPrivate.get("/recipes/favourite");
+            setFavourites(data.data);
+        }
+    }
     const handleSearchedRecipe = async (e) => {
         e.preventDefault()
         fetchRecipe()
@@ -48,14 +60,9 @@ const Recipes = () => {
 
     useEffect(() => {
         setLaoding(true)
-
         fetchRecipe()
+        fetchFavourites();
       }, [])
-
-
-      const createRecipeClick = () => {
-
-      }
     if (loading) {
         return (
             <Loading />
@@ -83,18 +90,15 @@ const Recipes = () => {
                     <>
                         <div className='w-full  flex flex-wrap gap-10 px-0 lg:px-10 py-10'>
                             {
+
                                 recipes?.map((item, index) => (
-                                    <RecipeCard recipe={item} key={index} />))
+                                    <RecipeCard recipe={item} key={index} flag={favourites.some((recipe) => recipe.recipe === item.id )}/>))
                             }
                         </div>
 
                         <div className='flex w-full items-center justify-center py-10'>
 
-                            <Button
-                                title="Show More"
-                                containerStyle="bg-green-800 text-white px-3 py-1 rounded-full text-sm"
-                                handleClick={showMore}
-                            />
+                            <button className="bg-green-800 text-white px-3 py-1 text-xl rounded-full text-sm" handleClick={showMore}>Show More</button>
                         </div>
                     </>
                 ) : <div className='text-white w-full items-center justify-center py-10'>
@@ -103,11 +107,19 @@ const Recipes = () => {
             }
             <Dialog
         open={openDialog}
-        onClose={closeCreateRecipeDialog}
+        onClose={closeDialog}
         fullWidth
         maxWidth='lg'
         PaperProps={{ style: { height: '750px' } }}>
-        <CreateRecipe />
+        <CreateRecipe onClose={closeDialog}/>
+      </Dialog>
+      <Dialog
+        open={infoDialog}
+        onClose={closeDialog}
+        fullWidth
+        maxWidth='xs'
+        PaperProps={{ style: { height: '100px', borderradius: '50%' }}}>
+        <InfoDialog info={'You need to be logged in first'} onClose={closeDialog}/>
       </Dialog>
         </div>
     )

@@ -4,25 +4,40 @@ import BackGround from '../images/login-image.jpg'
 import {loginUser} from '../utils/auth.js'
 import ForgotPassword from './ForgotPassword'
 import Dialog from '@mui/material/Dialog';
-import Cookies from 'universal-cookie';
-
-
+import Loading from './Loading'
+import Register from './Register.jsx';
+import getGoogleOAuthURL from "../utils/getGoogleUrl";
+import InfoDialog from './InfoDialog';
+import { FaGoogle } from "react-icons/fa";
 
 const Login = ({ onClose, handleButtonClick  }) => {
     const { setAuth } = useAuth();
     const [openForgotPassword, setOpenForgotPassword] = useState(false);
-
+    const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errMsg, setErrMsg] = useState('');
+    const [regDialog, setRegDialog] = useState(false);
+    const [infoDialog, setInfoDialog] = useState(false);
 
-    const cookies = new Cookies();
-
+    const closeDialog = () => {
+        setInfoDialog(false);
+        onClose();
+    }
     const handleForgotPassword = (e) => {
         e.preventDefault();
         setOpenForgotPassword(!openForgotPassword);
     };
-
+    const handleDialogClose = (e) => {
+        onClose();
+        setRegDialog(false);
+        setLoading(false);
+    }
+    const handleSignUp = (e) => {
+        // onClose();  
+        handleButtonClick();
+        setRegDialog(true);
+    }
     useEffect(() => {
         setErrMsg('');
     }, [email, password])
@@ -32,13 +47,11 @@ const Login = ({ onClose, handleButtonClick  }) => {
 
         try {
             const response = await loginUser(email, password);
+            setErrMsg(response.data.message)
+            console.log(response);
             const accessToken = response?.data?.accessToken;
-
-            if(accessToken){
-                alert("Login successfully");
-                onClose();
-                handleButtonClick();
-            }
+            setInfoDialog(true);
+            handleButtonClick();
 
             setAuth({accessToken});
             localStorage.setItem('accessToken', accessToken);
@@ -46,6 +59,7 @@ const Login = ({ onClose, handleButtonClick  }) => {
             setEmail('');
             setPassword('');
         } catch (err) {
+            setErrMsg(err.response.data.message);
         }
     }
   return (
@@ -60,12 +74,12 @@ const Login = ({ onClose, handleButtonClick  }) => {
                     <label className='text-[#1FB137] text-base font-bold'>
                         Email address:
                         <br />
-                        <input type="email" name="email" id="email" className=' border-[#1FB137] bg-black border w-full' onChange={(e) => setEmail(e.target.value)}/>
+                        <input type="email" name="email" id="email" required className='border-[#1FB137] bg-black border w-full' onChange={(e) => setEmail(e.target.value)}/>
                     </label>
                     <label className='text-[#1FB137] mt-5 text-base font-bold block'>
                         Password:
                         <br />
-                        <input type="password" name="password" id="password" className='border-[#1FB137] bg-black border w-full' onChange={(e) => setPassword(e.target.value)}/>
+                        <input type="password" name="password" id="password" required className='border-[#1FB137] bg-black border w-full' onChange={(e) => setPassword(e.target.value)}/>
                     </label>
                     <button className='text-[#1FB137] mt-3 text-base font-bold block ml-auto flex gap-6 inline-block text-xs' onClick={handleForgotPassword} >
                         Forgot password?  
@@ -79,8 +93,13 @@ const Login = ({ onClose, handleButtonClick  }) => {
                         </button>
                     </div>
                 </form>
-                <div className='mt-10'>
-                    <button className='text-[#1FB137] mt-3 text-base font-bold block ml-auto flex gap-6 inline-block text-sm' 
+                <div className='mt-10 text-center'>
+                    <p className='text-[#1FB137]'>OR</p>
+                <a className='text-[#1FB137] flex items-center justify-center text-center p-1.5 rounded-sm text-white mt-5' href={getGoogleOAuthURL()}>
+    <FaGoogle size={18} /><span className='ml-1'>Login with Google</span>
+</a>
+
+                    <button onClick={handleSignUp} className='text-[#1FB137] mt-3 text-base font-bold block ml-auto flex gap-6 inline-block text-sm' 
                     >
                         Don’t have an account?Sign up 
                     </button> 
@@ -95,6 +114,30 @@ const Login = ({ onClose, handleButtonClick  }) => {
         PaperProps={{ style: { height: '250px' } }}>
         <ForgotPassword />
       </Dialog>
+      <Dialog
+        open={loading}
+        onClose={handleDialogClose}
+        fullWidth
+        maxWidth='lg'
+        PaperProps={{ style: { height: '800px' } }}>
+        <Loading />
+      </Dialog>
+      <Dialog
+        open={regDialog}
+        onClose={handleDialogClose}
+        fullWidth
+        maxWidth='lg'
+        PaperProps={{ style: { height: '800px' } }}>
+        <Register />
+      </Dialog>
+      <Dialog
+            open={infoDialog}
+            onClose={closeDialog}
+            fullWidth
+            maxWidth='xs'
+            PaperProps={{ style: { height: '100px', borderradius: '50%' }}}>
+            <InfoDialog info={'You have been logged in successfully'} onClose={closeDialog}/>
+          </Dialog>
     </div>
     
   )

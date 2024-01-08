@@ -2,25 +2,31 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 import Login from './Login.jsx';
+import Favourites from './Favourites.jsx';
+import MyRecipes from './MyRecipes.jsx';
 import Register from './Register.jsx';
-import ChangePassword from './ChangePassword.jsx';
-import useAuth from '../hooks/useAuth.js';
 import Logo from '../images/logo.png';
-import axios, { axiosPrivate } from '../api/axios';
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
-import { HiMenuAlt3 } from 'react-icons/hi';
-import { AiOutlineClose } from 'react-icons/ai';
 import { VscAccount } from 'react-icons/vsc';
-import Dialog from '@mui/material/Dialog';
+import InfoDialog from './InfoDialog';
+import Dialog from '@mui/material/Dialog'
 
 const Navbar = ({loginOpened}) => {
+  const axiosPrivate = useAxiosPrivate();
+  const [infoDialog, setInfoDialog] = useState(false);
   const [open, setOpen] = useState(false);
   const [openLoginDialog, setLoginOpenDialog] = useState(loginOpened);
   const [openRegisterDialog, setRegisterOpenDialog] = useState(false);
+  const [openFavouriteDialog, setFavouriteOpenDialog] = useState(false);
+  const [openMyRecipesDialog, setMyRecipesDialog] = useState(false);
   const [openChangePasswordDialog, setChangePasswordDialog] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
   
-  const { auth, setAuth } = useAuth();
+
+  const closeDialog = () => {
+    setInfoDialog(false);
+}
 
 const location = useLocation();
   const showLoginDialog = location.state?.showLoginDialog;
@@ -31,16 +37,8 @@ const location = useLocation();
     }
   }, [showLoginDialog]);
 
-  const handleLogin = () => {
-    setLoginOpenDialog(true);
-  };
-
   const handleButtonClick = () => {
     setIsVisible(!isVisible);
-  };
-
-  const handleRegister = () => {
-    setRegisterOpenDialog(true);
   };
 
   const handleLoginDialogClose = () => {
@@ -50,11 +48,19 @@ const location = useLocation();
   const handleDialogClose = () => {
     setRegisterOpenDialog(false);
     setLoginOpenDialog(false);
+    setFavouriteOpenDialog(false);
     setChangePasswordDialog(false);
+    setMyRecipesDialog(false);
   };
   const handleLogOut = async() => {
-    await axiosPrivate.post("/users/logout");
-    localStorage.removeItem("accessToken");
+    try{
+      await axiosPrivate.get("/users/logout");
+      localStorage.removeItem("accessToken");
+      setInfoDialog(true);
+    }
+    catch (err) {
+
+    }
     if (!localStorage.getItem("accessToken")) {
       handleButtonClick();
     }
@@ -72,13 +78,10 @@ const location = useLocation();
             <Link to="/">Home</Link>
           </li>
           <li>
-            <a href="/#recipes">Favourites</a>
+            <button onClick={() => setFavouriteOpenDialog(true)}>Favourites</button>
           </li>
           <li>
-            <a href="/favorites">My Recipes</a>
-          </li>
-          <li>
-            <a href="/favorites">Settings</a>
+          <button onClick={() => setMyRecipesDialog(true)}>My Recipes</button>
           </li>
         </ul>
         <div className='text-white ml-auto relative flex gap-6 inline-block cursor-pointer'>
@@ -123,13 +126,6 @@ const location = useLocation();
             </div>
           )}
         </div>
-
-        {/* <button
-          className='block md:hidden text-white text-xl outline-0 shadow-0'
-          onClick={() => setOpenDialog(true)}
-        >
-          {open ? <AiOutlineClose /> : <HiMenuAlt3 />}
-        </button> */}
       </nav>
       <div className={`${open ? 'flex' : 'hidden'} bg-black flex-col w-full px-4 pt-16 pb-10 text-white gap-6 text-[14px]`}>
         <a href='/'>Home</a>
@@ -150,8 +146,32 @@ const location = useLocation();
         fullWidth
         maxWidth='lg'
         PaperProps={{ style: { height: '800px' } }}>
-        <Register />
+        <Register onClose={handleDialogClose}/>
+      </Dialog >
+      <Dialog
+        open={openFavouriteDialog}
+        onClose={handleDialogClose}
+        fullWidth
+        maxWidth='lg'
+        PaperProps={{ style: { height: '800px' } }}>
+        <Favourites onClose={handleDialogClose} handleButtonClick={handleButtonClick}/>
       </Dialog>
+      <Dialog
+        open={openMyRecipesDialog}
+        onClose={handleDialogClose}
+        fullWidth
+        maxWidth='lg'
+        PaperProps={{ style: { height: '800px' } }}>
+        <MyRecipes  onClose={handleDialogClose} handleButtonClick={handleButtonClick}/>
+      </Dialog>
+      <Dialog
+            open={infoDialog}
+            onClose={closeDialog}
+            fullWidth
+            maxWidth='xs'
+            PaperProps={{ style: { height: '100px', borderradius: '50%' }}}>
+            <InfoDialog info={'You have been logged out successfully'} onClose={closeDialog}/>
+          </Dialog>
     </header>
 
     

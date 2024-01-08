@@ -1,5 +1,4 @@
 import { FaFacebook, FaTwitter, FaInstagram, FaYoutube } from "react-icons/fa";
-import Button from "./Button"
 
 const Footer = () => {
     return (
@@ -78,12 +77,6 @@ const Footer = () => {
                             <FaYoutube size={18} />
                         </a>
                     </div>
-
-                    <Button
-                        title='Sign up'
-                        btnType='button'
-                        conteinerStyle='mt-10 md:block bg-transparent border border-white text-white hover:bg-white hover:text-black rounded-md min-w-[130px]'
-                    />
                 </div>
             </div>
 

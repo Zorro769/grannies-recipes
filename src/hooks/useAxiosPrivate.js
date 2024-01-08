@@ -29,7 +29,7 @@ const useAxiosPrivate = () => {
                         prevRequest.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`;
                         return axiosPrivate(prevRequest);
                     } catch (refreshError) {
-                        // Handle refresh error (e.g., redirect to login page)
+                        // console.log(refreshError);
                         return Promise.reject(refreshError);
                     }
                 }

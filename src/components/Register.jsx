@@ -3,7 +3,9 @@ import useAuth from '../hooks/useAuth'
 import BackGround from '../images/login-image.jpg'
 import {loginUser, registerUser} from '../utils/auth.js'
 import Cookies from 'universal-cookie';
-const Register = () => {
+import InfoDialog from './InfoDialog';
+import Dialog from '@mui/material/Dialog'
+const Register = ({onClose}) => {
     const { setAuth } = useAuth();
 
     const [username, setUsername] = useState('');
@@ -11,9 +13,13 @@ const Register = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [errMsg, setErrMsg] = useState('');
+    const [infoDialog, setInfoDialog] = useState(false);
+    const [isValid, setIsValid] = useState(true);
 
-    const cookies = new Cookies();
-
+    const closeDialog = () => {
+        setInfoDialog(false);
+        onClose();
+    }
     useEffect(() => {
         setErrMsg('');
     }, [email, password])
@@ -22,19 +28,24 @@ const Register = () => {
         e.preventDefault();
         if(confirmPassword !== password){
             setErrMsg('Password and confirm password must be the same');
+            setIsValid(false);
         }
-        try {
-            const response = await registerUser(username, email, password);
-            const accessToken = response?.data?.accessToken;
+        else {
+            try {
+                const response = await registerUser(username, email, password);
+                const accessToken = response?.data?.accessToken;
 
-            if(accessToken){
-                alert("Register successfully")
+                if(accessToken){
+                    setInfoDialog(true);
+                    
+                }
+                localStorage.setItem('accessToken', accessToken);
+                    
+                setEmail('');
+                setPassword('');
+            } catch (err) {
+                setErrMsg(err.response.data.message);
             }
-            localStorage.setItem('accessToken', accessToken);
-                
-            setEmail('');
-            setPassword('');
-        } catch (err) {
         }
     }
   return (
@@ -49,23 +60,23 @@ const Register = () => {
                 <label className='text-[#1FB137] text-base font-bold'>
                         Username:
                         <br />
-                        <input type="text" name="username" id="username" className=' border-[#1FB137] bg-black border w-full' onChange={(e) => setUsername(e.target.value)}/>
+                        <input type="text" name="username" id="username" required className=' border-[#1FB137] bg-black border w-full' onChange={(e) => setUsername(e.target.value)}/>
                     </label>
                     <label className='text-[#1FB137] mt-5 text-base font-bold block'>
                         Email address:
                         <br />
-                        <input type="email" name="email" id="email" className=' border-[#1FB137] bg-black border w-full' onChange={(e) => setEmail(e.target.value)}/>
+                        <input type="email" name="email" id="email" required className=' border-[#1FB137] bg-black border w-full' onChange={(e) => setEmail(e.target.value)}/>
                     </label>
                             
                     <label className='text-[#1FB137] mt-5 text-base font-bold block'>
                         Password:
                         <br />
-                        <input type="password" name="password" id="password" className='border-[#1FB137] bg-black border w-full' onChange={(e) => setPassword(e.target.value)}/>
+                        <input type="password" name="password" required id="password" className='border-[#1FB137] bg-black border w-full' onChange={(e) => setPassword(e.target.value)}/>
                     </label>
                     <label className='text-[#1FB137] mt-5 text-base font-bold block'>
                         Confirm Password:
                         <br />
-                        <input type="password" name="password" id="password" className='border-[#1FB137] bg-black border w-full' onChange={(e) => setConfirmPassword(e.target.value)}/>
+                        <input type="password" name="password" required id="password" className='border-[#1FB137] bg-black border w-full' onChange={(e) => setConfirmPassword(e.target.value)}/>
                     </label>
                     <div className='text-left text-orange-900 mt-5'>
                         {errMsg}
@@ -78,6 +89,14 @@ const Register = () => {
                 </form>
             </div>
         </div>
+        <Dialog
+            open={infoDialog}
+            onClose={closeDialog}
+            fullWidth
+            maxWidth='xs'
+            PaperProps={{ style: { height: '150px', borderradius: '50%' }}}>
+            <InfoDialog info={'We have sent you an activation email.Please click the link in the email to activate your account'} onClose={closeDialog}/>
+          </Dialog>
     </div>
   )
 }

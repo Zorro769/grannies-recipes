@@ -1,23 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { fetchRecipe, fetchRecipes, fetchRecommendRecipes } from '../utils'
+import { fetchRecipe, fetchRecommendRecipes } from '../utils'
 import Loading from '../components/Loading'
 import Header from '../components/Header'
-// import useRefreshToken from "../hooks/useRefreshToken";
-import axios, { axiosPrivate } from "../api/axios";
 
-import { AiFillPushpin, AiOutlineConsoleSql } from "react-icons/ai"
-import { BsPatchCheck } from "react-icons/bs"
+
+import { AiFillPushpin } from "react-icons/ai"
 import RecipeCard from '../components/RecipeCard'
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import useAuth from "../context/AuthProvider";
-
 
 const RecipeDetail = () => {
   const [recipe, setRecipe] = useState(null)
   const [recipes, setRecipes] = useState([])
   const [loading, setLoading] = useState(false)
-  const [containsLI, setContainsLI] = useState(false); // Declare containsLI stat
+  const [containsLI, setContainsLI] = useState(false);
   const axiosPrivate = useAxiosPrivate();
 
   const { id } = useParams()
@@ -27,18 +23,27 @@ const RecipeDetail = () => {
     const getRecipe = async (id) => {
       try {
         setLoading(true)
+        const stringId = id.toString();
+        let data = []
+        if(stringId.length < 7){
+          data = await fetchRecipe(id)
+          
+          const recommend = await fetchRecommendRecipes({ id })
+          const recipePromises = recommend.map(async (recommendedRecipe) => {
+            const recipeData = await fetchRecipe(recommendedRecipe.id);
+            return recipeData;
+          });
+          const recipes = await Promise.all(recipePromises);
+          console.log(recipes);
+          await setRecipes(recipes)
+        } else {
+
+          data = await axiosPrivate.get(`/recipes/${id}`)
+        }
+        setRecipe(data)
       
-        const data = await fetchRecipe(id)
-  
-        await setRecipe(data)
-  
-        const recommend = await fetchRecommendRecipes({ id })
-  
-        setRecipes(recommend)
-  
         setLoading(false)
-        await setContainsLI(containsLIValue );
-        console.log("Contains LI after set" + containsLI)
+        setContainsLI(containsLIValue );
       } catch (error) {
   
         setLoading(false)
@@ -47,12 +52,6 @@ const RecipeDetail = () => {
     getRecipe(id);
   }, [id, containsLIValue])
   
-
-  // useEffect(() => {
-  //   getRecipe(id)
-  // }, [id])
-
-
   if (loading) {
     return (
       <div className='w-full h-[100vh] flex items-center justify-center'>
@@ -60,7 +59,6 @@ const RecipeDetail = () => {
       </div>
     );
   }
-  // getRecipe(id);
   return (
     <div className='w-full'>
       <Header
@@ -96,7 +94,6 @@ const RecipeDetail = () => {
         </div>
 
         <div className='w-full flex flex-col md:flex-row gap-8 py-20 pxx-4 md:px-10'>
-          {/* LEFT SIDE */}
           <div className='w-full md:w-2/4 md:border-r border-slate-800 pr-1'>
             <div className='flex flex-col gap-5'>
             <img src={recipe?.image} alt={recipe?.title} className='rounded-lg h-[200px] md:h-[150px] md:w-[220px]' />
@@ -110,24 +107,15 @@ const RecipeDetail = () => {
                     </p>
                   )
                 })
-
-                  // <span>{recipe?.extendedIngredients}</span>
-                
-                
               }
             </div>
             <div className='flex flex-col gap-5' >
               <p className='text-green-500 text-2xl underline mt-10'>Instructions</p>
               <ol className='text-white'>
-                
               {
-               
                  !containsLI ? (
-                  
-                    recipe?.instructions.split(/\./).map((item, index) => {
-                      console.log("Contains LI False: " + containsLI);
+                    recipe?.instructions.split(/\.\n/).map((item, index) => {
                       const cleanedInstruction = item.trim();
-                    
                       if (cleanedInstruction !== '') {
                         return (
                           <li key={index} className='flex items-center mt-5'>
@@ -138,12 +126,10 @@ const RecipeDetail = () => {
                           </li>
                         );
                       }
-                
                       return null;
                     })
                   ) : (
                     recipe?.instructions.split(/\n|<\/li>|<\/ol>/).map((item, index) => {
-                      console.log("Contains LI: " + containsLI);
                       const cleanedInstruction = item.replace(/<li>|<ol>/g, '').trim();
                       if (cleanedInstruction !== '') {
                         return (
@@ -162,9 +148,6 @@ const RecipeDetail = () => {
               </ol>
             </div>
           </div>
-
-
-          {/* RIGHT SIDE */}
           <div className='w-full md:w-2/4 2xl:pl-10 mt-20 md:mt-0'>
             {
               recipes?.length > 0 && (

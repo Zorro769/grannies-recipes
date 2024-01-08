@@ -6,7 +6,7 @@ const useRefreshToken = () => {
     
     const refresh = async() => {
         
-        const response = await axiosPrivate.post('/users/refresh',{
+        const response = await axiosPrivate.get('/users/refresh',{
             withCredentials: true,
             credentials: 'include',
         });
