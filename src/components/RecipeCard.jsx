@@ -5,39 +5,18 @@ import { HiOutlineHeart } from 'react-icons/hi';
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import InfoDialog from './InfoDialog';
 import Dialog from '@mui/material/Dialog'
-import Cookies from 'js-cookie';
-import { useCookies } from "react-cookie";
+
 
 const RecipeCard = ({ recipe, flag=false, favouriteFlag = true, onClose }) => {
     const { id,image,sourceUrl, title, readyInMinutes, dishTypes } = recipe;
     const [flagFavourite, setFlag] = useState(flag);
     const axiosPrivate = useAxiosPrivate();
     const [infoDialog, setInfoDialog] = useState(false);
-    const [isCookieSet, setCookie] = useState(Cookies.get("refreshToken"));
-
-    const [cookies, setCookies] = useCookies(['refreshToken']);
 
     const closeDialog = () => {
         setInfoDialog(false);
     }
-    const readCookie = (name) => {
-        const cookieString = document.cookie;
-        const cookies = cookieString.split('; ');
-    
-        for (const cookie of cookies) {
-          const [cookieName, cookieValue] = cookie.split('=');
-          if (cookieName === name) {
-            return cookieValue;
-          }
-        }
-    
-        return null; // Cookie not found
-      };
     const handleFavouriteClick = async() => {
-        const myCookieValue = readCookie('refreshToken');
-        console.log(cookies.refreshToken);
-        console.log(isCookieSet);
-        const refreshToken = cookies.refreshToken;
         try {
             setFlag(!flagFavourite);
             await axiosPrivate.get(`/recipes/favourite/${id}`)
