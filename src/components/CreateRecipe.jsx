@@ -20,6 +20,7 @@ const [vegetarian, setVegetarian] = useState('');
 const [evaluation, setEvaluation] = useState('');
 const [instructions, setInstructions] = useState('');
 const [infoDialog, setInfoDialog] = useState(false);
+const [info, setInfo] = useState('');
 
 const closeDialog = () => {
     setInfoDialog(false);
@@ -55,8 +56,10 @@ const closeDialog = () => {
             }
         });
         setInfoDialog(true);
+        setInfo('Your recipe has been successfully created')
       } catch (error) {
-        console.error('Error sending data:', error);
+        setInfoDialog(true);
+        setInfo('You need to be logged in first')
       }
   }
 
@@ -179,7 +182,7 @@ const closeDialog = () => {
             fullWidth
             maxWidth='xs'
             PaperProps={{ style: { height: '100px', borderradius: '50%' }}}>
-            <InfoDialog info={'Your recipe has been successfully  created'} onClose={closeDialog}/>
+            <InfoDialog info={info} onClose={closeDialog}/>
           </Dialog>
         </div>
     </>

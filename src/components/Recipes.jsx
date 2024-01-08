@@ -8,8 +8,11 @@ import CreateRecipe from './CreateRecipe'
 import Dialog from '@mui/material/Dialog';
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import InfoDialog from './InfoDialog'
+
+
 const Recipes = () => {
     const axiosPrivate = useAxiosPrivate();
+
     const [recipes, setRecipes] = useState([])
     const [query, setQuery] = useState('Dessert,Vegan')
     const [limit, setLimit] = useState(30)
@@ -26,15 +29,11 @@ const Recipes = () => {
         setInfoDialog(false);
     }
     const openCreateRecipeDialog = () => {
-        if(localStorage.getItem('accessToken'))
-            setOpenDialog(true);
-        else
-            setInfoDialog(true)
+        setOpenDialog(true);
     }
     const fetchRecipe = async () => {
         try {
             const data = await fetchRandomRecipes({ query, limit })
-            console.log(data);
             setRecipes(data)
             setLaoding(false)
         } catch (error) {
@@ -43,9 +42,12 @@ const Recipes = () => {
         setLaoding(false)
     }
     const fetchFavourites = async () => {
-        if(localStorage.getItem('accessToken')){
+        try {
             const data = await axiosPrivate.get("/recipes/favourite");
             setFavourites(data.data);
+        }
+        catch(err) {
+            console.log(err);
         }
     }
     const handleSearchedRecipe = async (e) => {
@@ -98,7 +100,7 @@ const Recipes = () => {
 
                         <div className='flex w-full items-center justify-center py-10'>
 
-                            <button className="bg-green-800 text-white px-3 py-1 text-xl rounded-full text-sm" handleClick={showMore}>Show More</button>
+                            <button className="bg-green-800 text-white px-3 py-1 text-xl rounded-full text-sm" onClick={showMore}>Show More</button>
                         </div>
                     </>
                 ) : <div className='text-white w-full items-center justify-center py-10'>

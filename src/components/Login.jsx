@@ -46,13 +46,12 @@ const Login = ({ onClose, handleButtonClick  }) => {
         try {
             const response = await loginUser(email, password);
             setErrMsg(response.data.message)
-            console.log(response);
             const accessToken = response?.data?.accessToken;
             setInfoDialog(true);
             handleButtonClick();
 
             localStorage.setItem('accessToken', accessToken);
-                
+
             setEmail('');
             setPassword('');
         } catch (err) {

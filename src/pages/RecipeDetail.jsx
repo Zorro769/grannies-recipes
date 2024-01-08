@@ -34,7 +34,6 @@ const RecipeDetail = () => {
             return recipeData;
           });
           const recipes = await Promise.all(recipePromises);
-          console.log(recipes);
           await setRecipes(recipes)
         } else {
 
