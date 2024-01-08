@@ -1,9 +1,6 @@
-import axios, { axiosPrivate } from '../api/axios';
+import { axiosPrivate } from '../api/axios';
 
 export const registerUser = async (username, email, password) => {
-    // var myHeaders = new Headers();
-    // myHeaders.append("Content-Type", "application/json");
-
     var body = JSON.stringify({
         username,email,password 
     });

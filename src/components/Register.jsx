@@ -1,20 +1,15 @@
 import React,{useState, useEffect} from 'react'
-import useAuth from '../hooks/useAuth'
 import BackGround from '../images/login-image.jpg'
-import {loginUser, registerUser} from '../utils/auth.js'
-import Cookies from 'universal-cookie';
+import { registerUser} from '../utils/auth.js'
 import InfoDialog from './InfoDialog';
 import Dialog from '@mui/material/Dialog'
 const Register = ({onClose}) => {
-    const { setAuth } = useAuth();
-
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [errMsg, setErrMsg] = useState('');
     const [infoDialog, setInfoDialog] = useState(false);
-    const [isValid, setIsValid] = useState(true);
 
     const closeDialog = () => {
         setInfoDialog(false);
@@ -28,7 +23,6 @@ const Register = ({onClose}) => {
         e.preventDefault();
         if(confirmPassword !== password){
             setErrMsg('Password and confirm password must be the same');
-            setIsValid(false);
         }
         else {
             try {
@@ -37,7 +31,6 @@ const Register = ({onClose}) => {
 
                 if(accessToken){
                     setInfoDialog(true);
-                    
                 }
                 localStorage.setItem('accessToken', accessToken);
                     

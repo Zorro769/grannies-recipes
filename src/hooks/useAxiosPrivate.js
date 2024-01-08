@@ -1,8 +1,6 @@
-import axios, { axiosPrivate } from "../api/axios";
+import { axiosPrivate } from "../api/axios";
 import { useEffect } from "react";
 import useRefreshToken from "./useRefreshToken";
-import useAuth from "./useAuth";
-import Cookies from 'universal-cookie';
 
 const useAxiosPrivate = () => {
     const refreshToken = useRefreshToken();
@@ -24,12 +22,10 @@ const useAxiosPrivate = () => {
                     prevRequest.sent = true;
                     try {
                         const newAccessToken = await refreshToken();
-                        // Use the returned Promise to ensure the state has been updated
-                       localStorage.setItem('accessToken', newAccessToken);
+                        localStorage.setItem('accessToken', newAccessToken);
                         prevRequest.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`;
                         return axiosPrivate(prevRequest);
                     } catch (refreshError) {
-                        // console.log(refreshError);
                         return Promise.reject(refreshError);
                     }
                 }

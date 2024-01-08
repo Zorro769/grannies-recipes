@@ -2,12 +2,13 @@ import { useEffect, useState } from 'react'
 import { fetchRecipe } from '../utils'
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import RecipeCard from './RecipeCard'
-
+import Loading from './Loading'
 
 const Favourites = ({onClose}) => {
   const axiosPrivate = useAxiosPrivate();
   const [recipes, setRecipes] = useState([])
   const [favourites, setFavourites] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchFavourites = async () => {
     try {
@@ -25,6 +26,7 @@ const Favourites = ({onClose}) => {
           return {...recipeData };
         })
       );
+      setLoading(false);
       setRecipes(recipesData);
       
     } catch (error) {
@@ -35,14 +37,19 @@ const Favourites = ({onClose}) => {
   useEffect(() => {
     fetchFavourites();
   }, []);
-  
+  if (loading) {
+    return (
+        <Loading />
+    )
+}
   return (
     <div className='flex'>
     <div className='fixed w-[1280px] h-full bg-black'>
       <p className='text-[#1FB137] text-3xl block ml-10'>Favourites</p>
+      
     </div>
-  
-    <div className='flex-grow overflow-y-auto'>
+    {loading ? (<Loading/>) : (
+      <div className='flex-grow overflow-y-auto'>
       {recipes?.length > 0 ? (
         <div className='w-full flex flex-wrap gap-10 px-0 lg:px-10 py-10'>
           {recipes?.map((item, index) => (
@@ -55,6 +62,8 @@ const Favourites = ({onClose}) => {
         </div>
       )}
     </div>
+    )}
+    
   </div>
   
   )

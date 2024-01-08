@@ -1,17 +1,12 @@
-import axios, { axiosPrivate } from '../api/axios';
-import useAuth from './useAuth';
+import { axiosPrivate } from '../api/axios';
 
 const useRefreshToken = () => {
-    const {auth, setAuth} = useAuth();
     
     const refresh = async() => {
         
         const response = await axiosPrivate.get('/users/refresh',{
             withCredentials: true,
             credentials: 'include',
-        });
-        await setAuth((prev) => {
-            return { ...prev, accessToken: response.data.accessToken };
         });
         localStorage.setItem('accessToken', response.data.accessToken);
         return response.data.accessToken;

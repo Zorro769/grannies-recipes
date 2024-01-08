@@ -1,5 +1,4 @@
 import React,{useState, useEffect} from 'react'
-import useAuth from '../hooks/useAuth'
 import BackGround from '../images/login-image.jpg'
 import {loginUser} from '../utils/auth.js'
 import ForgotPassword from './ForgotPassword'
@@ -11,7 +10,6 @@ import InfoDialog from './InfoDialog';
 import { FaGoogle } from "react-icons/fa";
 
 const Login = ({ onClose, handleButtonClick  }) => {
-    const { setAuth } = useAuth();
     const [openForgotPassword, setOpenForgotPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
@@ -53,7 +51,6 @@ const Login = ({ onClose, handleButtonClick  }) => {
             setInfoDialog(true);
             handleButtonClick();
 
-            setAuth({accessToken});
             localStorage.setItem('accessToken', accessToken);
                 
             setEmail('');

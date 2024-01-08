@@ -20,7 +20,6 @@ const Navbar = ({loginOpened}) => {
   const [openRegisterDialog, setRegisterOpenDialog] = useState(false);
   const [openFavouriteDialog, setFavouriteOpenDialog] = useState(false);
   const [openMyRecipesDialog, setMyRecipesDialog] = useState(false);
-  const [openChangePasswordDialog, setChangePasswordDialog] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
   
 
@@ -49,7 +48,6 @@ const location = useLocation();
     setRegisterOpenDialog(false);
     setLoginOpenDialog(false);
     setFavouriteOpenDialog(false);
-    setChangePasswordDialog(false);
     setMyRecipesDialog(false);
   };
   const handleLogOut = async() => {

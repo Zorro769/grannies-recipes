@@ -1,8 +1,5 @@
-import { flushSync } from "react-dom";
-
-
 export async function fetchRecipes (filter){
-    const {query, limit} = filter;
+    const {limit} = filter;
 
     const url = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${process.env.REACT_APP_API}&number=${limit}`;
     
