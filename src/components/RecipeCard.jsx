@@ -5,6 +5,7 @@ import { HiOutlineHeart } from 'react-icons/hi';
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import InfoDialog from './InfoDialog';
 import Dialog from '@mui/material/Dialog'
+import defaultImage from '../images/default_recipe.jpg';
 
 
 const RecipeCard = ({ recipe, flag=false, favouriteFlag = true, onClose }) => {
@@ -24,7 +25,7 @@ const RecipeCard = ({ recipe, flag=false, favouriteFlag = true, onClose }) => {
         catch(err) {
             setInfoDialog(true);
             setFlag(false);
-        }
+        }   
     }
     return (
        
@@ -47,7 +48,7 @@ const RecipeCard = ({ recipe, flag=false, favouriteFlag = true, onClose }) => {
             }
                 
                 <Link  to={`/recipes/${recipe?._id || id}`} className='w-full md:w-full'>
-                <img src={image ? image : sourceUrl} alt={title} className='rounded-lg h-[200px] md:h-[150px] w-full' />
+                <img src={image || defaultImage} alt={title} className='rounded-lg h-[200px] md:h-[150px] w-full' />
                 
                 <div className='p-3'>
                     <p className='font-semibold text-[#1FB137]'>{title}</p>
