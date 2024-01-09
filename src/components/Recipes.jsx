@@ -82,19 +82,18 @@ const Recipes = () => {
         <div className='w-full'>
             <div className='w-full flex items-center justify-center pt-10 pb-5 px-0 md:px-10'>
                 <form className='w-full lg:w-2/4' onSubmit={handleSearchedRecipe}>
-                    <Searchbar placeholder="eg. Cake, Vegan, Chicken"
-                        handleInputChange={handleChange}
-                        rightIcon={
+                    <div className='relative'>
+                        <input type="text" placeholder="eg. Cake, Vegan, Chicken" onChange={handleChange} className='bg-black border border-gray-800 text-gray-300 text-md rounded-full focus:ring-1 focus:ring-slate-800 focus:border-slate-800 block w-full p-2.5 outline-none px-5 placeholder:text-sm shadow-xl'/>
+        
+                        <div className='absolute inset-y-0 right-0 flex items-center pr-4 cursor-pointer'>
                             <BiSearchAlt2 className='text-gray-600' onClick={handleSearchedRecipe} />
-                        }
-                    />
+                        </div>
+                    </div>
                 </form>
-
             </div>
             <div className='text-white text-right'>
                     <button onClick={openCreateRecipeDialog}><span className='text-[#1FB137] text-base text-5xl'>+  </span><span className='text-[#1FB137] text-base font-bold'>Create your recipe</span></button>
                 </div>
-            
             {
                 recipes?.length > 0 ? (
                     <>
