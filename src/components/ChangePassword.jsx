@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import axiosPrivate from '../api/axios';
-import { useLocation, useNavigate, Outlet } from "react-router-dom";
+  import { useNavigate } from "react-router-dom";
 const ChangePassword = ({onClose}) => {
   const [password, setPassword] = useState('');
   const [errMsg, setErrMsg] = useState('');

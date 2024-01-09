@@ -1,14 +1,25 @@
 import React, {useState} from 'react'
 import axiosPrivate from '../api/axios';
+import InfoDialog from './InfoDialog';
+import Dialog from '@mui/material/Dialog';
 
-const ForgotPassword = () => {
+
+const ForgotPassword = ({onClose}) => {
   const [email, setEmail] = useState('');
+  const [infoDialog, setInfoDialog] = useState(false);
+
+  const closeDialog = () => {
+    setInfoDialog(false);
+    onClose();
+}
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       localStorage.setItem('email', email);
         await axiosPrivate.post('/users/forget-password', {email: email});
+        setInfoDialog(true);
+
     } catch (err) {
     }
 }
@@ -33,6 +44,14 @@ const ForgotPassword = () => {
         <div className="text-center mt-5">
 
             </div>
+            <Dialog
+            open={infoDialog}
+            onClose={closeDialog}
+            fullWidth
+            maxWidth='xs'
+            PaperProps={{ style: { height: '100px', borderradius: '50%' }}}>
+            <InfoDialog info={'We have sent you an email.Please check you mailbox'} onClose={closeDialog}/>
+          </Dialog>
     </div>
   )
 }

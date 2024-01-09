@@ -108,7 +108,7 @@ const Login = ({ onClose, handleButtonClick  }) => {
         fullWidth
         maxWidth='xs'
         PaperProps={{ style: { height: '250px' } }}>
-        <ForgotPassword />
+        <ForgotPassword onClose={handleForgotPassword}/>
       </Dialog>
       <Dialog
         open={loading}
