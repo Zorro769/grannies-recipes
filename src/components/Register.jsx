@@ -34,8 +34,7 @@ const Register = ({onClose}) => {
                 }
                 localStorage.setItem('accessToken', accessToken);
                     
-                setEmail('');
-                setPassword('');
+
             } catch (err) {
                 setErrMsg(err.response.data.message);
             }

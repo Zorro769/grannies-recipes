@@ -9,11 +9,12 @@ const ForgotPassword = ({onClose}) => {
   const [infoDialog, setInfoDialog] = useState(false);
 
   const closeDialog = () => {
-    setInfoDialog(false);
     onClose();
 }
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e) {
+      e.preventDefault();
+    }
 
     try {
       localStorage.setItem('email', email);

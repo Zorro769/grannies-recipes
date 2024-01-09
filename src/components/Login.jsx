@@ -22,8 +22,7 @@ const Login = ({ onClose, handleButtonClick  }) => {
         setInfoDialog(false);
         onClose();
     }
-    const handleForgotPassword = (e) => {
-        e.preventDefault();
+    const handleForgotPassword = () => {
         setOpenForgotPassword(!openForgotPassword);
     };
     const handleDialogClose = (e) => {
