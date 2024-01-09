@@ -3,7 +3,7 @@ import { BiSearchAlt2 } from 'react-icons/bi'
 import Loading from './Loading'
 import Searchbar from './SearchBar'
 import RecipeCard from './RecipeCard'
-import { fetchRandomRecipes } from '../utils'
+import { fetchRandomRecipes, fetchRecipes } from '../utils'
 import CreateRecipe from './CreateRecipe'
 import Dialog from '@mui/material/Dialog';
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
@@ -51,8 +51,16 @@ const Recipes = () => {
         }
     }
     const handleSearchedRecipe = async (e) => {
-        e.preventDefault()
-        fetchRecipe()
+        try {
+            setLaoding(true);
+            e.preventDefault();
+            const data = await fetchRecipes({query, limit});
+            setRecipes(data);
+        }
+        catch (err) {
+            console.log(err);
+        }
+        setLaoding(false);
     }
 
     const showMore = () => {

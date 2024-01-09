@@ -1,7 +1,8 @@
 export async function fetchRecipes (filter){
-    const {limit} = filter;
+    console.log(filter);
+    const {query, limit} = filter;
 
-    const url = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${process.env.REACT_APP_API}&number=${limit}`;
+    const url = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${process.env.REACT_APP_API}&query=${query}&number=${limit}`;
     
     const response = await fetch(url);
 
