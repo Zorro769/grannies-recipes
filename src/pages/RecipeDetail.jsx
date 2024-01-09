@@ -27,7 +27,7 @@ const RecipeDetail = () => {
         let data = []
         if(stringId.length < 7){
           data = await fetchRecipe(id)
-          
+          setRecipe(data)
           const recommend = await fetchRecommendRecipes({ id })
           const recipePromises = recommend.map(async (recommendedRecipe) => {
             const recipeData = await fetchRecipe(recommendedRecipe.id);
@@ -38,8 +38,9 @@ const RecipeDetail = () => {
         } else {
 
           data = await axiosPrivate.get(`/recipes/${id}`)
+          setRecipe(data.data)
         }
-        setRecipe(data)
+        
       
         setLoading(false)
         setContainsLI(containsLIValue );

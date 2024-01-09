@@ -4,7 +4,7 @@ import { fetchRecipe } from '../utils'
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import RecipeCard from './RecipeCard'
 
-const MyRecipes = () => {
+const MyRecipes = ({onClose}) => {
     const axiosPrivate = useAxiosPrivate();
     const [recipes, setRecipes] = useState([])
     const [myRecipes, setMyRecipes] = useState([]);
@@ -46,7 +46,7 @@ const MyRecipes = () => {
                     <div className='w-full  flex flex-wrap gap-10 px-0 lg:px-10 py-10'>
                         {
                             myRecipes?.map((item, index) => (
-                                <RecipeCard recipe={item} key={index} favouriteFlag={false}/>))
+                                <RecipeCard recipe={item} key={index} favouriteFlag={false} onClose={onClose}/>))
                         }
                     </div>
                 </>
