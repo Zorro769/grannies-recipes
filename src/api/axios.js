@@ -1,12 +1,11 @@
 import axios from 'axios';
-const BASE_URL = 'https://bezdna-vesna2.onrender.com/api';
 
 export default axios.create({
-    baseURL:BASE_URL
+    baseURL:process.env.REACT_APP_SERVER_URL
 });
 
 export const axiosPrivate = axios.create({
-    baseURL: BASE_URL,
+    baseURL: process.env.REACT_APP_SERVER_URL,
     headers: { 'Content-Type': 'application/json' },
     withCredentials: true,
     credentials: 'include',
