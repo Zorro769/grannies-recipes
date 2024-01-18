@@ -10,3 +10,7 @@ export const dishTypes = [
     "Bread", "Breakfast", "Soup", "Beverage", "Sauce", "Marinade",
     "Finger Food", "Snack", "Drink"
   ];
+export const diet = [
+  "Gluten Free", "Ketogenic", "Vegetarian", "Lacto-Vegetarian", "Ovo-Vegetarian",
+  "Vegan", "Pescetarian", "Paleo", "Primal", "Low FODMAP", "Whole30"
+];

@@ -29,12 +29,7 @@ const RecipeDetail = () => {
           data = await fetchRecipe(id)
           setRecipe(data)
           const recommend = await fetchRecommendRecipes({ id })
-          const recipePromises = recommend.map(async (recommendedRecipe) => {
-            const recipeData = await fetchRecipe(recommendedRecipe.id);
-            return recipeData;
-          });
-          const recipes = await Promise.all(recipePromises);
-          await setRecipes(recipes)
+          await setRecipes(recommend)
         } else {
 
           data = await axiosPrivate.get(`/recipes/${id}`)
@@ -76,7 +71,7 @@ const RecipeDetail = () => {
 
           <div className='flex flex-col justify-center'>
             <span className='text-white text-center border border-gray-500 py-1.5 rounded-full mb-2'>
-              {recipe?.readyInMinutes} min
+              {recipe?.readyInMinutes} 
             </span>
             <p className='text-neutral-100 text-[12px] md:text-md'>
               TOTAL TIME
@@ -94,24 +89,30 @@ const RecipeDetail = () => {
         </div>
 
         <div className='w-full flex flex-col md:flex-row gap-8 py-20 pxx-4 md:px-10'>
-          <div className='w-full md:w-2/4 md:border-r border-slate-800 pr-1'>
+          <div className='w-full md:w-2/4 flex items-center md:border-r border-slate-800 pr-1'>
             <div className='flex flex-col gap-5'>
-            <img src={recipe?.image} alt={recipe?.title} className='rounded-lg h-[200px] md:h-[150px] md:w-[220px]' />
-              <p className='text-green-500 text-2xl underline'>Ingredients</p>
-
-              {
-                recipe?.extendedIngredients?.map((ingredient, index) => {
-                  return (
-                    <p key={index} className='text-neutral-100 flex gap-2'>
-                      <AiFillPushpin className='text-green-800 text-xl' /> {ingredient.original}
-                    </p>
-                  )
-                })
-              }
+              <img src={recipe?.image} alt={recipe?.title} className='rounded-lg h-[500px] md:h-[400px] md:w-[550px]' />
             </div>
-            <div className='flex flex-col gap-5' >
+          </div>
+          <div className='w-full md:w-2/4 pr-1'>
+            <div className='flex flex-col gap-5'>
+          <p className='text-green-500 text-2xl underline'>Ingredients</p>
+          {
+            recipe?.extendedIngredients?.map((ingredient, index) => {
+              return (
+                <p key={index} className='text-neutral-100 flex gap-2 text-xl'>
+                  <AiFillPushpin className='text-green-800 text-xl' /> {ingredient.original}
+                </p>
+              )
+            })
+          }
+
+            </div>
+          </div>
+        </div>
+        <div className='flex flex-col gap-5' >
               <p className='text-green-500 text-2xl underline mt-10'>Instructions</p>
-              <ol className='text-white'>
+              <ol className='text-white text-xl'>
               {
                  !containsLI ? (
                     recipe?.instructions.split(/\.\n/).map((item, index) => {
@@ -120,7 +121,7 @@ const RecipeDetail = () => {
                         return (
                           <li key={index} className='flex items-center mt-5'>
                             <div className='h-full inline-block'>
-                              <AiFillPushpin className='text-green-800 text-xl mr-2 inline-block' />
+                              <AiFillPushpin className='text-green-800  mr-2 inline-block' />
                             </div>
                             <div className='h-full inline-block'>{cleanedInstruction}</div>
                           </li>
@@ -146,15 +147,14 @@ const RecipeDetail = () => {
                   )
               }
               </ol>
-            </div>
-          </div>
-          <div className='w-full md:w-2/4 2xl:pl-10 mt-20 md:mt-0'>
-            {
+            <div className='w-full pr-1 mt-10'>
+              <div className='flex flex-col gap-5'></div>
+                          {
               recipes?.length > 0 && (
                 <>
                   <p className='text-white text-2xl'>Also Try This</p>
 
-                  <div className='flex flex-wrap gap-6 px-1 pt-3'>
+                  <div className='flex flex-wrap gap-5 px-1 pt-3'>
                     {
                       recipes?.map((item, index) => (
                         <RecipeCard recipe={item} index={index} />
@@ -164,8 +164,8 @@ const RecipeDetail = () => {
                 </>
               )
             }
-          </div>
-        </div>
+            </div>
+            </div>
       </div>
     </div>
   )

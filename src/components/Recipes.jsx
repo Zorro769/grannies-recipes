@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { BiSearchAlt2 } from 'react-icons/bi'
+import { FaFilter } from 'react-icons/fa'
 import Loading from './Loading'
 import RecipeCard from './RecipeCard'
 import { fetchRandomRecipes, fetchRecipes } from '../utils'
@@ -7,6 +8,7 @@ import CreateRecipe from './CreateRecipe'
 import Dialog from '@mui/material/Dialog';
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import InfoDialog from './InfoDialog'
+import Filter from './Filter'
 
 
 const Recipes = () => {
@@ -19,6 +21,7 @@ const Recipes = () => {
     const [openDialog, setOpenDialog] = useState(false);
     const [favourites, setFavourites] = useState([]);
     const [infoDialog, setInfoDialog] = useState(false);
+    const [filterDialog, setFilterDialog] = useState(false);
 
     const handleChange = (e) => {
         setQuery(e.target.value)
@@ -26,6 +29,7 @@ const Recipes = () => {
     const closeDialog = () => {
         setOpenDialog(false);
         setInfoDialog(false);
+        setFilterDialog(false);
     }
     const openCreateRecipeDialog = () => {
         setOpenDialog(true);
@@ -48,6 +52,9 @@ const Recipes = () => {
         catch(err) {
             console.log(err);
         }
+    }
+    const handleFilterClick = async() => {
+        setFilterDialog(true);
     }
     const handleSearchedRecipe = async (e) => {
         try {
@@ -87,8 +94,12 @@ const Recipes = () => {
                         <div className='absolute inset-y-0 right-0 flex items-center pr-4 cursor-pointer'>
                             <BiSearchAlt2 className='text-gray-600' onClick={handleSearchedRecipe} />
                         </div>
+                       
+                        
                     </div>
+                    
                 </form>
+                <FaFilter className=' cursor-pointer inline text-gray-600 ml-4' onClick={handleFilterClick}/>
             </div>
             <div className='text-white text-right'>
                     <button onClick={openCreateRecipeDialog}><span className='text-[#1FB137] text-base text-5xl'>+  </span><span className='text-[#1FB137] text-base font-bold'>Create your recipe</span></button>
@@ -96,18 +107,18 @@ const Recipes = () => {
             {
                 recipes?.length > 0 ? (
                     <>
-                        <div className='w-full  flex flex-wrap gap-10 px-0 lg:px-10 py-10'>
+                        <div className='w-full  flex items-center flex-wrap gap-10 px-0 lg:px-10 py-10'>
                             {
-
                                 recipes?.map((item, index) => (
-                                    <RecipeCard recipe={item} key={index} flag={favourites.some((recipe) => recipe.recipe === item.id )}/>))
+                                    <RecipeCard recipe={item} key={index} flag={favourites.some((recipe) => recipe.recipe === item.id )}/>)
+                                )
                             }
+                            <div className='bg-_gradient shadow md:w-[220px] rounded-lg relative flex align-center justify-center'>
+                                <button className="bg-green-800 text-white px-3 py-30 text-xl rounded-full text-sm" onClick={showMore}>Show More</button>
+                            </div>                             
                         </div>
 
-                        <div className='flex w-full items-center justify-center py-10'>
-
-                            <button className="bg-green-800 text-white px-3 py-1 text-xl rounded-full text-sm" onClick={showMore}>Show More</button>
-                        </div>
+                       
                     </>
                 ) : <div className='text-white w-full items-center justify-center py-10'>
                     <p className='text-center'>No Recipe Found</p>
@@ -128,6 +139,14 @@ const Recipes = () => {
         maxWidth='xs'
         PaperProps={{ style: { height: '100px', borderradius: '50%' }}}>
         <InfoDialog info={'You need to be logged in first'} onClose={closeDialog}/>
+      </Dialog>
+      <Dialog
+        open={filterDialog}
+        onClose={closeDialog}
+        fullWidth
+        maxWidth='xs'
+        PaperProps={{ style: { height: '400px' }}}>
+        <Filter onClose={closeDialog} data={setRecipes}/>
       </Dialog>
         </div>
     )

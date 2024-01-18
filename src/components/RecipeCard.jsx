@@ -55,7 +55,7 @@ const RecipeCard = ({ recipe, flag=false, favouriteFlag = true, onClose }) => {
 
                     <div className='mt-2'>
                         <span className='px-2 py-1 text-[12px] capitalize bg-[#0c452243] shadow-xl rounded-full mr-3 text-green-500'>
-                            {readyInMinutes} min
+                            {readyInMinutes}
                         </span>
                         {dishTypes?.length > 0 && (
                             <span

@@ -18,7 +18,9 @@ const ForgotPassword = ({onClose}) => {
 
     try {
       localStorage.setItem('email', email);
-        await axiosPrivate.post('/users/forget-password', {email: email});
+        await axiosPrivate.post('/users/forget-password', {email: email},{
+          headers: { 'Content-Type': 'application/json' },
+        });
         setInfoDialog(true);
 
     } catch (err) {

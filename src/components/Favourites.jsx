@@ -12,7 +12,7 @@ const Favourites = ({onClose}) => {
 
   const fetchFavourites = async () => {
     try {
-      const data = await axiosPrivate.get("/recipes/favourite");
+      const data = await axiosPrivate.get("/spoonacular/recipes/favourite");
       const fetchedFavourites = data.data;
   
       setFavourites((prevFavourites) => {
@@ -20,14 +20,14 @@ const Favourites = ({onClose}) => {
         return updatedFavourites;
       });
   
-      const recipesData = await Promise.all(
-        fetchedFavourites.map(async (recipe) => {
-          const recipeData = await fetchRecipe(recipe.recipe);
-          return {...recipeData };
-        })
-      );
+      // const recipesData = await Promise.all(
+      //   fetchedFavourites.map(async (recipe) => {
+      //     const recipeData = await fetchRecipe(recipe.recipe);
+      //     return {...recipeData };
+      //   })
+      // );
       setLoading(false);
-      setRecipes(recipesData);
+      setRecipes(fetchedFavourites);
       
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -53,7 +53,7 @@ const Favourites = ({onClose}) => {
       {recipes?.length > 0 ? (
         <div className='w-full flex flex-wrap gap-10 px-0 lg:px-10 py-10'>
           {recipes?.map((item, index) => (
-            <RecipeCard onClose={onClose} recipe={item} key={index} flag={favourites.some((recipe) => recipe.recipe === item.id)} />
+            <RecipeCard onClose={onClose} recipe={item} key={index} flag={true} />
           ))}
         </div>
       ) : (

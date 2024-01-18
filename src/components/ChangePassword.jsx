@@ -9,7 +9,9 @@ const ChangePassword = ({onClose}) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try{
-      const response = await axiosPrivate.post("/users/change-password", {email:localStorage.getItem('email'),password: password});
+      const response = await axiosPrivate.post("/users/change-password", {email:localStorage.getItem('email'),password: password},
+      {    headers: { 'Content-Type': 'application/json' },});
+      
       
       if (response.data === 'Password changed successfully'){
         onClose();
