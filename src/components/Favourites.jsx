@@ -13,7 +13,7 @@ const Favourites = ({onClose}) => {
 
   const fetchFavourites = async () => {
     try {
-      const data = await axiosPrivate.get("/spoonacular/recipes/favourite");
+      const data = await axiosPrivate.get("/recipes/favourite");
       const fetchedFavourites = data.data;
   
       setFavourites((prevFavourites) => {
