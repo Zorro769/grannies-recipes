@@ -3,6 +3,7 @@ import { fetchRecipe } from '../utils'
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import RecipeCard from './RecipeCard'
 import Loading from './Loading'
+import Header from '../components/Header'
 
 const Favourites = ({onClose}) => {
   const axiosPrivate = useAxiosPrivate();
@@ -37,19 +38,20 @@ const Favourites = ({onClose}) => {
   useEffect(() => {
     fetchFavourites();
   }, []);
-  if (loading) {
-    return (
-        <Loading />
-    )
-}
+  // if (loading) {
+  //   return (
+  //       <Loading />
+  //   )
+// }
   return (
-    <div className='flex'>
-    <div className='fixed w-[1280px] h-full bg-black'>
-      <p className='text-[#1FB137] text-3xl block ml-10'>Favourites</p>
+    <div className='w-full'>
+      <Header
+        label={'Favourites'}
+      />
+      {/* <p className='text-[#1FB137] text-3xl block ml-10'>Favourites</p> */}
       
-    </div>
     {loading ? (<Loading/>) : (
-      <div className='flex-grow overflow-y-auto'>
+      <div className='flex-grow overflow-y-auto p-20'>
       {recipes?.length > 0 ? (
         <div className='w-full flex flex-wrap gap-10 px-0 lg:px-10 py-10'>
           {recipes?.map((item, index) => (

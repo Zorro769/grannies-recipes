@@ -66,20 +66,20 @@ const location = useLocation();
 
   return (
     <header className='w-full fixed z-10 bg-black opacity-90 object-cover'>
-      <nav className='relative flex w-full py-2 md:py-3 px-4 md:px-20 items-center'>
-        <a href="/" className='flex items-center justify-center text-white text-lg cursor-pointer'>
+      <nav className='relative flex w-full py-2 md:py-3 px-4 md:px-9 items-center'>
+        <a href="/" className='flex items-center justify-center text-white text-lg cursor-pointer mr-5'>
           <img src={Logo} alt='Logo' className='hidden md:block w-8 h-8 lg:w-14 lg:h-14' />
         </a>
 
-        <ul className='hidden md:flex text-white gap-6'>
+        <ul className='hidden md:flex text-white gap-9'>
           <li>
             <Link to="/">Home</Link>
           </li>
           <li>
-            <button onClick={() => setFavouriteOpenDialog(true)}>Favourites</button>
+            <Link to="/favourites">Favourites</Link>
           </li>
           <li>
-          <button onClick={() => setMyRecipesDialog(true)}>My Recipes</button>
+            <Link to="/myrecipes">My recipes</Link>
           </li>
         </ul>
         <div className='text-white ml-auto relative flex gap-6 inline-block cursor-pointer'>
@@ -135,7 +135,7 @@ const location = useLocation();
         onClose={handleLoginDialogClose}
         fullWidth
         maxWidth='lg'
-        PaperProps={{ style: { height: '800px' } }}>
+        PaperProps={{ style: { height: '800px', border:'5px solid gray' }, sx: { borderRadius: "50px" } }}>
         <Login  onClose={handleLoginDialogClose} handleButtonClick={handleButtonClick}/>
       </Dialog>
       <Dialog
@@ -143,7 +143,7 @@ const location = useLocation();
         onClose={handleDialogClose}
         fullWidth
         maxWidth='lg'
-        PaperProps={{ style: { height: '800px' } }}>
+        PaperProps={{ style: { height: '800px', border:'5px solid gray' }, sx: { borderRadius: "50px" }  }}>
         <Register onClose={handleDialogClose}/>
       </Dialog >
       <Dialog

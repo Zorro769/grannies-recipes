@@ -26,7 +26,9 @@ const Recipes = () => {
     const handleChange = (e) => {
         setQuery(e.target.value)
     }
-    const closeDialog = () => {
+    const closeDialog = (reason) => {
+        if (reason && reason === "backdropClick")
+            return;
         setOpenDialog(false);
         setInfoDialog(false);
         setFilterDialog(false);
@@ -85,52 +87,55 @@ const Recipes = () => {
         )
     }
     return (
-        <div className='w-full'>
+        <div className='w-full text-center'>
             <div className='w-full flex items-center justify-center pt-10 pb-5 px-0 md:px-10'>
                 <form className='w-full lg:w-2/4' onSubmit={handleSearchedRecipe}>
                     <div className='relative'>
-                        <input type="text" placeholder="eg. Cake, Vegan, Chicken" onChange={handleChange} className='bg-black border border-gray-800 text-gray-300 text-md rounded-full focus:ring-1 focus:ring-slate-800 focus:border-slate-800 block w-full p-2.5 outline-none px-5 placeholder:text-sm shadow-xl'/>
+                        <input type="text" placeholder="eg. Cake, Vegan, Chicken" onChange={handleChange} className='bg-black border border-4 border-gray-800 text-gray-300 text-md rounded-full focus:ring-1 focus:ring-slate-800 focus:border-slate-800 block w-full p-2.5 outline-none px-5 placeholder:text-sm shadow-xl'/>
         
                         <div className='absolute inset-y-0 right-0 flex items-center pr-4 cursor-pointer'>
-                            <BiSearchAlt2 className='text-gray-600' onClick={handleSearchedRecipe} />
+                            <BiSearchAlt2 className='text-gray-600 text-2xl' onClick={handleSearchedRecipe} />
                         </div>
                        
                         
                     </div>
                     
                 </form>
-                <FaFilter className=' cursor-pointer inline text-gray-600 ml-4' onClick={handleFilterClick}/>
+                <FaFilter className=' cursor-pointer inline text-gray-600 ml-4 text-2xl' onClick={handleFilterClick}/>
             </div>
-            <div className='text-white text-right'>
-                    <button onClick={openCreateRecipeDialog}><span className='text-[#1FB137] text-base text-5xl'>+  </span><span className='text-[#1FB137] text-base font-bold'>Create your recipe</span></button>
-                </div>
-            {
-                recipes?.length > 0 ? (
-                    <>
-                        <div className='w-full  flex items-center flex-wrap gap-10 px-0 lg:px-10 py-10'>
-                            {
-                                recipes?.map((item, index) => (
-                                    <RecipeCard recipe={item} key={index} flag={favourites.some((recipe) => recipe.recipe === item.id )}/>)
-                                )
-                            }
-                            <div className='bg-_gradient shadow md:w-[220px] rounded-lg relative flex align-center justify-center'>
-                                <button className="bg-green-800 text-white px-3 py-30 text-xl rounded-full text-sm" onClick={showMore}>Show More</button>
-                            </div>                             
-                        </div>
+            <div className='text-white flex justify-end text-right'>
+                    <button onClick={openCreateRecipeDialog} className="flex items-center"><span className='text-[#1FB137] flex items-center justify-center text-5xl m-0 p-0'>+    </span>  <span className='text-[#1FB137] text-2xl font-bold mt-1 p-0'>Create your recipe</span></button>
+            </div>
+            <div className='flex justify-center'>
+                {
+                    recipes?.length > 0 ? (
+                        <>
+                            <div className='w-full flex items-start flex-wrap gap-10 py-10'>
+                                {
+                                    recipes?.map((item, index) => (
+                                        <RecipeCard recipe={item} key={index} flag={favourites.some((recipe) => recipe.recipe === item.id )}/>)
+                                    )
+                                }
+                                <div className='bg-_gradient shadow md:w-[220px] self:center rounded-lg relative flex align-center justify-center'>
+                                    <button className="bg-green-800 text-white px-3 py-30 text-xl rounded-full text-sm" onClick={showMore}>Show More</button>
+                                </div>                             
+                            </div>
 
-                       
-                    </>
-                ) : <div className='text-white w-full items-center justify-center py-10'>
-                    <p className='text-center'>No Recipe Found</p>
-                </div>
-            }
+                        
+                        </>
+                    ) : <div className='text-white w-full items-center justify-center py-10'>
+                        <p className='text-center'>No Recipe Found</p>
+                    </div>
+                }
+            </div>
             <Dialog
         open={openDialog}
         onClose={closeDialog}
         fullWidth
         maxWidth='lg'
-        PaperProps={{ style: { height: '750px' } }}>
-        <CreateRecipe onClose={closeDialog}/>
+        PaperProps={{ style: { height: '750px', border:'5px solid gray' }, sx: { borderRadius: "50px"  } }}
+        disableBackdropClick={true} >
+        <CreateRecipe onClose={closeDialog} />
       </Dialog>
       <Dialog
         open={infoDialog}
@@ -145,7 +150,7 @@ const Recipes = () => {
         onClose={closeDialog}
         fullWidth
         maxWidth='xs'
-        PaperProps={{ style: { height: '400px' }}}>
+        PaperProps={{ style: { height: '500px' }}}>
         <Filter onClose={closeDialog} data={setRecipes}/>
       </Dialog>
         </div>

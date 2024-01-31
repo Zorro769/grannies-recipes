@@ -64,7 +64,7 @@ const RecipeDetail = () => {
 
         <div className='flex gap-10 items-center justify-center px-4'>
           <div className='flex flex-col justify-between'>
-            <span className='text-white text-center border border-gray-500 py-1.5 px-2 rounded-full mb-2'>{recipe?.cheap ? <span>cheap</span> : <span>expensive</span> } </span>
+            <span className='text-white text-center border border-gray-500 py-1.5 px-2 rounded-full mb-2'>{recipe?.pricePerServing} </span>
 
             <span className='text-center text-neutral-100 text-[12px] md:text-md'>EVALUATION</span>
           </div>
@@ -101,7 +101,7 @@ const RecipeDetail = () => {
             recipe?.extendedIngredients?.map((ingredient, index) => {
               return (
                 <p key={index} className='text-neutral-100 flex gap-2 text-xl'>
-                  <AiFillPushpin className='text-green-800 text-xl' /> {ingredient.original}
+                  <AiFillPushpin className='text-green-800 text-xl' /> {ingredient}
                 </p>
               )
             })
@@ -115,7 +115,7 @@ const RecipeDetail = () => {
               <ol className='text-white text-xl'>
               {
                  !containsLI ? (
-                    recipe?.instructions.split(/\.\n/).map((item, index) => {
+                    recipe?.instructions.split(".").map((item, index) => {
                       const cleanedInstruction = item.trim();
                       if (cleanedInstruction !== '') {
                         return (
