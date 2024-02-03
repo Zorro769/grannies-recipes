@@ -21,6 +21,7 @@ const RecipeCard = ({ recipe, flag=false, favouriteFlag = true, onClose }) => {
         try {
             setFlag(!flagFavourite);
             await axiosPrivate.get(`/recipes/favourite/${id}`)
+            onClose();
         }
         catch(err) {
             setInfoDialog(true);

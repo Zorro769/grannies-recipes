@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { fetchRecipe } from '../utils'
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import RecipeCard from './RecipeCard'
@@ -10,17 +10,20 @@ const Favourites = ({onClose}) => {
   const [recipes, setRecipes] = useState([])
   const [favourites, setFavourites] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  // const removeItem = (id) => {
+    const [, updateState] = useState();
+    const forceUpdate = useCallback(() => updateState({}), []);
+  // }
   const fetchFavourites = async () => {
     try {
       const data = await axiosPrivate.get("/recipes/favourite");
       const fetchedFavourites = data.data;
-  
+      
       setFavourites((prevFavourites) => {
         const updatedFavourites = [...prevFavourites, ...fetchedFavourites];
         return updatedFavourites;
       });
-  
+      
       // const recipesData = await Promise.all(
       //   fetchedFavourites.map(async (recipe) => {
       //     const recipeData = await fetchRecipe(recipe.recipe);
@@ -29,7 +32,7 @@ const Favourites = ({onClose}) => {
       // );
       setLoading(false);
       setRecipes(fetchedFavourites);
-      
+      console.log(recipes);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -55,7 +58,7 @@ const Favourites = ({onClose}) => {
       {recipes?.length > 0 ? (
         <div className='w-full flex flex-wrap gap-10 px-0 lg:px-10 py-10'>
           {recipes?.map((item, index) => (
-            <RecipeCard onClose={onClose} recipe={item} key={index} flag={true} />
+            <RecipeCard onClose={fetchFavourites} recipe={item} key={recipes.id || index} flag={recipes.id ? true : false} />
           ))}
         </div>
       ) : (
