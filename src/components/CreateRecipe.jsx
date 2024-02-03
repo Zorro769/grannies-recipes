@@ -1,4 +1,4 @@
-import React, { useState,useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import BackGround from "../images/create-recipe.jpg";
 import { cuisines, dishTypes, diets } from "../utils/recipeData";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
@@ -6,6 +6,11 @@ import InfoDialog from "./InfoDialog";
 import Dialog from "@mui/material/Dialog";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Select from "react-select";
+import colorStyle from "../utils/styleReactSelect";
+import Loading from './Loading'
+import Header from '../components/Header'
+
 
 const CreateRecipe = ({ onClose }) => {
   const axiosPrivate = useAxiosPrivate();
@@ -13,18 +18,27 @@ const CreateRecipe = ({ onClose }) => {
   const [name, setName] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [ingredients, setIngredients] = useState([{ original: "" }]);
-  const [cuisine, setCuisine] = useState("");
+  const [cuisines, setCuisine] = useState([]);
   const [dishType, setDishType] = useState("");
   const [diet, setDiet] = useState("");
   const [totalMin, setTotalMin] = useState("");
   const [instructions, setInstructions] = useState("");
   const [infoDialog, setInfoDialog] = useState(false);
+  const [uploadedData, setUploadedData] = useState();
   const [info, setInfo] = useState("");
+  const [loading, setLoading] = useState(true);
+
   const fileInputRef = useRef(null);
 
+  const uploadingDietsDishTypesCuisines = async () => {
+    const data = await axiosPrivate.get("/recipes/data");
+    console.log(data.data.cuisines);
+    setLoading(false);
+    setUploadedData(data);
+  };
   const closeDialog = () => {
     setInfoDialog(false);
-    onClose();
+    // onClose();
   };
 
   const handleSubmit = async (e) => {
@@ -43,11 +57,11 @@ const CreateRecipe = ({ onClose }) => {
       JSON.stringify(serializedIngredients)
     );
     formData.append("title", name);
-    formData.append("cuisine", cuisine);
-    formData.append("dishType", dishType);
+    formData.append("cuisines", JSON.stringify(cuisines));
+    formData.append("dishTypes", JSON.stringify(dishType));
     formData.append("instructions", instructions);
     formData.append("readyInMinutes", totalMin);
-    formData.append("diet", diet);
+    formData.append("diets", JSON.stringify(diet));
 
     if (selectedFile) {
       formData.append("image", selectedFile);
@@ -89,25 +103,32 @@ const CreateRecipe = ({ onClose }) => {
 
     setIngredients(filteredIngredients);
   };
-
+  const handleCuisinesChange = (option) => {
+    setCuisine(option);
+    console.log(option);
+  }  
+  useEffect(() => {
+    uploadingDietsDishTypesCuisines();
+  }, []);
   return (
     <>
-      <img
+      {/* <img
         src={BackGround}
         alt="login"
-        className="w-[1190px] h-[717px] object-cover fixed "
-      />
-      <div className="bg-gradient-to-l from-transparent to-black to-65% w-[1190px] h-[1017px] fixed top-0 z-8 flex flex-col items-start justify-start pt-40 2xl:pt-20 px-4"></div>
-      <div className="bg-gradient-to-l from-transparent to-black to-65% w-[1190px] h-[1017px] fixed top-0 z-8 flex flex-col items-start justify-start pt-40 2xl:pt-20 px-4"></div>
+        className="w-[1190px] h-[717px] object-cover fixed rounded-[50px] left-[310px]"
+      /> */}
+      <div className='w-full h-full '>
+      <div className="bg-gradient-to-l from-transparent to-black to-65% w-[1190px] h-[710px] top-[36px] fixed top-0 z-8 flex flex-col items-start justify-start pt-40 2xl:pt-20 px-4 left-[258px] rounded-[45px]"></div>
+      <div className="bg-gradient-to-l from-transparent to-black to-65% w-[1190px] h-[710px] top-[36px] fixed top-0 z-8 flex flex-col items-start justify-start pt-40 2xl:pt-20 px-4 rounded-[45px]"></div>
       <div className="h-screen w-full relative">
-      <div className='absolute text-white right-[20px] top-[20px] cursor-pointer' onClick={() => onClose()}>
-            <FontAwesomeIcon
-                icon={faX}
-                color={"gray"}
-                fontSize={25 + "px"}
-            />
+        <div
+          className="absolute text-white right-[20px] fixed top-[20px] cursor-pointer"
+          onClick={() => onClose()}
+        >
+          <FontAwesomeIcon icon={faX} color={"gray"} fontSize={25 + "px"} />
         </div>
-        <div className="h-full w-[400px] z-20 text-center flex flex-col items-center">
+        {loading ? (<Loading/>) : (
+        <div className="h-full w-[400px] z-20 text-center flex flex-col items-center rounded-[45px]">
           <span className="text-white font-Nunito text-xl font-bold">
             Granny's<span className="text-[#166534] text-2xl">Recipes</span>
           </span>
@@ -126,48 +147,42 @@ const CreateRecipe = ({ onClose }) => {
             </label>
             <label className="text-[#1FB137] text-base font-bold inline-block mt-5 w-full">
               Cuisine type:
-              <select
+              {/* <select
                 id="dishSelect"
                 className="border-[#1FB137] bg-black border w-full py-2 pl-4 pr-10"
                 onChange={(e) => setCuisine(e.target.value)}
                 value={cuisine}
-              >
-                {cuisines.map((cuisine) => (
-                  <option key={cuisine} value={cuisine}>
-                    {cuisine}
-                  </option>
-                ))}
-              </select>
+              > */}
+              {/* {uploadedData?.cuisines?.map((cuisine) => ( */}
+              <Select
+                options={uploadedData?.data?.cuisines}
+                isMulti
+                isClearable
+                styles={colorStyle}
+                onChange={handleCuisinesChange}
+              />
+              {/* ))}  */}
+              {/* </select> */}
             </label>
             <label className="text-[#1FB137] text-base font-bold inline-block mt-5 w-full">
               Dish type:
-              <select
-                id="dishSelect"
-                className="border-[#1FB137] bg-black border w-full py-2 pl-4 pr-10"
-                onChange={(e) => setDishType(e.target.value)}
-                value={dishType}
-              >
-                {dishTypes.map((dishType) => (
-                  <option key={dishType} value={dishType}>
-                    {dishType}
-                  </option>
-                ))}
-              </select>
+              <Select
+                options={uploadedData?.data?.dishTypes}
+                isMulti
+                isClearable
+                styles={colorStyle}
+                onChange={(option) => setDishType(option)}
+              />
             </label>
             <label className="text-[#1FB137] text-base font-bold inline-block mt-5 w-full">
               Diet:
-              <select
-                id="dishSelect"
-                className="border-[#1FB137] bg-black border w-full py-2 pl-4 pr-10"
-                onChange={(e) => setDiet(e.target.value)}
-                value={diet}
-              >
-                {diets.map((diet) => (
-                  <option key={diet} value={diet}>
-                    {diet}
-                  </option>
-                ))}
-              </select>
+              <Select
+                options={uploadedData?.data?.diets}
+                isMulti
+                isClearable
+                styles={colorStyle}
+                onChange={(option) => setDiet(option)}
+              />
             </label>
             -
             <label className="text-[#1FB137] text-base font-bold inline-block mt-5 w-full">
@@ -248,7 +263,13 @@ const CreateRecipe = ({ onClose }) => {
                 </span>
                 <div className="mt-3 relative">
                   <div>
-                    <div className="absolute inline-block m-2 left-40 cursor-pointer" onClick={() => {setSelectedFile(null);fileInputRef.current.value = null; }}>
+                    <div
+                      className="absolute inline-block m-2 left-40 cursor-pointer"
+                      onClick={() => {
+                        setSelectedFile(null);
+                        fileInputRef.current.value = null;
+                      }}
+                    >
                       <FontAwesomeIcon
                         icon={faX}
                         color={"black"}
@@ -279,7 +300,7 @@ const CreateRecipe = ({ onClose }) => {
               </button>
             </div>
           </form>
-        </div>
+        </div>)}
         <Dialog
           open={infoDialog}
           onClose={closeDialog}
@@ -289,6 +310,7 @@ const CreateRecipe = ({ onClose }) => {
         >
           <InfoDialog info={info} onClose={closeDialog} />
         </Dialog>
+      </div>
       </div>
     </>
   );

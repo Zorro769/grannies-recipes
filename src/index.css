@@ -90,11 +90,28 @@ body {
 option span {
   color: #3e4753;
 }
+.MuiDialog-paper .MuiPaper-root {
+  overflow: hidden;
+}
+
+.MuiDialog-paper .MuiPaper-root::-webkit-scrollbar {
+  width: 12px;
+}
+
+MuiDialog-container MuiDialog-scrollPaper css-hz1bth-MuiDialog-container::-webkit-scrollbar-thumb {
+  background-color: #1FB137;
+  border-radius: 6px;
+}
+
+.MuiDialog-paper .MuiPaper-root::-webkit-scrollbar-track {
+  background-color: black;
+}
 ::placeholder{ 
   color: #3e4753;
   }
-  ::-webkit-scrollbar {
+  /* ::-webkit-scrollbar {
     width: 10px;
+    margin-right:10px
   }
 
   ::-webkit-scrollbar-thumb {
@@ -107,7 +124,7 @@ option span {
     padding: 2px;
     background-color: #000000;
     padding:5px;
-  }
+  } */
 body, html,select,div, textarea {
 
 

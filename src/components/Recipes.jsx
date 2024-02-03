@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom';
 import { BiSearchAlt2 } from 'react-icons/bi'
 import { FaFilter } from 'react-icons/fa'
 import Loading from './Loading'
@@ -104,7 +105,9 @@ const Recipes = () => {
                 <FaFilter className=' cursor-pointer inline text-gray-600 ml-4 text-2xl' onClick={handleFilterClick}/>
             </div>
             <div className='text-white flex justify-end text-right'>
+                {/* <Link to="/createrecipe"> */}
                     <button onClick={openCreateRecipeDialog} className="flex items-center"><span className='text-[#1FB137] flex items-center justify-center text-5xl m-0 p-0'>+    </span>  <span className='text-[#1FB137] text-2xl font-bold mt-1 p-0'>Create your recipe</span></button>
+                {/* </Link> */}
             </div>
             <div className='flex justify-center'>
                 {
@@ -133,7 +136,7 @@ const Recipes = () => {
         onClose={closeDialog}
         fullWidth
         maxWidth='lg'
-        PaperProps={{ style: { height: '750px', border:'5px solid gray' }, sx: { borderRadius: "50px"  } }}
+        PaperProps={{ style: { height: '750px', border:'5px solid gray',borderRadius: "50px" }, }}
         disableBackdropClick={true} >
         <CreateRecipe onClose={closeDialog} />
       </Dialog>
