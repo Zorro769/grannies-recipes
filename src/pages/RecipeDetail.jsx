@@ -32,8 +32,8 @@ const RecipeDetail = () => {
           await setRecipes(recommend)
         } else {
 
-          data = await axiosPrivate.get(`/recipes/${id}`)
-          setRecipe(data.data)
+          data = await fetchRecipe(id);
+          setRecipe(data)
         }
         
       
