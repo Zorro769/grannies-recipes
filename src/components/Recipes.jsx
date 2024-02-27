@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { BiSearchAlt2 } from "react-icons/bi";
 import { FaFilter } from "react-icons/fa";
 import { faArrowDownShortWide } from "@fortawesome/free-solid-svg-icons";
+import Pagination from "@mui/material/Pagination";
 import Select from "react-select";
 import colorStyle from "../utils/styleReactSelect";
 
@@ -17,16 +18,25 @@ import InfoDialog from "./InfoDialog";
 import Filter from "./Filter";
 
 const Recipes = () => {
+  const recipesRef = useRef(null);
   const axiosPrivate = useAxiosPrivate();
+
+  const [cuisine, setCuisine] = useState("");
+  const [type, setType] = useState("");
+  const [diet, setDiet] = useState("");
+  const [maxReadyTime, setMaxReadyTime] = useState();
 
   const [recipes, setRecipes] = useState([]);
   const [query, setQuery] = useState("Dessert,Vegan");
-  const [limit, setLimit] = useState(30);
+  const [page, setPage] = useState(1);
   const [loading, setLaoding] = useState(false);
+  const [recipeLoading, setRecipeLoading] = useState(false);
+  const [itemsCount, setItemsCount] = useState(5);
   const [openDialog, setOpenDialog] = useState(false);
   const [favourites, setFavourites] = useState([]);
   const [infoDialog, setInfoDialog] = useState(false);
   const [filterDialog, setFilterDialog] = useState(false);
+  const [recipeFlag, setRecipeFlag] = useState("random");
   const sorts = [
     { value: ["popularity", "desc"], label: "Most Popular" },
     { value: ["price", "asc"], label: "Less Price" },
@@ -37,8 +47,41 @@ const Recipes = () => {
   const [sort, setSort] = useState(true);
   const [sortType, setSortType] = useState();
 
+  const handleSubmit = async (e, page) => {
+    setRecipeFlag("filter");
+    const response = await fetchRecipes({
+      limit: 10,
+      type: type,
+      diet: diet,
+      maxReadyTime: maxReadyTime,
+      cuisine: cuisine,
+      page: page,
+    });
+    setRecipes(response?.results);
+    setItemsCount(Math.ceil(response?.totalItems / 20));
+  };
   const handleChange = (e) => {
     setQuery(e.target.value);
+  };
+
+  const handlePageChange = (event, value) => {
+    setRecipeLoading(true);
+    setPage(value);
+    switch (recipeFlag) {
+      case "random":
+        fetchRecipe(value);
+        break;
+      case "search":
+        handleSearchedRecipe(event, value);
+        break;
+      case "filter":
+        handleSubmit(value);
+        break;
+      case "sort":
+        handleSortTypeChange(sortType, value);
+    }
+
+    recipesRef.current.scrollIntoView();
   };
   const closeDialog = (reason) => {
     if (reason && reason === "backdropClick") return;
@@ -49,58 +92,51 @@ const Recipes = () => {
   const openCreateRecipeDialog = () => {
     setOpenDialog(true);
   };
-  const fetchRecipe = async () => {
+  const fetchRecipe = async (page) => {
     try {
-      const data = await fetchRandomRecipes({ query, limit });
-      setRecipes(data);
+      const data = await fetchRandomRecipes({ page });
+      setItemsCount(Math.ceil(data?.totalItems / 20));
+      setRecipes(data?.results);
+      // setRecipes(data?.results);
       setLaoding(false);
+      setRecipeLoading(false);
     } catch (error) {
       console.log(error);
     }
     setLaoding(false);
   };
-  const fetchFavourites = async () => {
-    try {
-      const data = await axiosPrivate.get("/recipes/favourite");
-      setFavourites(data.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
   const handleFilterClick = async () => {
     setFilterDialog(true);
   };
-  const handleSearchedRecipe = async (e) => {
+  const handleSearchedRecipe = async (e, page) => {
     try {
-      setLaoding(true);
+      setRecipeFlag("search");
+      setLaoding(false);
       e.preventDefault();
-      const data = await fetchRecipes({ query, limit });
-      setRecipes(data);
+      const data = await fetchRecipes({ query, page });
+      setRecipes(data?.results);
+      setItemsCount(Math.ceil(data?.totalItems / 20));
     } catch (err) {
       console.log(err);
     }
     setLaoding(false);
   };
-
-  const showMore = () => {
-    setLimit((prev) => prev + 10);
-    fetchRecipe();
-  };
-  const handleSortTypeChange = async (option) => {
-    // console.log("hello");
-    const response = await fetchSortedRecipe(option);
-    setRecipes(response);
+  const handleSortTypeChange = async (option, page) => {
+    setSortType(option);
+    const response = await fetchSortedRecipe({ value: option, page: page });
+    setRecipeFlag("sort");
+    setRecipes(response?.results);
+    setItemsCount(Math.ceil(response?.totalItems / 20));
   };
   useEffect(() => {
     setLaoding(true);
     fetchRecipe();
-    fetchFavourites();
   }, []);
   if (loading) {
     return <Loading />;
   }
   return (
-    <div className="w-full text-center">
+    <div className="w-full text-center" ref={recipesRef}>
       <div className="w-full flex items-center justify-center pt-10 pb-5 px-0 md:px-10">
         <form
           className="min-w-[600px] lg:w-2/4"
@@ -126,37 +162,6 @@ const Recipes = () => {
           className=" cursor-pointer inline text-gray-600 ml-4 text-2xl"
           onClick={handleFilterClick}
         />
-        {/* <div className="inline-block">
-          <FontAwesomeIcon
-            icon={faArrowDownShortWide}
-            className=" cursor-pointer inline text-gray-600 ml-4 text-2xl"
-            onClick={() => setSort(!sort)}
-          />
-
-          <div
-            className={
-              sort
-                ? "absolute bg-black text-white z-50  border-2 border-[#1FB137]"
-                : "hidden"
-            }
-          >
-            <ul
-              className="cursor-pointer space-y-4 "
-              value={sortType}
-              onChange={(e) => setSortType(e.target.value)}
-            >
-              {sorts.map((sortType) => (
-                <li
-                  value={sortType}
-                  key={sortType}
-                  className="border-[#1FB137] text-[#1FB137] p-3"
-                >
-                  {sortType}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div> */}
       </div>
       <div className="text-white flex justify-end text-right">
         {/* <Link to="/createrecipe"> */}
@@ -171,18 +176,6 @@ const Recipes = () => {
         {/* </Link> */}
       </div>
       <div className="text-left text-[#1FB137] ">
-        {/* <select
-          id="dishSelect"
-          className="border-none bg-black border p-y-2 pl-4 pr-10 text-[#1FB137]"
-          onChange={(e) => setSortType(e.target.value)}
-          value={sortType}
-        >
-          {sorts.map((sortType) => (
-            <option key={sortType} value={sortType} className="border-none p-2">
-              {sortType}
-            </option>
-          ))}
-        </select> */}
         <Select
           className="basic-single min-w-[200px] inline-block border-transparent"
           options={sorts}
@@ -190,38 +183,54 @@ const Recipes = () => {
           styles={{
             singleValue: (provided, state) => ({
               ...provided,
-              color: "[#1FB137]", // Change to the desired color
+              color: "[#1FB137]",
             }),
-            ...colorStyle, // Merge colorStyle with other styles
+            ...colorStyle,
             control: (provided, state) => ({
               ...provided,
               border: "none",
               background: "black",
-              // Add other styles if needed
             }),
-            // Add other styles if needed
           }}
           onChange={(option) => handleSortTypeChange(option)}
         />
       </div>
-      <div className="flex justify-center">
+      <div className="flex justify-center duration-0.7">
         {recipes?.length > 0 ? (
           <>
             <div className="w-full flex items-start flex-wrap gap-10 py-10">
-              {recipes?.map((item, index) => (
-                <RecipeCard
-                  recipe={item}
-                  key={index}
-                  flag={favourites.some((recipe) => recipe.recipe === item.id)}
+              {
+              !recipeLoading ? (
+              recipes?.map((item, index) => (
+                <RecipeCard recipe={item} key={index} flag={item.isFavourite} />
+              ))) : (<Loading />)}
+              <div className="flex justify-center mt-10 w-full bg-black">
+                <Pagination
+                  count={Number(itemsCount)}
+                  page={page}
+                  variant="outlined"
+                  shape="rounded"
+                  defaultPage={1}
+                  sx={{
+                    color: "green",
+                    backgroundColor: "black",
+                    padding: 5 + "px",
+                    border: "none ",
+                    "& .MuiPaginationItem-page": {
+                      border: "2px solid green",
+                      color: "green !important",
+                      "&:hover": {
+                        backgroundColor: "darkgreen",
+                        color: "white !important",
+                      },
+                      "&.Mui-selected": {
+                        backgroundColor: "darkgreen",
+                        color: "white !important",
+                      },
+                    },
+                  }}
+                  onChange={handlePageChange}
                 />
-              ))}
-              <div className="bg-_gradient shadow md:w-[220px] self:center rounded-lg relative flex align-center justify-center">
-                <button
-                  className="bg-green-800 text-white px-3 py-30 text-xl rounded-full text-sm"
-                  onClick={showMore}
-                >
-                  Show More
-                </button>
               </div>
             </div>
           </>
@@ -266,7 +275,18 @@ const Recipes = () => {
         maxWidth="xs"
         PaperProps={{ style: { height: "500px" } }}
       >
-        <Filter onClose={closeDialog} data={setRecipes} />
+        <Filter
+          onClose={closeDialog}
+          handleSubmit={handleSubmit}
+          setCuisine={setCuisine}
+          setDiet={setDiet}
+          setType={setType}
+          setMaxReadyTime={setMaxReadyTime}
+          cuisine={cuisine}
+          diet={diet}
+          type={type}
+          maxReadyTime={maxReadyTime}
+        />
       </Dialog>
     </div>
   );

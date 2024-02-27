@@ -196,3 +196,9 @@ img, .content {
 .create-recipe {
   background-image: url("./images/create-recipe.jpg");
 }
+.custom-page {
+  color: green !important;
+}
+* {
+  scroll-behavior: smooth;
+}

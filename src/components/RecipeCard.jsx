@@ -15,7 +15,7 @@ const RecipeCard = ({
   onClose,
   shouldCallOnClose = false,
 }) => {
-  const { id, image, sourceUrl, title, readyInMinutes, dishTypes } = recipe;
+  const { id, image, title, readyInMinutes, dishTypes } = recipe;
   const [flagFavourite, setFlag] = useState(flag);
   const axiosPrivate = useAxiosPrivate();
   const [infoDialog, setInfoDialog] = useState(false);
@@ -26,6 +26,8 @@ const RecipeCard = ({
   const handleFavouriteClick = async () => {
     try {
       setFlag(!flagFavourite);
+      flag = !flagFavourite;
+      console.log(flag);
       await axiosPrivate.get(`/recipes/favourite/${id}`);
       if (shouldCallOnClose) {
         onClose();
@@ -66,21 +68,9 @@ const RecipeCard = ({
           </div>
         </Link>
       </div>
-      <Dialog
-        open={infoDialog}
-        onClose={closeDialog}
-        fullWidth
-        maxWidth="xs"
-        PaperProps={{ style: { height: "100px", borderradius: "50%" } }}
-      >
-        <InfoDialog
-          info={"You need to be logged in first"}
-          onClose={closeDialog}
-        />
-      </Dialog>
       <div className="inline-block absolute right-4 top-2 ">
         {favouriteFlag ? (
-          flagFavourite | flag ? (
+          flagFavourite ? (
             <button onClick={handleFavouriteClick}>
               <span className="fa-layers">
                 <FontAwesomeIcon
@@ -111,6 +101,18 @@ const RecipeCard = ({
           console.log()
         )}
       </div>
+      <Dialog
+        open={infoDialog}
+        onClose={closeDialog}
+        fullWidth
+        maxWidth="xs"
+        PaperProps={{ style: { height: "100px", borderradius: "50%" } }}
+      >
+        <InfoDialog
+          info={"You need to be logged in first"}
+          onClose={closeDialog}
+        />
+      </Dialog>
     </div>
   );
 };

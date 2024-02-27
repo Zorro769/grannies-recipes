@@ -6,4 +6,6 @@ export default axios.create({
 
 export const axiosPrivate = axios.create({
     baseURL: process.env.REACT_APP_SERVER_URL,
+    withCredentials: true,
+    credentials: 'include',
 })

@@ -1,27 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { fetchRecipes } from "../utils/index";
 import { cuisines, dishTypes, diets } from "../utils/recipeData";
 
 const Filter = (props) => {
-  const [cuisine, setCuisine] = useState('');
-  const [type, setType] = useState('');
-  const [diet, setDiet] = useState('');
-  const [maxReadyTime, setMaxReadyTime] = useState();
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const response = await fetchRecipes({
-      limit: 10,
-      type: type,
-      diet: diet,
-      maxReadyTime: maxReadyTime,
-      cuisine: cuisine,
-    });
-    console.log(response);
-    props.data(response);
-    props.onClose();
-  };
+  useEffect(() => {
+    props.setCuisine("");
+    props.setDiet("");
+    props.setMaxReadyTime();
+    props.setType("");
+  }, []);
   return (
     <div className="bg-black h-full p-5">
       <div className="flex justify-end">
@@ -38,10 +26,12 @@ const Filter = (props) => {
           <select
             id="cuisineSelect"
             className="border-[#1FB137] bg-black border w-full py-2 pl-4 pr-10"
-            onChange={(e) => setCuisine(e.target.value)}
-            value={cuisine}
+            onChange={(e) => props.setCuisine(e.target.value)}
+            value={props.cuisine}
           >
-            <option value='' disabled selected>Select your Cuisine Type</option>
+            <option value="" disabled selected>
+              Select your Cuisine Type
+            </option>
             {cuisines.map((cuisine) => (
               <option key={cuisine} value={cuisine}>
                 {cuisine}
@@ -54,10 +44,12 @@ const Filter = (props) => {
           <select
             id="dishSelect"
             className="border-[#1FB137] bg-black border w-full py-2 pl-4 pr-10"
-            onChange={(e) => setType(e.target.value)}
-            value={type}
+            onChange={(e) => props.setType(e.target.value)}
+            value={props.type}
           >
-            <option value='' disabled selected>Select your Dish Type</option>
+            <option value="" disabled selected>
+              Select your Dish Type
+            </option>
             {dishTypes.map((type) => (
               <option key={type} value={type}>
                 {type}
@@ -70,10 +62,12 @@ const Filter = (props) => {
           <select
             id="dishSelect"
             className="border-[#1FB137] bg-black border w-full py-2 pl-4 pr-10"
-            onChange={(e) => setDiet(e.target.value)}
-            value={diet}
+            onChange={(e) => props.setDiet(e.target.value)}
+            value={props.diet}
           >
-            <option value='' disabled selected>Select your Diet</option>
+            <option value="" disabled selected>
+              Select your Diet
+            </option>
             {diets.map((diet) => (
               <option key={diet} value={diet}>
                 {diet}
@@ -91,14 +85,17 @@ const Filter = (props) => {
             name="time"
             id="time"
             className=" border-[#1FB137] bg-black border w-full py-2 pl-4 pr-10"
-            onChange={(e) => setMaxReadyTime(e.target.value)}
+            onChange={(e) => props.setMaxReadyTime(e.target.value)}
           />
         </label>
         <div className="text-right">
           <button
             type="button"
             className="mt-7 bg-[#166534] w-[130px] h-[45px]  rounded-3xl text-white text-xl self-right"
-            onClick={handleSubmit}
+            onClick={(e) => {
+              props.handleSubmit(e);
+              props.onClose();
+            }}
           >
             Filter
           </button>
