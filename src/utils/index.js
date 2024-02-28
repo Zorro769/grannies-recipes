@@ -47,8 +47,7 @@ export async function fetchRecipe(id) {
 }
 export async function fetchSortedRecipe(filter) {
     const { value, page=1 } = filter;
-    console.log(filter);
-    console.log(value.value[0]);
+
     const url = `${process.env.REACT_APP_SERVER_URL}/spoonacular/recipes/top-categories?limit=100&sort=${value.value[0]}&sortDirection=${value.value[1]}&size=20&page=${page}`
 
     const response = await fetch(url);

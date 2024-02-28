@@ -1,13 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { BiSearchAlt2 } from "react-icons/bi";
 import { FaFilter } from "react-icons/fa";
-import { faArrowDownShortWide } from "@fortawesome/free-solid-svg-icons";
 import Pagination from "@mui/material/Pagination";
 import Select from "react-select";
 import colorStyle from "../utils/styleReactSelect";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Loading from "./Loading";
 import RecipeCard from "./RecipeCard";
 import { fetchRandomRecipes, fetchRecipes, fetchSortedRecipe } from "../utils";
@@ -19,7 +17,6 @@ import Filter from "./Filter";
 
 const Recipes = () => {
   const recipesRef = useRef(null);
-  const axiosPrivate = useAxiosPrivate();
 
   const [cuisine, setCuisine] = useState("");
   const [type, setType] = useState("");
@@ -37,6 +34,7 @@ const Recipes = () => {
   const [infoDialog, setInfoDialog] = useState(false);
   const [filterDialog, setFilterDialog] = useState(false);
   const [recipeFlag, setRecipeFlag] = useState("random");
+
   const sorts = [
     { value: ["popularity", "desc"], label: "Most Popular" },
     { value: ["price", "asc"], label: "Less Price" },
@@ -46,7 +44,11 @@ const Recipes = () => {
   ];
   const [sort, setSort] = useState(true);
   const [sortType, setSortType] = useState();
-
+  const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const currentPage = parseInt(queryParams.get("page")) || 1;
+  
   const handleSubmit = async (e, page) => {
     setRecipeFlag("filter");
     const response = await fetchRecipes({
@@ -80,7 +82,9 @@ const Recipes = () => {
       case "sort":
         handleSortTypeChange(sortType, value);
     }
-
+    const searchParams = new URLSearchParams(location.search);
+    searchParams.set("page", value);
+    navigate({ search: searchParams.toString() });
     recipesRef.current.scrollIntoView();
   };
   const closeDialog = (reason) => {
@@ -195,21 +199,30 @@ const Recipes = () => {
           onChange={(option) => handleSortTypeChange(option)}
         />
       </div>
-      <div className="flex justify-center duration-0.7">
+      <div
+        className="flex justify-center duration-0.7"
+        style={recipeLoading ? { opacity: 0 } : { backgroundColor: "black" }}
+      >
         {recipes?.length > 0 ? (
           <>
             <div className="w-full flex items-start flex-wrap gap-10 py-10">
-              {
-              !recipeLoading ? (
-              recipes?.map((item, index) => (
-                <RecipeCard recipe={item} key={index} flag={item.isFavourite} />
-              ))) : (<Loading />)}
+              {!recipeLoading ? (
+                recipes?.map((item, index) => (
+                  <RecipeCard
+                    recipe={item}
+                    key={index}
+                    flag={item.isFavourite}
+                  />
+                ))
+              ) : (
+                <Loading />
+              )}
               <div className="flex justify-center mt-10 w-full bg-black">
                 <Pagination
                   count={Number(itemsCount)}
-                  page={page}
                   variant="outlined"
                   shape="rounded"
+                  page={currentPage}
                   defaultPage={1}
                   sx={{
                     color: "green",
