@@ -17,7 +17,7 @@ const RecipeDetail = () => {
   const axiosPrivate = useAxiosPrivate();
 
   const { id } = useParams()
-  const containsLIValue  = recipe?.instructions.includes("<li>") || recipe?.instructions.includes("\n");
+  const containsLIValue  = recipe?.instructions.includes("<li>") || recipe?.instructions.includes("\n") || recipe?.instructions.includes("<p>");
   
   useEffect(() => {
     const getRecipe = async (id) => {
@@ -114,8 +114,9 @@ const RecipeDetail = () => {
               <p className='text-green-500 text-2xl underline mt-10'>Instructions</p>
               <ol className='text-white text-xl'>
               {
+                recipe?.instructions.length > 0 ? (
                  !containsLI ? (
-                    recipe?.instructions.split(".").map((item, index) => {
+                    recipe?.instructions ?.split(".").map((item, index) => {
                       const cleanedInstruction = item.trim();
                       if (cleanedInstruction !== '') {
                         return (
@@ -130,7 +131,7 @@ const RecipeDetail = () => {
                       return null;
                     })
                   ) : (
-                    recipe?.instructions.split(/\n|<\/li>|<\/ol>/).map((item, index) => {
+                    recipe?.instructions.split(/\n|<\/li>|<\/ol>|<\/p>|<p>/).map((item, index) => {
                       const cleanedInstruction = item.replace(/<li>|<ol>/g, '').trim();
                       if (cleanedInstruction !== '') {
                         return (
@@ -144,7 +145,7 @@ const RecipeDetail = () => {
                       }
                       return null;
                     })
-                  )
+                  )) : (console.log())
               }
               </ol>
             <div className='w-full pr-1 mt-10'>

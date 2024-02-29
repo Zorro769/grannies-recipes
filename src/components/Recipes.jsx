@@ -11,7 +11,6 @@ import RecipeCard from "./RecipeCard";
 import { fetchRandomRecipes, fetchRecipes, fetchSortedRecipe } from "../utils";
 import CreateRecipe from "./CreateRecipe";
 import Dialog from "@mui/material/Dialog";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import InfoDialog from "./InfoDialog";
 import Filter from "./Filter";
 
@@ -48,7 +47,7 @@ const Recipes = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const currentPage = parseInt(queryParams.get("page")) || 1;
-  
+
   const handleSubmit = async (e, page) => {
     setRecipeFlag("filter");
     const response = await fetchRecipes({
@@ -82,6 +81,7 @@ const Recipes = () => {
       case "sort":
         handleSortTypeChange(sortType, value);
     }
+
     const searchParams = new URLSearchParams(location.search);
     searchParams.set("page", value);
     navigate({ search: searchParams.toString() });
@@ -102,8 +102,8 @@ const Recipes = () => {
       setItemsCount(Math.ceil(data?.totalItems / 20));
       setRecipes(data?.results);
       // setRecipes(data?.results);
-      setLaoding(false);
       setRecipeLoading(false);
+      setLaoding(false);
     } catch (error) {
       console.log(error);
     }
@@ -130,6 +130,7 @@ const Recipes = () => {
     const response = await fetchSortedRecipe({ value: option, page: page });
     setRecipeFlag("sort");
     setRecipes(response?.results);
+    setRecipeLoading(false);
     setItemsCount(Math.ceil(response?.totalItems / 20));
   };
   useEffect(() => {
@@ -177,7 +178,6 @@ const Recipes = () => {
             Create your recipe
           </span>
         </button>
-        {/* </Link> */}
       </div>
       <div className="text-left text-[#1FB137] ">
         <Select
