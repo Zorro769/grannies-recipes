@@ -1,10 +1,10 @@
 import { axiosPrivate } from '../api/axios';
 
 const useRefreshToken = () => {
-    
-    const refresh = async() => {
-        
-        const response = await axiosPrivate.get('/users/refresh',{
+
+    const refresh = async () => {
+
+        const response = await axiosPrivate.get('/users/refresh', {
             withCredentials: true,
             credentials: 'include',
         });

@@ -1,5 +1,6 @@
 import React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import Pagination from "@mui/material/Pagination";
 import { fetchRecipe } from "../utils";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import RecipeCard from "./RecipeCard";
@@ -10,30 +11,33 @@ const MyRecipes = ({ onClose }) => {
   const axiosPrivate = useAxiosPrivate();
   const [recipes, setRecipes] = useState([]);
   const [myRecipes, setMyRecipes] = useState([]);
+  const [itemsCount, setItemsCount] = useState(5);
   const [loading, setLoading] = useState(true);
+  const recipesRef = useRef(null);
 
-  const fetchFavourites = async () => {
+  const fetchMyRecipes = async (page = 1) => {
     try {
-      const data = await axiosPrivate.get("/recipes");
-      const fetchedMyRecipes = data.data;
+      const {
+        data: { totalItems },
+      } = await axiosPrivate.get(`/recipes?page=${page}&size=1`);
+      const pageSize = Math.min(totalItems, 20);
+      const response = await axiosPrivate.get(
+        `/recipes?page=${page}&size=${pageSize}`
+      );
+      setItemsCount(Math.ceil(response?.data?.totalItems / 20));
+      const fetchedMyRecipes = response?.data.results;
       setMyRecipes(fetchedMyRecipes);
       setLoading(false);
-      //   const recipesData = await Promise.all(
-      //     fetchedFavourites.map(async (recipe) => {
-      //       const recipeData = await fetchRecipe(recipe.recipe);
-      //       return {...recipeData };
-      //     })
-      //   );
-      //   setRecipes(recipesData);
-      //   console.log(myRecipes);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-
+  const handlePageChange = (event, value) => {
+    fetchMyRecipes(value);
+    recipesRef.current.scrollIntoView();
+  };
   useEffect(() => {
-    fetchFavourites();
-    // console.log(myRecipes);
+    fetchMyRecipes();
   }, []);
   return (
     <div className="w-full">
@@ -41,7 +45,7 @@ const MyRecipes = ({ onClose }) => {
       {loading ? (
         <Loading />
       ) : (
-        <div className="flex-grow overflow-y-auto p-20">
+        <div className="flex-grow overflow-y-auto p-20" ref={recipesRef}>
           {myRecipes?.length > 0 ? (
             <>
               <div className="w-full justify-center flex flex-wrap gap-10 px-0 lg:px-10 py-10">
@@ -53,6 +57,33 @@ const MyRecipes = ({ onClose }) => {
                     onClose={onClose}
                   />
                 ))}
+                <div className="flex justify-center mt-10 w-full bg-black">
+                <Pagination
+                  count={itemsCount}
+                  variant="outlined"
+                  shape="rounded"
+                  defaultPage={1}
+                  sx={{
+                    color: "green",
+                    backgroundColor: "black",
+                    padding: 5 + "px",
+                    border: "none ",
+                    "& .MuiPaginationItem-page": {
+                      border: "2px solid green",
+                      color: "green !important",
+                      "&:hover": {
+                        backgroundColor: "darkgreen",
+                        color: "white !important",
+                      },
+                      "&.Mui-selected": {
+                        backgroundColor: "darkgreen",
+                        color: "white !important",
+                      },
+                    },
+                  }}
+                  onChange={handlePageChange}
+                />
+              </div>
               </div>
             </>
           ) : (

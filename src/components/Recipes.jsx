@@ -13,9 +13,11 @@ import CreateRecipe from "./CreateRecipe";
 import Dialog from "@mui/material/Dialog";
 import InfoDialog from "./InfoDialog";
 import Filter from "./Filter";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 const Recipes = () => {
   const recipesRef = useRef(null);
+  const axiosPrivate = useAxiosPrivate();
 
   const [cuisine, setCuisine] = useState("");
   const [type, setType] = useState("");
@@ -65,8 +67,9 @@ const Recipes = () => {
     setQuery(e.target.value);
   };
 
-  const handlePageChange = (event, value) => {
-    setRecipeLoading(true);
+  const handlePageChange = (event, value = currentPage) => {
+    console.log(value);
+    setLaoding(true);
     setPage(value);
     switch (recipeFlag) {
       case "random":
@@ -98,6 +101,7 @@ const Recipes = () => {
   };
   const fetchRecipe = async (page) => {
     try {
+      await axiosPrivate.get("/recipes");
       const data = await fetchRandomRecipes({ page });
       setItemsCount(Math.ceil(data?.totalItems / 20));
       setRecipes(data?.results);
@@ -109,23 +113,32 @@ const Recipes = () => {
     }
     setLaoding(false);
   };
+  const handleSearchTypeChanged = () => {
+    const searchParams = new URLSearchParams(location.search);
+    searchParams.set("page", 1);
+    navigate({ search: searchParams.toString() });
+  };
   const handleFilterClick = async () => {
+    handleSearchTypeChanged();
     setFilterDialog(true);
   };
   const handleSearchedRecipe = async (e, page) => {
     try {
+      handleSearchTypeChanged();
       setRecipeFlag("search");
-      setLaoding(false);
+      setLaoding(true);
       e.preventDefault();
       const data = await fetchRecipes({ query, page });
       setRecipes(data?.results);
       setItemsCount(Math.ceil(data?.totalItems / 20));
+      setRecipeLoading(false);
     } catch (err) {
       console.log(err);
     }
     setLaoding(false);
   };
   const handleSortTypeChange = async (option, page) => {
+    handleSearchTypeChanged();
     setSortType(option);
     const response = await fetchSortedRecipe({ value: option, page: page });
     setRecipeFlag("sort");
@@ -133,10 +146,16 @@ const Recipes = () => {
     setRecipeLoading(false);
     setItemsCount(Math.ceil(response?.totalItems / 20));
   };
-  useEffect(() => {
+  useEffect((e) => {
     setLaoding(true);
     fetchRecipe();
+    window.addEventListener("storage", handlePageChange(e,currentPage));
+
+    return () => {
+      window.removeEventListener("storage", handlePageChange);
+    };
   }, []);
+
   if (loading) {
     return <Loading />;
   }
