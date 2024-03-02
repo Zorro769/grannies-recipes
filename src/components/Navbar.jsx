@@ -128,9 +128,9 @@ const Navbar = ({ loginOpened }) => {
               className="basic-single min-w-[200px] inline-block border-transparent"
               options={currency}
               defaultValue={{
-                value: localStorage.getItem("currencyLabel").toUpperCase(),
-                label: localStorage.getItem("currencyLabel").toUpperCase(),
-                code: localStorage.getItem("currencyLabel").toUpperCase(),
+                value: localStorage.getItem("currencyLabel")?.toUpperCase(),
+                label: localStorage.getItem("currencyLabel")?.toUpperCase(),
+                code: localStorage.getItem("currencyLabel")?.toUpperCase(),
               }}
               styles={{
                 singleValue: (provided, state) => ({
@@ -162,7 +162,7 @@ const Navbar = ({ loginOpened }) => {
               options={languages}
               defaultValue={{
                 value: i18n.language,
-                label: i18n.language.toUpperCase(),
+                label: i18n.language?.toUpperCase(),
                 code: localStorage.getItem("language"),
               }}
               styles={{
