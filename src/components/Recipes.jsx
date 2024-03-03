@@ -14,6 +14,7 @@ import Dialog from "@mui/material/Dialog";
 import InfoDialog from "./InfoDialog";
 import Filter from "./Filter";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import i18n from "../i18n/i18n";
 
 const Recipes = () => {
   const recipesRef = useRef(null);
@@ -68,7 +69,7 @@ const Recipes = () => {
   };
 
   const handlePageChange = (event, value = currentPage) => {
-    console.log(value);
+    console.log("hello");
     setLaoding(true);
     setPage(value);
     switch (recipeFlag) {
@@ -126,7 +127,7 @@ const Recipes = () => {
     try {
       handleSearchTypeChanged();
       setRecipeFlag("search");
-      setLaoding(true);
+      setLaoding(false);
       e.preventDefault();
       const data = await fetchRecipes({ query, page });
       setRecipes(data?.results);
@@ -147,9 +148,10 @@ const Recipes = () => {
     setItemsCount(Math.ceil(response?.totalItems / 20));
   };
   useEffect((e) => {
+    localStorage.setItem("language", i18n.language.toLowerCase());
     setLaoding(true);
     fetchRecipe();
-    window.addEventListener("storage", handlePageChange(e,currentPage));
+    window.addEventListener("storage", handlePageChange);
 
     return () => {
       window.removeEventListener("storage", handlePageChange);

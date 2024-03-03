@@ -17,6 +17,7 @@ const Favourites = () => {
   const [flag, setFlag] = useState(true);
   const fetchFavourites = async (page = 1) => {
     try {
+      setLoading(true);
       const {
         data: { totalItems },
       } = await axiosPrivate.get(`/recipes/favourite?page=${page}&size=1`);
@@ -24,17 +25,12 @@ const Favourites = () => {
       const pageSize = Math.min(totalItems, 20);
 
       const response = await axiosPrivate.get(
-        `/recipes/favourite?page=${page}&size=${pageSize}`
+        `/recipes/favourite?page=${page}&size=${pageSize}&language=${localStorage.getItem('language')}&currency=${localStorage.getItem('currencyCode')}`
       );
       console.log(response?.data?.totalItems);
       setItemsCount(Math.ceil(response?.data?.totalItems / 20));
       const fetchedFavourites = response?.data.results;
       console.log(fetchedFavourites);
-      setFavourites((prevFavourites) => {
-        const updatedFavourites = [...prevFavourites, ...fetchedFavourites];
-        return updatedFavourites;
-      });
-
       setLoading(false);
       setRecipes(fetchedFavourites);
     } catch (error) {
@@ -48,6 +44,11 @@ const Favourites = () => {
   }, []);
   useEffect(() => {
     fetchFavourites();
+    window.addEventListener("storage", fetchFavourites);
+
+    return () => {
+      window.removeEventListener("storage", fetchFavourites);
+    };
   }, []);
   const handlePageChange = (event, value) => {
     fetchFavourites(value);

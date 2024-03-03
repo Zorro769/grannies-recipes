@@ -52,11 +52,11 @@ const Navbar = ({ loginOpened }) => {
     if (localStorage.getItem("currencyCode") === null) {
       localStorage.setItem(
         "currencyCode",
-        response?.data?.languageData[0].code
+        response?.data?.currencyData[0].code
       );
       localStorage.setItem(
         "currencyLabel",
-        response?.data?.languageData[0].label
+        response?.data?.currencyData[0].label
       );
     }
   };
@@ -77,6 +77,7 @@ const Navbar = ({ loginOpened }) => {
   const handleLanguageChange = (option) => {
     i18n.changeLanguage(option.label);
     localStorage.setItem("language", option.code);
+    console.log(localStorage.getItem('language'));
     window.dispatchEvent(new Event("storage"));
   };
 
@@ -162,7 +163,7 @@ const Navbar = ({ loginOpened }) => {
               options={languages}
               defaultValue={{
                 value: i18n.language,
-                label: i18n.language?.toUpperCase(),
+                label: i18n.language.toUpperCase(),
                 code: localStorage.getItem("language"),
               }}
               styles={{

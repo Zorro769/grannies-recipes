@@ -6,13 +6,12 @@ export async function fetchRecipes(filter) {
 
     const url = `${process.env.REACT_APP_SERVER_URL}/spoonacular/recipes/?query=${query}&limit=100&type=${type}&diet=${diet}&maxReadyTime=${maxReadyTime}&cuisine=${cuisine}&page=${page}&size=20&currency=${localStorage.getItem('currencyCode')}`
 
-    const response = await  axiosPrivate.get(url);
+    const response = await axiosPrivate.get(url);
 
     return response?.data;
 }
 export async function fetchRandomRecipes(filter) {
     const { page = 1 } = filter;
-
     const url = `${process.env.REACT_APP_SERVER_URL}/spoonacular/recipes/random?limit=100&page=${page}&size=${20}&language=${localStorage.getItem('language')}&currency=${localStorage.getItem('currencyCode')}`
 
     const response = await axiosPrivate.get(url);

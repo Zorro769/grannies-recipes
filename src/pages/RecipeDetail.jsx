@@ -20,26 +20,28 @@ const RecipeDetail = () => {
     recipe?.instructions.includes("<li>") ||
     recipe?.instructions.includes("\n") ||
     recipe?.instructions.includes("<p>");
+  const getRecipe = async () => {
+    try {
+      setLoading(true);
+      let data = [];
+      data = await fetchRecipe(id);
+      setRecipe(data);
+      const recommend = await fetchRecommendRecipes({ id });
+      await setRecipes(recommend);
 
+      setLoading(false);
+      setContainsLI(containsLIValue);
+    } catch (error) {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const getRecipe = async (id) => {
-      try {
-        setLoading(true);
-        const stringId = id.toString();
-        let data = [];
-        data = await fetchRecipe(id);
-        setRecipe(data);
-        const recommend = await fetchRecommendRecipes({ id });
-        await setRecipes(recommend);
-
-        setLoading(false);
-        setContainsLI(containsLIValue);
-      } catch (error) {
-        setLoading(false);
-      }
-    };
-    
     getRecipe(id);
+    window.addEventListener("storage", getRecipe);
+
+    return () => {
+      window.removeEventListener("storage", getRecipe);
+    };
   }, [id, containsLIValue]);
 
   if (loading) {

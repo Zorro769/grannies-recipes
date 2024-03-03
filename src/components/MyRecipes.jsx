@@ -15,14 +15,19 @@ const MyRecipes = ({ onClose }) => {
   const [loading, setLoading] = useState(true);
   const recipesRef = useRef(null);
 
-  const fetchMyRecipes = async (page = 1) => {
+  const fetchMyRecipes = async (event, page = 1) => {
     try {
+      setLoading(true);
       const {
         data: { totalItems },
-      } = await axiosPrivate.get(`/recipes?page=${page}&size=1`);
+      } = await axiosPrivate.get(
+        `/recipes?page=${page}&size=1`
+      );
       const pageSize = Math.min(totalItems, 20);
       const response = await axiosPrivate.get(
-        `/recipes?page=${page}&size=${pageSize}`
+        `/recipes?page=${page}&size=${pageSize}&language=${localStorage.getItem(
+          "language"
+        )}&currency=${localStorage.getItem("currencyCode")}`
       );
       setItemsCount(Math.ceil(response?.data?.totalItems / 20));
       const fetchedMyRecipes = response?.data.results;
@@ -38,6 +43,11 @@ const MyRecipes = ({ onClose }) => {
   };
   useEffect(() => {
     fetchMyRecipes();
+    window.addEventListener("storage", fetchMyRecipes);
+
+    return () => {
+      window.removeEventListener("storage", fetchMyRecipes);
+    };
   }, []);
   return (
     <div className="w-full">
@@ -58,32 +68,32 @@ const MyRecipes = ({ onClose }) => {
                   />
                 ))}
                 <div className="flex justify-center mt-10 w-full bg-black">
-                <Pagination
-                  count={itemsCount}
-                  variant="outlined"
-                  shape="rounded"
-                  defaultPage={1}
-                  sx={{
-                    color: "green",
-                    backgroundColor: "black",
-                    padding: 5 + "px",
-                    border: "none ",
-                    "& .MuiPaginationItem-page": {
-                      border: "2px solid green",
-                      color: "green !important",
-                      "&:hover": {
-                        backgroundColor: "darkgreen",
-                        color: "white !important",
+                  <Pagination
+                    count={itemsCount}
+                    variant="outlined"
+                    shape="rounded"
+                    defaultPage={1}
+                    sx={{
+                      color: "green",
+                      backgroundColor: "black",
+                      padding: 5 + "px",
+                      border: "none ",
+                      "& .MuiPaginationItem-page": {
+                        border: "2px solid green",
+                        color: "green !important",
+                        "&:hover": {
+                          backgroundColor: "darkgreen",
+                          color: "white !important",
+                        },
+                        "&.Mui-selected": {
+                          backgroundColor: "darkgreen",
+                          color: "white !important",
+                        },
                       },
-                      "&.Mui-selected": {
-                        backgroundColor: "darkgreen",
-                        color: "white !important",
-                      },
-                    },
-                  }}
-                  onChange={handlePageChange}
-                />
-              </div>
+                    }}
+                    onChange={handlePageChange}
+                  />
+                </div>
               </div>
             </>
           ) : (
