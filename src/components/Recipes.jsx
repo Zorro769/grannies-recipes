@@ -21,14 +21,15 @@ const Recipes = () => {
   const axiosPrivate = useAxiosPrivate();
 
   const [cuisine, setCuisine] = useState("");
-  const [type, setType] = useState("");
+  const [type, setDishType] = useState("");
   const [diet, setDiet] = useState("");
   const [maxReadyTime, setMaxReadyTime] = useState();
+  const [shouldScroll, setShouldScroll] = useState(false);
 
   const [recipes, setRecipes] = useState([]);
   const [query, setQuery] = useState("Dessert,Vegan");
   const [page, setPage] = useState(1);
-  const [loading, setLaoding] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [recipeLoading, setRecipeLoading] = useState(false);
   const [itemsCount, setItemsCount] = useState(5);
   const [openDialog, setOpenDialog] = useState(false);
@@ -50,17 +51,24 @@ const Recipes = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const currentPage = parseInt(queryParams.get("page")) || 1;
-
-  const handleSubmit = async (e, page) => {
+  useEffect(() => {
+    if (!loading && recipesRef.current) {
+      recipesRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [loading]);
+  const handleFilterSubmit = async (e, page) => {
+    const formData = new FormData();
     setRecipeFlag("filter");
+    setLoading(true);
     const response = await fetchRecipes({
       limit: 10,
-      type: type,
-      diet: diet,
+      type: JSON.stringify(type),
+      diet: JSON.stringify(diet),
+      cuisine: JSON.stringify(cuisine),
       maxReadyTime: maxReadyTime,
-      cuisine: cuisine,
       page: page,
     });
+    setLoading(false);
     setRecipes(response?.results);
     setItemsCount(Math.ceil(response?.totalItems / 20));
   };
@@ -69,9 +77,9 @@ const Recipes = () => {
   };
 
   const handlePageChange = (event, value = currentPage) => {
-    console.log("hello");
-    setLaoding(true);
     setPage(value);
+    setLoading(true);
+
     switch (recipeFlag) {
       case "random":
         fetchRecipe(value);
@@ -80,7 +88,7 @@ const Recipes = () => {
         handleSearchedRecipe(event, value);
         break;
       case "filter":
-        handleSubmit(value);
+        handleFilterSubmit(value);
         break;
       case "sort":
         handleSortTypeChange(sortType, value);
@@ -89,7 +97,6 @@ const Recipes = () => {
     const searchParams = new URLSearchParams(location.search);
     searchParams.set("page", value);
     navigate({ search: searchParams.toString() });
-    recipesRef.current.scrollIntoView();
   };
   const closeDialog = (reason) => {
     if (reason && reason === "backdropClick") return;
@@ -102,17 +109,27 @@ const Recipes = () => {
   };
   const fetchRecipe = async (page) => {
     try {
+      setLoading(true);
       await axiosPrivate.get("/recipes");
       const data = await fetchRandomRecipes({ page });
       setItemsCount(Math.ceil(data?.totalItems / 20));
       setRecipes(data?.results);
       // setRecipes(data?.results);
-      setRecipeLoading(false);
-      setLaoding(false);
+      // setRecipeLoading(false);
+      // setLoading(false);
+      setShouldScroll(true);
+      await scrollToElement();
     } catch (error) {
       console.log(error);
     }
-    setLaoding(false);
+    setLoading(false);
+  };
+  const scrollToElement = async () => {
+    const { current } = recipesRef;
+    if (current !== null) {
+      await new Promise((resolve) => setTimeout(resolve, 0)); // Wait for next render cycle
+      current.scrollIntoView({ behavior: "smooth" });
+    }
   };
   const handleSearchTypeChanged = () => {
     const searchParams = new URLSearchParams(location.search);
@@ -122,12 +139,13 @@ const Recipes = () => {
   const handleFilterClick = async () => {
     handleSearchTypeChanged();
     setFilterDialog(true);
+    // setLoading(true);
   };
   const handleSearchedRecipe = async (e, page) => {
     try {
+      setLoading(true);
       handleSearchTypeChanged();
       setRecipeFlag("search");
-      setLaoding(false);
       e.preventDefault();
       const data = await fetchRecipes({ query, page });
       setRecipes(data?.results);
@@ -136,9 +154,10 @@ const Recipes = () => {
     } catch (err) {
       console.log(err);
     }
-    setLaoding(false);
+    setLoading(false);
   };
   const handleSortTypeChange = async (option, page) => {
+    setLoading(true);
     handleSearchTypeChanged();
     setSortType(option);
     const response = await fetchSortedRecipe({ value: option, page: page });
@@ -146,20 +165,23 @@ const Recipes = () => {
     setRecipes(response?.results);
     setRecipeLoading(false);
     setItemsCount(Math.ceil(response?.totalItems / 20));
+    setLoading(false);
+    // await new Promise((resolve) => setTimeout(resolve, 0));
+    // recipesRef.current.scrollIntoView({ behavior: "smooth" });
   };
   useEffect((e) => {
     localStorage.setItem("language", i18n.language.toLowerCase());
-    setLaoding(true);
+    setLoading(true);
     fetchRecipe();
-    window.addEventListener("storage", handlePageChange);
+    window.addEventListener('storage', handlePageChange);
 
     return () => {
-      window.removeEventListener("storage", handlePageChange);
+      window.removeEventListener('storage', handlePageChange);
     };
   }, []);
 
   if (loading) {
-    return <Loading />;
+    return <Loading ref={recipesRef} />;
   }
   return (
     <div className="w-full text-center" ref={recipesRef}>
@@ -204,6 +226,7 @@ const Recipes = () => {
         <Select
           className="basic-single min-w-[200px] inline-block border-transparent"
           options={sorts}
+          value={sortType}
           defaultValue={sorts[0]}
           styles={{
             singleValue: (provided, state) => ({
@@ -311,14 +334,15 @@ const Recipes = () => {
       >
         <Filter
           onClose={closeDialog}
-          handleSubmit={handleSubmit}
+          handleFilterSubmit={handleFilterSubmit}
           setCuisine={setCuisine}
           setDiet={setDiet}
-          setType={setType}
+          setDishType={setDishType}
           setMaxReadyTime={setMaxReadyTime}
           cuisine={cuisine}
           diet={diet}
           type={type}
+          // setLoading={setLoading}
           maxReadyTime={maxReadyTime}
         />
       </Dialog>

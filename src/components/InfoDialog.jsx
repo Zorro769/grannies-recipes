@@ -1,13 +1,16 @@
 import React from 'react'
 
-const InfoDialog = ({info, onClose}) => {
+const InfoDialog = (props) => {
   const handleClose = () => {
-    onClose();
+    if(props.reload) {
+      props.reload();
+    }
+    props.onClose();
   }
   return (
     <div className='text-[#1FB137] flex flex-col text-center bg-black text-lg h-full'>
       <div className='w-full'>
-        {info}
+        {props.info}
       </div>
       
       <div className='w-full'>

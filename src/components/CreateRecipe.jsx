@@ -31,7 +31,6 @@ const CreateRecipe = ({ onClose }) => {
 
   const uploadingDietsDishTypesCuisines = async () => {
     const data = await axiosPrivate.get("/recipes/data");
-    console.log(data.data.cuisines);
     setLoading(false);
     setUploadedData(data);
   };
@@ -151,13 +150,6 @@ const CreateRecipe = ({ onClose }) => {
                 </label>
                 <label className="text-[#1FB137] text-base font-bold inline-block mt-5 w-full">
                   Cuisine type:
-                  {/* <select
-                id="dishSelect"
-                className="border-[#1FB137] bg-black border w-full py-2 pl-4 pr-10"
-                onChange={(e) => setCuisine(e.target.value)}
-                value={cuisine}
-              > */}
-                  {/* {uploadedData?.cuisines?.map((cuisine) => ( */}
                   <Select
                     options={uploadedData?.data?.cuisines}
                     isMulti
@@ -165,8 +157,6 @@ const CreateRecipe = ({ onClose }) => {
                     styles={colorStyle}
                     onChange={handleCuisinesChange}
                   />
-                  {/* ))}  */}
-                  {/* </select> */}
                 </label>
                 <label className="text-[#1FB137] text-base font-bold inline-block mt-5 w-full">
                   Dish type:

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { fetchRecipe, fetchRecommendRecipes } from "../utils";
 import Loading from "../components/Loading";
@@ -14,29 +14,37 @@ const RecipeDetail = () => {
   const [loading, setLoading] = useState(false);
   const [containsLI, setContainsLI] = useState(false);
   const axiosPrivate = useAxiosPrivate();
-
+  const recipesRef = useRef();
   const { id } = useParams();
   const containsLIValue =
     recipe?.instructions.includes("<li>") ||
     recipe?.instructions.includes("\n") ||
     recipe?.instructions.includes("<p>");
-  const getRecipe = async () => {
-    try {
-      setLoading(true);
-      let data = [];
-      data = await fetchRecipe(id);
-      setRecipe(data);
-      const recommend = await fetchRecommendRecipes({ id });
-      await setRecipes(recommend);
-
-      setLoading(false);
-      setContainsLI(containsLIValue);
-    } catch (error) {
-      setLoading(false);
-    }
-  };
   useEffect(() => {
-    getRecipe(id);
+    if (!loading && recipesRef.current) {
+      recipesRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [loading]);
+  useEffect(() => {
+    const getRecipe = async () => {
+      try {
+        setLoading(true);
+        let data = [];
+        console.log(id);
+        data = await fetchRecipe(id);
+        data.extendedIngredients.map((item) => {
+          console.log(item);
+        });
+        setRecipe(data);
+        setContainsLI(containsLIValue);
+        const recommend = await fetchRecommendRecipes({ id });
+        await setRecipes(recommend);
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+      }
+    };
+    getRecipe();
     window.addEventListener("storage", getRecipe);
 
     return () => {
@@ -52,7 +60,7 @@ const RecipeDetail = () => {
     );
   }
   return (
-    <div className="w-full">
+    <div className="w-full" ref={recipesRef}>
       <Header label={recipe?.title || "Default Title"} />
 
       <div className="w-full px-4 lg:px-20 pt-5">

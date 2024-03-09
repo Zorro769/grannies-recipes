@@ -77,11 +77,12 @@ const Navbar = ({ loginOpened }) => {
   const handleLanguageChange = (option) => {
     i18n.changeLanguage(option.label);
     localStorage.setItem("language", option.code);
-    console.log(localStorage.getItem('language'));
+    console.log(localStorage.getItem("language"));
     window.dispatchEvent(new Event("storage"));
   };
 
   const handleDialogClose = () => {
+    console.log("Hello");
     setRegisterOpenDialog(false);
     setLoginOpenDialog(false);
     setFavouriteOpenDialog(false);
@@ -138,11 +139,18 @@ const Navbar = ({ loginOpened }) => {
                   ...provided,
                   color: "[#1FB137]",
                 }),
+
                 ...colorStyle,
+                menu: (baseStyles) => ({
+                  ...baseStyles,
+                  backgroundColor: "black",
+                  borderColor: "yellow",
+                  width: "60px",
+                }),
                 control: (provided, state) => ({
                   ...provided,
                   border: "none",
-                  maxWidth: 90 + "px",
+                  maxWidth: 100 + "px",
                   background: "black",
                 }),
               }}
@@ -155,7 +163,7 @@ const Navbar = ({ loginOpened }) => {
             </button>
           </div>
           <div
-            className="text-left text-[#1FB137] max-w-[50px] cursor-pointer"
+            className="text-left text-[#1FB137] max-w-[60px] cursor-pointer"
             onClick={() => {}}
           >
             <Select
@@ -172,6 +180,12 @@ const Navbar = ({ loginOpened }) => {
                   color: "[#1FB137]",
                 }),
                 ...colorStyle,
+                menu: (baseStyles) => ({
+                  ...baseStyles,
+                  backgroundColor: "black",
+                  borderColor: "yellow",
+                  width: "60px",
+                }),
                 control: (provided, state) => ({
                   ...provided,
                   border: "none",
@@ -222,7 +236,7 @@ const Navbar = ({ loginOpened }) => {
               style={{ top: "155%", left: "60%" }}
             >
               <ul
-                class=" text-sm text-gray-700 dark:text-gray-200 text-center"
+                className=" text-sm text-gray-700 dark:text-gray-200 text-center"
                 aria-labelledby="dropdownDefaultButton"
               >
                 <li>
@@ -306,6 +320,7 @@ const Navbar = ({ loginOpened }) => {
         PaperProps={{ style: { height: "100px", borderradius: "50%" } }}
       >
         <InfoDialog
+          reload={() => {window.location.reload(false)}}
           info={"You have been logged out successfully"}
           onClose={closeDialog}
         />

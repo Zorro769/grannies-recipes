@@ -30,20 +30,16 @@ export async function fetchRecommendRecipes(filter) {
 export async function fetchRecipe(id) {
     const url = `${process.env.REACT_APP_SERVER_URL}/spoonacular/recipes/${id}?language=${localStorage.getItem('language')}&currency=${localStorage.getItem('currencyCode')}`
 
-    const response = await fetch(url)
+    const response = await axiosPrivate.get(url)
 
-    const data = await response.json();
-
-    return data;
+    return response?.data;
 }
 export async function fetchSortedRecipe(filter) {
     const { value, page = 1 } = filter;
 
     const url = `${process.env.REACT_APP_SERVER_URL}/spoonacular/recipes/top-categories?limit=100&sort=${value.value[0]}&sortDirection=${value.value[1]}&size=20&page=${page}&language=${localStorage.getItem('language')}&currency=${localStorage.getItem('currencyCode')}`
 
-    const response = await fetch(url);
+    const response = await axiosPrivate.get(url);
 
-    const data = await response.json();
-
-    return data;
+    return response?.data;
 }

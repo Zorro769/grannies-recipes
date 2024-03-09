@@ -27,13 +27,18 @@ const Login = ({ onClose, handleButtonClick }) => {
   const handleForgotPassword = () => {
     setOpenForgotPassword(!openForgotPassword);
   };
-  const handleDialogClose = (e) => {
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault(); // Prevent the default behavior
+    }
+  };
+  const handleDialogClose = () => {
+    console.log("Hello2");
     onClose();
     setRegDialog(false);
     setLoading(false);
   };
   const handleSignUp = (e) => {
-    // onClose();
     handleButtonClick();
     setRegDialog(true);
   };
@@ -52,7 +57,7 @@ const Login = ({ onClose, handleButtonClick }) => {
       handleButtonClick();
 
       localStorage.setItem("accessToken", accessToken);
-
+      
       setEmail("");
       setPassword("");
     } catch (err) {
@@ -95,6 +100,7 @@ const Login = ({ onClose, handleButtonClick }) => {
                 required
                 className="border-[#1FB137] bg-black border w-full text-lg p-2"
                 onChange={(e) => setEmail(e.target.value)}
+                onKeyPress={handleKeyPress}
               />
             </label>
             <label className="text-[#1FB137] mt-5 text-xl font-bold block">
@@ -107,6 +113,7 @@ const Login = ({ onClose, handleButtonClick }) => {
                 required
                 className="border-[#1FB137] text-lg bg-black border w-full p-2"
                 onChange={(e) => setPassword(e.target.value)}
+                onKeyPress={handleKeyPress}
               />
             </label>
             <button
@@ -171,9 +178,12 @@ const Login = ({ onClose, handleButtonClick }) => {
         onClose={handleDialogClose}
         fullWidth
         maxWidth="lg"
-        PaperProps={{ style: { height: "800px" } }}
+        PaperProps={{
+          style: { height: "800px", border: "5px solid gray" },
+          sx: { borderRadius: "50px" },
+        }}
       >
-        <Register />
+        <Register  onClose={handleDialogClose}/>
       </Dialog>
       <Dialog
         open={infoDialog}
@@ -183,6 +193,7 @@ const Login = ({ onClose, handleButtonClick }) => {
         PaperProps={{ style: { height: "100px", borderradius: "50%" } }}
       >
         <InfoDialog
+          reload={() => {window.location.reload(false)}}
           info={"You have been logged in successfully"}
           onClose={closeDialog}
         />

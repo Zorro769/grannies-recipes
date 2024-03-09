@@ -6,6 +6,7 @@ import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import RecipeCard from "./RecipeCard";
 import Header from "../components/Header";
 import Loading from "./Loading";
+import { faL } from "@fortawesome/free-solid-svg-icons";
 
 const MyRecipes = ({ onClose }) => {
   const axiosPrivate = useAxiosPrivate();
@@ -34,6 +35,7 @@ const MyRecipes = ({ onClose }) => {
       setMyRecipes(fetchedMyRecipes);
       setLoading(false);
     } catch (error) {
+      // setLoading(false);
       console.error("Error fetching data:", error);
     }
   };
