@@ -15,7 +15,7 @@ const RecipeCard = ({
   onClose,
   shouldCallOnClose = false,
 }) => {
-  const { id, image, title, readyInMinutes, dishTypes } = recipe;
+  const { id, image, title, readyInMinutes, dishTypes, cuisines } = recipe;
   const [flagFavourite, setFlag] = useState(flag);
   const axiosPrivate = useAxiosPrivate();
   const [infoDialog, setInfoDialog] = useState(false);
@@ -44,27 +44,36 @@ const RecipeCard = ({
     >
       <div className="bg-_gradient shadow w-full rounded-lg relative ">
         <Link to={`/recipes/${recipe?._id || id}`} className="w-full md:w-full">
-          <img
-            src={image || defaultImage}
-            alt={title}
-            className="rounded-lg h-[200px] md:h-[150px] w-full"
-          />
+          <div className="relative">
+            <img
+              src={image || defaultImage}
+              alt={title}
+              className="rounded-lg h-[200px] md:h-[150px] w-full"
+            />
+            <div className="absolute content flex gap-2 flex-wrap justify-center">
+              <span className="px-2 py-1 text-[12px] capitalize bg-black shadow-xl rounded-full text-green-500">
+                {readyInMinutes}
+              </span>
+              {dishTypes?.length > 0 ? (
+                <span
+                  key={0}
+                  className="px-2 py-1 text-[12px] capitalize bg-black shadow-xl rounded-full text-green-500"
+                >
+                  {dishTypes[0]}
+                </span>
+              ) : (
+                <span
+                  key={0}
+                  className="px-2 py-1 text-[12px] capitalize bg-black shadow-xl rounded-full text-green-500"
+                >
+                  {cuisines[0]}
+                </span>
+              )}
+            </div>
+          </div>
 
           <div className="p-3">
             <p className="font-semibold text-[#1FB137]">{title}</p>
-          </div>
-          <div className="mt-2 absolute top-12 right-12 content">
-            <span className="px-2 py-1 text-[12px] capitalize bg-black shadow-xl rounded-full mr-3 text-green-500">
-              {readyInMinutes}
-            </span>
-            {dishTypes?.length > 0 && (
-              <span
-                key={0} // or use a unique key based on your data
-                className="px-2 py-1 text-[12px] capitalize bg-black shadow-xl rounded-full text-green-500"
-              >
-                {dishTypes[0]}
-              </span>
-            )}
           </div>
         </Link>
       </div>

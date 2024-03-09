@@ -120,6 +120,9 @@ const Recipes = () => {
       setShouldScroll(true);
       await scrollToElement();
     } catch (error) {
+      const data = await fetchRandomRecipes({ page });
+      setItemsCount(Math.ceil(data?.totalItems / 20));
+      setRecipes(data?.results);
       console.log(error);
     }
     setLoading(false);

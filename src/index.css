@@ -184,6 +184,11 @@ input:-webkit-autofill{
   -webkit-filter: blur(5px);
   filter:blur(5px);
 }
+.content {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
 .single-item .content {
   opacity:0;
 }
