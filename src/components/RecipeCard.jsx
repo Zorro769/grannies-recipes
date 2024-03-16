@@ -15,7 +15,7 @@ const RecipeCard = ({
   onClose,
   shouldCallOnClose = false,
 }) => {
-  const { id, image, title, readyInMinutes, dishTypes, cuisines } = recipe;
+  const { id, image, title, readyInMinutes, dishTypes, cuisines, diets } = recipe;
   const [flagFavourite, setFlag] = useState(flag);
   const axiosPrivate = useAxiosPrivate();
   const [infoDialog, setInfoDialog] = useState(false);
@@ -62,12 +62,22 @@ const RecipeCard = ({
                   {dishTypes[0]}
                 </span>
               ) : (
-                <span
+                cuisines?.length > 0 ? (
+                  <span
                   key={0}
                   className="px-2 py-1 text-[12px] capitalize bg-black shadow-xl rounded-full text-green-500"
                 >
                   {cuisines[0]}
                 </span>
+                ) :
+               diets?.length > 0 && (
+                <span
+                  key={0}
+                  className="px-2 py-1 text-[12px] capitalize bg-black shadow-xl rounded-full text-green-500"
+                >
+                  {diets[0]}
+                </span>
+               )
               )}
             </div>
           </div>

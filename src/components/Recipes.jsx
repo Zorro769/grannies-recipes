@@ -25,7 +25,6 @@ const Recipes = () => {
   const [diet, setDiet] = useState("");
   const [maxReadyTime, setMaxReadyTime] = useState();
   const [shouldScroll, setShouldScroll] = useState(false);
-
   const [recipes, setRecipes] = useState([]);
   const [query, setQuery] = useState("Dessert,Vegan");
   const [page, setPage] = useState(1);
@@ -56,7 +55,8 @@ const Recipes = () => {
       recipesRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [loading]);
-  const handleFilterSubmit = async (e, page) => {
+  const handleFilterSubmit = async (e, page = 1) => {
+    console.log(page);
     const formData = new FormData();
     setRecipeFlag("filter");
     setLoading(true);
@@ -88,7 +88,7 @@ const Recipes = () => {
         handleSearchedRecipe(event, value);
         break;
       case "filter":
-        handleFilterSubmit(value);
+        handleFilterSubmit(event, value);
         break;
       case "sort":
         handleSortTypeChange(sortType, value);
@@ -99,7 +99,7 @@ const Recipes = () => {
     navigate({ search: searchParams.toString() });
   };
   const closeDialog = (reason) => {
-    if (reason && reason === "backdropClick") return;
+    if (reason && reason !== "backdropClick") return;
     setOpenDialog(false);
     setInfoDialog(false);
     setFilterDialog(false);
@@ -109,14 +109,12 @@ const Recipes = () => {
   };
   const fetchRecipe = async (page) => {
     try {
+      setSortType(sorts[0]);
       setLoading(true);
       await axiosPrivate.get("/recipes");
       const data = await fetchRandomRecipes({ page });
       setItemsCount(Math.ceil(data?.totalItems / 20));
       setRecipes(data?.results);
-      // setRecipes(data?.results);
-      // setRecipeLoading(false);
-      // setLoading(false);
       setShouldScroll(true);
       await scrollToElement();
     } catch (error) {
@@ -130,7 +128,7 @@ const Recipes = () => {
   const scrollToElement = async () => {
     const { current } = recipesRef;
     if (current !== null) {
-      await new Promise((resolve) => setTimeout(resolve, 0)); // Wait for next render cycle
+      await new Promise((resolve) => setTimeout(resolve, 0));
       current.scrollIntoView({ behavior: "smooth" });
     }
   };
@@ -146,6 +144,7 @@ const Recipes = () => {
   };
   const handleSearchedRecipe = async (e, page) => {
     try {
+      setSortType(sorts[0]);
       setLoading(true);
       handleSearchTypeChanged();
       setRecipeFlag("search");
@@ -154,6 +153,12 @@ const Recipes = () => {
       setRecipes(data?.results);
       setItemsCount(Math.ceil(data?.totalItems / 20));
       setRecipeLoading(false);
+      const queryParams = new URLSearchParams(location.search);
+      queryParams.set("query", query);
+      const currentPage = queryParams.get("query");
+      console.log(currentPage);
+      const newUrl = `${window.location.pathname}?${queryParams.toString()}`;
+      window.history.replaceState(null, null, newUrl);
     } catch (err) {
       console.log(err);
     }
@@ -169,17 +174,22 @@ const Recipes = () => {
     setRecipeLoading(false);
     setItemsCount(Math.ceil(response?.totalItems / 20));
     setLoading(false);
-    // await new Promise((resolve) => setTimeout(resolve, 0));
-    // recipesRef.current.scrollIntoView({ behavior: "smooth" });
   };
   useEffect((e) => {
     localStorage.setItem("language", i18n.language.toLowerCase());
     setLoading(true);
-    fetchRecipe();
-    window.addEventListener('storage', handlePageChange);
+
+    if (queryParams.get("query")) {
+      setQuery(queryParams.get("query"));
+      console.log("hello");
+      handleSearchedRecipe(e, currentPage);
+    } else {
+      fetchRecipe();
+    }
+    window.addEventListener("storage", handlePageChange);
 
     return () => {
-      window.removeEventListener('storage', handlePageChange);
+      window.removeEventListener("storage", handlePageChange);
     };
   }, []);
 
@@ -196,7 +206,7 @@ const Recipes = () => {
           <div className="relative">
             <input
               type="text"
-              placeholder="eg. Cake, Vegan, Chicken"
+              placeholder="Eg. Cake, Vegan, Chicken"
               onChange={handleChange}
               className="bg-black border border-4 border-gray-800 text-gray-300 text-md rounded-full focus:ring-1 focus:ring-slate-800 focus:border-slate-800 block w-full p-2.5 outline-none px-5 placeholder:text-sm shadow-xl"
             />
@@ -239,7 +249,7 @@ const Recipes = () => {
             ...colorStyle,
             control: (provided, state) => ({
               ...provided,
-              border: "none",
+              border: "1px solid green",
               background: "black",
             }),
           }}
@@ -304,15 +314,17 @@ const Recipes = () => {
         open={openDialog}
         onClose={closeDialog}
         fullWidth
+        className="create-recipe-dialog"
         maxWidth="lg"
         PaperProps={{
           style: {
             height: "750px",
             border: "5px solid gray",
             borderRadius: "50px",
+            background: "transparent",
           },
         }}
-        disableBackdropClick={true}
+        disableBackdropClick={false}
       >
         <CreateRecipe onClose={closeDialog} />
       </Dialog>

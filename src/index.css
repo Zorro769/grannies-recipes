@@ -207,3 +207,11 @@ img, .content {
 * {
   scroll-behavior: smooth;
 }
+body > div.MuiDialog-root.create-recipe-dialog.MuiModal-root.css-zw3mfo-MuiModal-root-MuiDialog-root > div.MuiDialog-container.MuiDialog-scrollPaper.css-hz1bth-MuiDialog-container > div {
+  background: url('./images/create-recipe.jpg') !important;
+  background-size: cover !important; 
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+  height: 750px !important; /* Adjust height as needed */
+  border-radius: 50px !important;
+}

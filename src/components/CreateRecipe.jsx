@@ -110,15 +110,10 @@ const CreateRecipe = ({ onClose }) => {
   }, []);
   return (
     <>
-      <div className="w-full h-full relative">
-        <img
-          src={BackGround}
-          alt="login"
-          className="w-[1120px] h-[709px] object-cover fixed rounded-[45px] left-[330px] top-[36px]"
-        />
+      <div className="w-full h-full relative create-recipe-dialog ">
         <div className="bg-gradient-to-l contain from-transparent  to-black to-65% w-[1190px] h-[710px] top-[36px] fixed top-0 z-8 flex flex-col items-start justify-start pt-40 2xl:pt-20 px-4 left-[258px] rounded-[45px]"></div>
         <div className="bg-gradient-to-l  contain from-transparent to-black to-65% w-[1190px] h-[710px] top-[36px] fixed top-0 z-8 flex flex-col items-start justify-start pt-40 2xl:pt-20 px-4 rounded-[45px]"></div>
-        <div className="h-screen w-full relative py-10 pb-5">
+        <div className="h-screen w-full relative py-10 pb-5 bg  -transparent">
           <div
             className="text-white right-[280px] fixed top-[50px] cursor-pointer"
             onClick={() => onClose()}

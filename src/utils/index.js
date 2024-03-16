@@ -4,7 +4,7 @@ import { axiosPrivate } from "../api/axios";
 export async function fetchRecipes(filter) {
     const { query = '', limit, type, diet, maxReadyTime = 1000, cuisine, page = 1 } = filter;
 
-    const url = `${process.env.REACT_APP_SERVER_URL}/spoonacular/recipes/?query=${query}&limit=100&type=${type}&diet=${diet}&maxReadyTime=${maxReadyTime}&cuisine=${cuisine}&page=${page}&size=20&currency=${localStorage.getItem('currencyCode')}`
+    const url = `${process.env.REACT_APP_SERVER_URL}/spoonacular/recipes/?query=${query}&limit=100&type=${type}&diet=${diet}&maxReadyTime=${maxReadyTime}&cuisine=${cuisine}&page=${page}&size=20&language=${localStorage.getItem('language')}&currency=${localStorage.getItem('currencyCode')}`
 
     const response = await axiosPrivate.get(url);
 
