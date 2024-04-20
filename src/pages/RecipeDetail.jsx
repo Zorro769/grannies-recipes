@@ -17,9 +17,9 @@ const RecipeDetail = () => {
   const recipesRef = useRef();
   const { id } = useParams();
   const containsLIValue =
-    recipe?.instructions.includes("<li>") ||
-    recipe?.instructions.includes("\n") ||
-    recipe?.instructions.includes("<p>");
+    recipe?.instructions?.includes("<li>") ||
+    recipe?.instructions?.includes("\n") ||
+    recipe?.instructions?.includes("<p>");
   useEffect(() => {
     if (!loading && recipesRef.current) {
       recipesRef.current.scrollIntoView({ behavior: "smooth" });
@@ -30,11 +30,13 @@ const RecipeDetail = () => {
       try {
         setLoading(true);
         let data = [];
-        console.log(id);
+
         data = await fetchRecipe(id);
+
         data.extendedIngredients.map((item) => {
           console.log(item);
         });
+
         setRecipe(data);
         setContainsLI(containsLIValue);
         const recommend = await fetchRecommendRecipes({ id });
@@ -111,19 +113,17 @@ const RecipeDetail = () => {
           <div className="w-full md:w-2/4 pr-1">
             <div className="flex flex-col gap-5">
               <p className="text-green-500 text-2xl underline">Ingredients</p>
-              {recipe?.extendedIngredients?.map(
-                (ingredient, index) => {
-                  return (
-                    <p
-                      key={index}
-                      className="text-neutral-100 flex gap-2 text-xl"
-                    >
-                      <AiFillPushpin className="text-green-800 text-xl" />{" "}
-                      {ingredient}
-                    </p>
-                  );
-                }
-              )}
+              {recipe?.extendedIngredients?.map((ingredient, index) => {
+                return (
+                  <p
+                    key={index}
+                    className="text-neutral-100 flex gap-2 text-xl"
+                  >
+                    <AiFillPushpin className="text-green-800 text-xl" />{" "}
+                    {ingredient}
+                  </p>
+                );
+              })}
             </div>
           </div>
         </div>

@@ -11,8 +11,6 @@ body {
   font-family: "Nunito", sans-serif;
 }
 
-
-
 .custom-btn {
   @apply flex-row relative justify-center items-center py-2 px-6 outline-none;
 }
@@ -22,7 +20,9 @@ body {
 } */
 
 .shadow {
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
+    rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
+    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
 }
 
 .shadow1 {
@@ -30,11 +30,10 @@ body {
 }
 
 .bg_gradient {
-  @apply bg-gradient-to-t from-slate-900 to-transparent top-0
+  @apply bg-gradient-to-t from-slate-900 to-transparent top-0;
 }
 
 .dots-container {
-
   display: flex;
   align-items: center;
   justify-content: center;
@@ -90,10 +89,10 @@ body {
 option span {
   color: #3e4753;
 }
-::placeholder{ 
+::placeholder {
   color: #3e4753;
-  }
-  /* MuiDialog-container MuiDialog-scrollPaper css-hz1bth-MuiDialog-container::-webkit-scrollbar-thumb {
+}
+/* MuiDialog-container MuiDialog-scrollPaper css-hz1bth-MuiDialog-container::-webkit-scrollbar-thumb {
     background-color: #1FB137;
     border-radius: 6px;
   } 
@@ -109,24 +108,24 @@ option span {
     background-color: #1FB137;
     border-radius: 6px;
   } */
-  .MuiDialog-root {
-    overflow: hidden;
-  }
-  div::-webkit-scrollbar {
-    display: none;
-  }
-  ::-webkit-scrollbar {
-    width: 10px;
-  }
+.MuiDialog-root {
+  overflow: hidden;
+}
+div::-webkit-scrollbar {
+  display: none;
+}
+::-webkit-scrollbar {
+  width: 10px;
+}
 
-  ::-webkit-scrollbar-thumb {
-    background-color: #1f2220;
-    border-radius: 10px;
-  }
+::-webkit-scrollbar-thumb {
+  background-color: #1f2220;
+  border-radius: 10px;
+}
 
-  ::-webkit-scrollbar-track {
-    background-color: #000000;
-  }
+::-webkit-scrollbar-track {
+  background-color: #000000;
+}
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -147,7 +146,7 @@ input::-webkit-inner-spin-button {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  border: 2px solid #1FB137;
+  border: 2px solid #1fb137;
   background-color: #000;
   outline: none;
   margin-right: 8px;
@@ -163,26 +162,26 @@ input::-webkit-inner-spin-button {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background-color: #1FB137;
+  background-color: #1fb137;
 }
 
 /* Style the text next to the radio button */
 .label-text {
-  color: #1FB137;
+  color: #1fb137;
   font-weight: bold;
 }
 input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus, 
-input:-webkit-autofill:active{
-    -webkit-box-shadow: 0 0 0 30px black inset !important;
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px black inset !important;
 }
-input:-webkit-autofill{
-  -webkit-text-fill-color: #1FB137 !important;
+input:-webkit-autofill {
+  -webkit-text-fill-color: #1fb137 !important;
 }
 .single-item:hover img:not(.fa-heart) {
   -webkit-filter: blur(5px);
-  filter:blur(5px);
+  filter: blur(5px);
 }
 .content {
   top: 50%;
@@ -190,12 +189,13 @@ input:-webkit-autofill{
   transform: translate(-50%, -50%);
 }
 .single-item .content {
-  opacity:0;
+  opacity: 0;
 }
 .single-item:hover .content {
-    opacity:1;
+  opacity: 1;
 }
-img, .content {
+img,
+.content {
   transition: 0.7s all;
 }
 .create-recipe {
@@ -207,11 +207,32 @@ img, .content {
 * {
   scroll-behavior: smooth;
 }
-body > div.MuiDialog-root.create-recipe-dialog.MuiModal-root.css-zw3mfo-MuiModal-root-MuiDialog-root > div.MuiDialog-container.MuiDialog-scrollPaper.css-hz1bth-MuiDialog-container > div {
-  background: url('./images/create-recipe.jpg') !important;
-  background-size: cover !important; 
+body
+  > div.MuiDialog-root.create-recipe-dialog.MuiModal-root.css-zw3mfo-MuiModal-root-MuiDialog-root
+  > div.MuiDialog-container.MuiDialog-scrollPaper.css-hz1bth-MuiDialog-container
+  > div {
+  background: url("./images/create-recipe.jpg") !important;
+  background-size: cover !important;
   background-repeat: no-repeat !important;
   background-attachment: fixed !important;
   height: 750px !important; /* Adjust height as needed */
   border-radius: 50px !important;
+}
+.card__number {
+  column-gap: 15px;
+  display: flex;
+}
+.card__number input {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 1rem;
+  padding-right: 2.5rem;
+  border-width: 1px;
+  border-radius: 20px;
+  width: 22%;
+  padding: 2px 5px;
+  text-align: center;
+  background-color: #000000;
+  border-color: #1fb137;
+  color: #1fb137;
 }

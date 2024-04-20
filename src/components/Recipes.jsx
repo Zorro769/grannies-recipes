@@ -31,7 +31,7 @@ const Recipes = () => {
   const [loading, setLoading] = useState(false);
   const [recipeLoading, setRecipeLoading] = useState(false);
   const [itemsCount, setItemsCount] = useState(5);
-  const [openDialog, setOpenDialog] = useState(false);
+  const [openDialog, setOpenDialog] = useState(true);
   const [favourites, setFavourites] = useState([]);
   const [infoDialog, setInfoDialog] = useState(false);
   const [filterDialog, setFilterDialog] = useState(false);
@@ -128,7 +128,7 @@ const Recipes = () => {
   const scrollToElement = async () => {
     const { current } = recipesRef;
     if (current !== null) {
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));//Check if it is neccessary
       current.scrollIntoView({ behavior: "smooth" });
     }
   };

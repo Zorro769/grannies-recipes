@@ -38,7 +38,7 @@ const Navbar = ({ loginOpened }) => {
   const showLoginDialog = location.state?.showLoginDialog;
 
   useEffect(() => {
-    loadCurrencyAndLanguage();
+    // loadCurrencyAndLanguage();
 
     if (showLoginDialog) {
       setLoginOpenDialog(true);
@@ -320,7 +320,9 @@ const Navbar = ({ loginOpened }) => {
         PaperProps={{ style: { height: "100px", borderradius: "50%" } }}
       >
         <InfoDialog
-          reload={() => {window.location.reload(false)}}
+          reload={() => {
+            window.location.reload(false);
+          }}
           info={"You have been logged out successfully"}
           onClose={closeDialog}
         />

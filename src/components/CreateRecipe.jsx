@@ -1,6 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-import BackGround from "../images/create-recipe.jpg";
-import { cuisines, dishTypes, diets } from "../utils/recipeData";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import InfoDialog from "./InfoDialog";
 import Dialog from "@mui/material/Dialog";
@@ -9,23 +7,26 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Select from "react-select";
 import colorStyle from "../utils/styleReactSelect";
 import Loading from "./Loading";
-import Header from "../components/Header";
 
 const CreateRecipe = ({ onClose }) => {
   const axiosPrivate = useAxiosPrivate();
   const [errMsg, setErrMsg] = useState("");
-  const [name, setName] = useState("");
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [ingredients, setIngredients] = useState([{ original: "" }]);
-  const [cuisines, setCuisine] = useState([]);
-  const [dishType, setDishType] = useState("");
-  const [diet, setDiet] = useState("");
-  const [totalMin, setTotalMin] = useState("");
-  const [instructions, setInstructions] = useState("");
   const [infoDialog, setInfoDialog] = useState(false);
   const [uploadedData, setUploadedData] = useState();
   const [info, setInfo] = useState("");
   const [loading, setLoading] = useState(true);
+  const [payment, setPayment] = useState(false);
+
+  const [name, setName] = useState("");
+  const [cuisines, setCuisine] = useState([]);
+  const [dishType, setDishType] = useState("");
+  const [diet, setDiet] = useState("");
+  const [totalMin, setTotalMin] = useState("");
+  const [ingredients, setIngredients] = useState([{ original: "" }]);
+  const [instructions, setInstructions] = useState("");
+  const [stripeID, setStripeID] = useState();
+  const [price, setPrice] = useState(0);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const fileInputRef = useRef(null);
 
@@ -38,7 +39,6 @@ const CreateRecipe = ({ onClose }) => {
     setInfoDialog(false);
     // onClose();
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
@@ -60,6 +60,8 @@ const CreateRecipe = ({ onClose }) => {
     formData.append("instructions", instructions);
     formData.append("readyInMinutes", totalMin);
     formData.append("diets", JSON.stringify(diet));
+    formData.append("stripeAccountId", stripeID);
+    formData.append("price", price);
 
     if (selectedFile) {
       formData.append("image", selectedFile);
@@ -71,17 +73,13 @@ const CreateRecipe = ({ onClose }) => {
           "Content-Type": "multipart/form-data",
         },
       });
+      console.log(response);
       setInfoDialog(true);
       setInfo("Your recipe has been successfully created");
     } catch (error) {
       setInfoDialog(true);
       setInfo("You need to be logged in first");
     }
-  };
-
-  const handleFileChange = (e) => {
-    setSelectedFile(e.target.files[0]);
-    console.log(e.target.files[0]);
   };
 
   const handleIngredientChange = (index, value) => {
@@ -101,10 +99,7 @@ const CreateRecipe = ({ onClose }) => {
 
     setIngredients(filteredIngredients);
   };
-  const handleCuisinesChange = (option) => {
-    setCuisine(option);
-    console.log(option);
-  };
+
   useEffect(() => {
     uploadingDietsDishTypesCuisines();
   }, []);
@@ -129,7 +124,7 @@ const CreateRecipe = ({ onClose }) => {
               </span>
               <form
                 onSubmit={handleSubmit}
-                className="text-left w-[340px] mt-10 py-5"
+                className="text-[#1FB137] text-left w-[340px] mt-10 py-5"
               >
                 <label className="text-[#1FB137] text-base font-bold ">
                   Name of recipe:
@@ -150,7 +145,7 @@ const CreateRecipe = ({ onClose }) => {
                     isMulti
                     isClearable
                     styles={colorStyle}
-                    onChange={handleCuisinesChange}
+                    onChange={(option) => setCuisine(option)}
                   />
                 </label>
                 <label className="text-[#1FB137] text-base font-bold inline-block mt-5 w-full">
@@ -173,7 +168,6 @@ const CreateRecipe = ({ onClose }) => {
                     onChange={(option) => setDiet(option)}
                   />
                 </label>
-                -
                 <label className="text-[#1FB137] text-base font-bold inline-block mt-5 w-full">
                   Total time(in min):
                   <br />
@@ -193,10 +187,9 @@ const CreateRecipe = ({ onClose }) => {
                 {ingredients.map((ingredient, index) => (
                   <div
                     key={index}
-                    className="text-[#1FB137] text-base font-bold w-full radio-container"
+                    className="text-[#1FB137] text-base font-bold w-full radio-container py-0"
                   >
-                    <label className="inline-block w-full">
-                      <br />
+                    <label className="inline-block w-full mb-5">
                       <input
                         type="text"
                         placeholder="Enter ingredient"
@@ -213,7 +206,6 @@ const CreateRecipe = ({ onClose }) => {
                 <span className="text-[#1FB137] text-base font-bold inline-block mt-5 w-full radio-container">
                   Instructions
                 </span>
-                <br />
                 <textarea
                   placeholder="Enter instructions"
                   name="dishType"
@@ -221,14 +213,62 @@ const CreateRecipe = ({ onClose }) => {
                   className="border-[#1FB137] text-[#1FB137] bg-black border w-full py-2 pl-4 pr-10 resize-none"
                   style={{ height: "200px" }}
                 />
+                <label className="text-[#1FB137] text-base font-bold inline-block w-full radio-container mt-5">
+                  <input
+                    type="radio"
+                    name="payment"
+                    value="free"
+                    className="radio-input"
+                    onChange={(e) => setPayment(false)}
+                  />
+                  <span className="label-text">Free</span>
+                </label>
                 <label className="text-[#1FB137] text-base font-bold inline-block mt-2 w-full radio-container">
+                  <input
+                    type="radio"
+                    name="payment"
+                    value="paid"
+                    className="radio-input"
+                    onChange={(e) => setPayment(true)}
+                  />
+                  <span className="label-text">Paid</span>
+                </label>
+                {payment && (
+                  <>
+                    <label className="text-[#1FB137] text-base font-bold inline-block w-full mt-5">
+                      Stripe ID:
+                      <br />
+                      <input
+                        type="text"
+                        name="stripe-id"
+                        placeholder="Your stripe accound ID"
+                        required
+                        maxLength={50}
+                        className=" border-[#1FB137] bg-black border w-full py-2 pl-4 pr-10"
+                        onChange={(e) => setStripeID(e.target.value)}
+                      />
+                    </label>
+                    <label className="text-[#1FB137] text-base font-bold inline-block w-full mt-5">
+                      Price:
+                      <br />
+                      <input
+                        type="number"
+                        name="price"
+                        placeholder="Price for the recipe"
+                        required
+                        className="border-[#1FB137] bg-black border w-full py-2 pl-4 pr-10"
+                        onChange={(e) => setPrice(e.target.value)}
+                      />
+                    </label>
+                  </>
+                )}
+                <label className="text-[#1FB137] text-base font-bold inline-block mt-5 w-full radio-container">
                   Pick an image
                 </label>
-                <br />
                 <input
                   type="file"
                   name="image"
-                  onChange={handleFileChange}
+                  onChange={(e) => setSelectedFile(e.target.files[0])}
                   className="hidden"
                   ref={fileInputRef}
                   id="fileInput"
