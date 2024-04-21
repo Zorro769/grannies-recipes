@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { fetchRecipe, fetchRecommendRecipes } from "../utils";
 import Loading from "../components/Loading";
 import Header from "../components/Header";
+import axios from "axios";
 
 import { AiFillPushpin } from "react-icons/ai";
 import RecipeCard from "../components/RecipeCard";
@@ -25,6 +26,15 @@ const RecipeDetail = () => {
       recipesRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [loading]);
+  const handlePayment = async () => {
+    const response = await axios.get(
+      `${
+        process.env.REACT_APP_SERVER_URL
+      }/recipes/${id}/create-checkout-session?language=${localStorage.getItem(
+        "language"
+      )}&currency=${localStorage.getItem("currencyCode")}`
+    );
+  };
   useEffect(() => {
     const getRecipe = async () => {
       try {
@@ -131,26 +141,17 @@ const RecipeDetail = () => {
           <p className="text-green-500 text-2xl underline mt-10">
             Instructions
           </p>
-          <ol className="text-white text-xl">
-            {recipe?.instructions.length > 0
-              ? !containsLI
-                ? recipe?.instructions?.split(".").map((item, index) => {
-                    const cleanedInstruction = item.trim();
-                    if (cleanedInstruction !== "") {
-                      return (
-                        <li key={index} className="flex items-center mt-5">
-                          <div className="h-full inline-block">
-                            <AiFillPushpin className="text-green-800  mr-2 inline-block" />
-                          </div>
-                          <div className="h-full inline-block">
-                            {cleanedInstruction}
-                          </div>
-                        </li>
-                      );
-                    }
-                    return null;
-                  })
-                : recipe?.instructions
+          <ol className="relative">
+            <div
+              className={
+                recipe?.paymentStatus
+                  ? "text-white text-xl"
+                  : "absolute top-0 left-0 w-full h-full text-white bg-gradient-to-b from-transparent to-50% to-black"
+              }
+            ></div>
+            {recipe?.instructions?.length > 0 &&
+              (containsLI
+                ? recipe?.instructions
                     .split(/\n|<\/li>|<\/ol>|<\/p>|<p>/)
                     .map((item, index) => {
                       const cleanedInstruction = item
@@ -162,7 +163,7 @@ const RecipeDetail = () => {
                             <div className="h-full inline-block">
                               <AiFillPushpin className="text-green-800 text-xl mr-2 inline-block" />
                             </div>
-                            <div className="h-full inline-block">
+                            <div className="h-full text-white inline-block">
                               {cleanedInstruction}
                             </div>
                           </li>
@@ -170,8 +171,29 @@ const RecipeDetail = () => {
                       }
                       return null;
                     })
-              : console.log()}
+                : recipe?.instructions.split(".").map((item, index) => {
+                    const cleanedInstruction = item.trim();
+                    if (cleanedInstruction !== "") {
+                      return (
+                        <li key={index} className="flex items-center mt-5">
+                          <div className="h-full inline-block">
+                            <AiFillPushpin className="text-green-800 mr-2 inline-block" />
+                          </div>
+                          <div className="h-full inline-block">
+                            {cleanedInstruction}
+                          </div>
+                        </li>
+                      );
+                    }
+                    return null;
+                  }))}
           </ol>
+          <button
+            onClick={handlePayment}
+            className="bg-[#166534] w-[150px] text-center p-3 rounded-3xl text-white text-xl "
+          >
+            Buy a recipe
+          </button>
           <div className="w-full pr-1 mt-10">
             <div className="flex flex-col gap-5"></div>
             {recipes?.length > 0 && (

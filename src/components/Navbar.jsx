@@ -38,7 +38,7 @@ const Navbar = ({ loginOpened }) => {
   const showLoginDialog = location.state?.showLoginDialog;
 
   useEffect(() => {
-    // loadCurrencyAndLanguage();
+    loadCurrencyAndLanguage();
 
     if (showLoginDialog) {
       setLoginOpenDialog(true);

@@ -60,8 +60,10 @@ const CreateRecipe = ({ onClose }) => {
     formData.append("instructions", instructions);
     formData.append("readyInMinutes", totalMin);
     formData.append("diets", JSON.stringify(diet));
-    formData.append("stripeAccountId", stripeID);
-    formData.append("price", price);
+    if (stripeID !== undefined && price !== 0) {
+        formData.append("stripeAccountId", stripeID);
+        formData.append("price", price);
+    }
 
     if (selectedFile) {
       formData.append("image", selectedFile);
