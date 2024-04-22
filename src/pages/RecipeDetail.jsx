@@ -27,13 +27,15 @@ const RecipeDetail = () => {
     }
   }, [loading]);
   const handlePayment = async () => {
-    const response = await axios.get(
+    const response = await axiosPrivate.get(
       `${
         process.env.REACT_APP_SERVER_URL
       }/recipes/${id}/create-checkout-session?language=${localStorage.getItem(
         "language"
       )}&currency=${localStorage.getItem("currencyCode")}`
     );
+    console.log(response.data);
+    window.location.replace(`${response.data}`);
   };
   useEffect(() => {
     const getRecipe = async () => {

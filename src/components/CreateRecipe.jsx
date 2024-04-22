@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import InfoDialog from "./InfoDialog";
 import Dialog from "@mui/material/Dialog";
@@ -17,18 +18,21 @@ const CreateRecipe = ({ onClose }) => {
   const [loading, setLoading] = useState(true);
   const [payment, setPayment] = useState(false);
 
-  const [name, setName] = useState("");
-  const [cuisines, setCuisine] = useState([]);
-  const [dishType, setDishType] = useState("");
-  const [diet, setDiet] = useState("");
-  const [totalMin, setTotalMin] = useState("");
-  const [ingredients, setIngredients] = useState([{ original: "" }]);
-  const [instructions, setInstructions] = useState("");
   const [stripeID, setStripeID] = useState();
   const [price, setPrice] = useState(0);
   const [selectedFile, setSelectedFile] = useState(null);
 
   const fileInputRef = useRef(null);
+
+  const { register, control, handleSubmit } = useForm({
+    defaultValues: {
+      extendedIngredients: [{ original: "" }],
+    },
+  });
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "extendedIngredients",
+  });
 
   const uploadingDietsDishTypesCuisines = async () => {
     const data = await axiosPrivate.get("/recipes/data");
@@ -39,30 +43,23 @@ const CreateRecipe = ({ onClose }) => {
     setInfoDialog(false);
     // onClose();
   };
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
     const formData = new FormData();
 
-    const serializedIngredients = ingredients
-      .filter(
-        (ingredient) =>
-          ingredient && ingredient.original && ingredient.original.trim() !== ""
-      )
-      .map((ingredient) => ({ original: ingredient.original }));
-
+    formData.append("title", data.title);
+    formData.append("cuisines", JSON.stringify(data.cuisines));
+    formData.append("dishTypes", JSON.stringify(data.dishtype));
+    formData.append("diets", JSON.stringify(data.diet));
+    formData.append("instructions", data.instructions);
     formData.append(
       "extendedIngredients",
-      JSON.stringify(serializedIngredients)
+      JSON.stringify(data.extendedIngredients)
     );
-    formData.append("title", name);
-    formData.append("cuisines", JSON.stringify(cuisines));
-    formData.append("dishTypes", JSON.stringify(dishType));
-    formData.append("instructions", instructions);
-    formData.append("readyInMinutes", totalMin);
-    formData.append("diets", JSON.stringify(diet));
+    formData.append("readyInMinutes", data.totalmin);
+
     if (stripeID !== undefined && price !== 0) {
-        formData.append("stripeAccountId", stripeID);
-        formData.append("price", price);
+      formData.append("stripeAccountId", stripeID);
+      formData.append("price", price);
     }
 
     if (selectedFile) {
@@ -75,31 +72,12 @@ const CreateRecipe = ({ onClose }) => {
           "Content-Type": "multipart/form-data",
         },
       });
-      console.log(response);
       setInfoDialog(true);
       setInfo("Your recipe has been successfully created");
     } catch (error) {
       setInfoDialog(true);
       setInfo("You need to be logged in first");
     }
-  };
-
-  const handleIngredientChange = (index, value) => {
-    const newIngredients = [...ingredients];
-    newIngredients[index] = value ? { original: value } : null;
-
-    const filteredIngredients = newIngredients.filter(
-      (ingredient) =>
-        ingredient !== null &&
-        ingredient !== undefined &&
-        ingredient.original !== undefined
-    );
-
-    if (index === newIngredients.length - 1 && value.trim() !== "") {
-      filteredIngredients.push({ original: "" });
-    }
-
-    setIngredients(filteredIngredients);
   };
 
   useEffect(() => {
@@ -125,49 +103,64 @@ const CreateRecipe = ({ onClose }) => {
                 Granny's<span className="text-[#166534] text-2xl">Recipes</span>
               </span>
               <form
-                onSubmit={handleSubmit}
+                onSubmit={handleSubmit(onSubmit)}
                 className="text-[#1FB137] text-left w-[340px] mt-10 py-5"
               >
                 <label className="text-[#1FB137] text-base font-bold ">
                   Name of recipe:
                   <br />
                   <input
-                    type="name"
-                    name="name"
-                    id="name"
+                    {...register("title")}
                     placeholder="Enter title of recipe"
                     className=" border-[#1FB137] bg-black border w-full py-2 pl-4 pr-10"
-                    onChange={(e) => setName(e.target.value)}
                   />
                 </label>
                 <label className="text-[#1FB137] text-base font-bold inline-block mt-5 w-full">
                   Cuisine type:
-                  <Select
-                    options={uploadedData?.data?.cuisines}
-                    isMulti
-                    isClearable
-                    styles={colorStyle}
-                    onChange={(option) => setCuisine(option)}
+                  <Controller
+                    name="cuisines"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        options={uploadedData?.data?.cuisines}
+                        isMulti
+                        isClearable
+                        styles={colorStyle}
+                      />
+                    )}
                   />
                 </label>
                 <label className="text-[#1FB137] text-base font-bold inline-block mt-5 w-full">
                   Dish type:
-                  <Select
-                    options={uploadedData?.data?.dishTypes}
-                    isMulti
-                    isClearable
-                    styles={colorStyle}
-                    onChange={(option) => setDishType(option)}
+                  <Controller
+                    name="dishtype"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        options={uploadedData?.data?.dishTypes}
+                        isMulti
+                        isClearable
+                        styles={colorStyle}
+                      />
+                    )}
                   />
                 </label>
                 <label className="text-[#1FB137] text-base font-bold inline-block mt-5 w-full">
                   Diet:
-                  <Select
-                    options={uploadedData?.data?.diets}
-                    isMulti
-                    isClearable
-                    styles={colorStyle}
-                    onChange={(option) => setDiet(option)}
+                  <Controller
+                    name="diet"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        options={uploadedData?.data?.diets}
+                        isMulti
+                        isClearable
+                        styles={colorStyle}
+                      />
+                    )}
                   />
                 </label>
                 <label className="text-[#1FB137] text-base font-bold inline-block mt-5 w-full">
@@ -177,51 +170,56 @@ const CreateRecipe = ({ onClose }) => {
                     type="number"
                     placeholder="Enter total time"
                     onWheel={(e) => e.target.blur()}
-                    name="time"
-                    id="time"
+                    {...register("totalmin")}
                     className=" border-[#1FB137] bg-black border w-full py-2 pl-4 pr-10"
-                    onChange={(e) => setTotalMin(e.target.value)}
                   />
                 </label>
                 <span className="text-[#1FB137] text-base font-bold inline-block mt-5 w-full radio-container">
                   Ingredients
                 </span>
-                {ingredients.map((ingredient, index) => (
-                  <div
-                    key={index}
-                    className="text-[#1FB137] text-base font-bold w-full radio-container py-0"
-                  >
-                    <label className="inline-block w-full mb-5">
-                      <input
-                        type="text"
-                        placeholder="Enter ingredient"
-                        value={ingredient.original}
-                        className="text-[#1FB137] text-base border-[#1FB137] bg-black border w-full py-2 pl-4 pr-10"
-                        onChange={(e) =>
-                          handleIngredientChange(index, e.target.value)
-                        }
-                      />
-                    </label>
-                    <br />
-                  </div>
-                ))}
+                <ul>
+                  {fields.map((field, index) => {
+                    return (
+                      <li key={field.id}>
+                        <input
+                          {...register(`extendedIngredients.${index}.original`)}
+                          className=" border-[#1FB137] bg-black border w-4/6 py-2 pl-4 pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => remove(index)}
+                          className="bg-[#166534] rounded-3xl text-white text-2xl text-center cursor-pointer inline-block ml-3 px-2 py-1"
+                        >
+                          Delete
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+                <button
+                  type="button"
+                  onClick={() => {
+                    append({ original: "" });
+                  }}
+                  className="bg-[#166534] rounded-3xl text-white text-xl text-center cursor-pointer inline-block mt-2 px-4 py-1"
+                >
+                  Append
+                </button>
                 <span className="text-[#1FB137] text-base font-bold inline-block mt-5 w-full radio-container">
                   Instructions
                 </span>
                 <textarea
                   placeholder="Enter instructions"
-                  name="dishType"
-                  onChange={(e) => setInstructions(e.target.value)}
-                  className="border-[#1FB137] text-[#1FB137] bg-black border w-full py-2 pl-4 pr-10 resize-none"
-                  style={{ height: "200px" }}
+                  {...register("instructions")}
+                  className="border-[#1FB137] h-[200px] text-[#1FB137] bg-black border w-full py-2 pl-4 pr-10 resize-none"
                 />
                 <label className="text-[#1FB137] text-base font-bold inline-block w-full radio-container mt-5">
                   <input
                     type="radio"
                     name="payment"
-                    value="free"
+                    checked
                     className="radio-input"
-                    onChange={(e) => setPayment(false)}
+                    onChange={() => setPayment(false)}
                   />
                   <span className="label-text">Free</span>
                 </label>
@@ -229,13 +227,12 @@ const CreateRecipe = ({ onClose }) => {
                   <input
                     type="radio"
                     name="payment"
-                    value="paid"
                     className="radio-input"
-                    onChange={(e) => setPayment(true)}
+                    onChange={() => setPayment(true)}
                   />
                   <span className="label-text">Paid</span>
                 </label>
-                {payment && (
+                {/* {payment && (
                   <>
                     <label className="text-[#1FB137] text-base font-bold inline-block w-full mt-5">
                       Stripe ID:
@@ -263,7 +260,7 @@ const CreateRecipe = ({ onClose }) => {
                       />
                     </label>
                   </>
-                )}
+                )} */}
                 <label className="text-[#1FB137] text-base font-bold inline-block mt-5 w-full radio-container">
                   Pick an image
                 </label>

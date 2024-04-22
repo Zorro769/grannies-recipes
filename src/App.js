@@ -5,6 +5,7 @@ import Favourites from './components/Favourites.jsx';
 import MyRecipes from './components/MyRecipes.jsx';
 import Home from "./pages/Home";
 import CreateRecipe from './components/CreateRecipe';
+import Checkout from './components/RecipeInstructions.jsx'
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path='favourites' element={<Favourites/>}/>
           <Route path='myrecipes' element={<MyRecipes/>}/>
           <Route path='createrecipe' element={<CreateRecipe/>}/>
+          <Route path='text' element={<Checkout/>}/>
           <Route path='recipes/:id' >
             <Route index element={<RecipeDetail/>}/>
           </Route>

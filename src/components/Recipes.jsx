@@ -128,7 +128,7 @@ const Recipes = () => {
   const scrollToElement = async () => {
     const { current } = recipesRef;
     if (current !== null) {
-      await new Promise((resolve) => setTimeout(resolve, 0));//Check if it is neccessary
+      await new Promise((resolve) => setTimeout(resolve, 0)); //Check if it is neccessary
       current.scrollIntoView({ behavior: "smooth" });
     }
   };
@@ -177,11 +177,10 @@ const Recipes = () => {
   };
   useEffect((e) => {
     localStorage.setItem("language", i18n.language.toLowerCase());
-    setLoading(true);
+    // setLoading(true);
 
     if (queryParams.get("query")) {
       setQuery(queryParams.get("query"));
-      console.log("hello");
       handleSearchedRecipe(e, currentPage);
     } else {
       fetchRecipe();

@@ -82,7 +82,6 @@ const Navbar = ({ loginOpened }) => {
   };
 
   const handleDialogClose = () => {
-    console.log("Hello");
     setRegisterOpenDialog(false);
     setLoginOpenDialog(false);
     setFavouriteOpenDialog(false);

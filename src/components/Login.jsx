@@ -33,7 +33,6 @@ const Login = ({ onClose, handleButtonClick }) => {
     }
   };
   const handleDialogClose = () => {
-    console.log("Hello2");
     onClose();
     setRegDialog(false);
     setLoading(false);

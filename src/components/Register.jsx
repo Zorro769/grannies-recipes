@@ -15,7 +15,6 @@ const Register = (props) => {
   const [infoDialog, setInfoDialog] = useState(false);
 
   const closeDialog = () => {
-    console.log("Hello");
     setInfoDialog(false);
     props.onClose();
   };
