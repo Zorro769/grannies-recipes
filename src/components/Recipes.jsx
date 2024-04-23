@@ -31,8 +31,7 @@ const Recipes = () => {
   const [loading, setLoading] = useState(false);
   const [recipeLoading, setRecipeLoading] = useState(false);
   const [itemsCount, setItemsCount] = useState(5);
-  const [openDialog, setOpenDialog] = useState(true);
-  const [favourites, setFavourites] = useState([]);
+  const [openDialog, setOpenDialog] = useState(false);
   const [infoDialog, setInfoDialog] = useState(false);
   const [filterDialog, setFilterDialog] = useState(false);
   const [recipeFlag, setRecipeFlag] = useState("random");
@@ -44,7 +43,6 @@ const Recipes = () => {
     { value: ["time", "asc"], label: "Less Time" },
     { value: ["time", "desc"], label: "Most Time" },
   ];
-  const [sort, setSort] = useState(true);
   const [sortType, setSortType] = useState();
   const navigate = useNavigate();
   const location = useLocation();
@@ -56,8 +54,6 @@ const Recipes = () => {
     }
   }, [loading]);
   const handleFilterSubmit = async (e, page = 1) => {
-    console.log(page);
-    const formData = new FormData();
     setRecipeFlag("filter");
     setLoading(true);
     const response = await fetchRecipes({
@@ -144,11 +140,12 @@ const Recipes = () => {
   };
   const handleSearchedRecipe = async (e, page) => {
     try {
+      console.log('hello');
       setSortType(sorts[0]);
       setLoading(true);
       handleSearchTypeChanged();
       setRecipeFlag("search");
-      e.preventDefault();
+      e?.preventDefault();
       const data = await fetchRecipes({ query, page });
       setRecipes(data?.results);
       setItemsCount(Math.ceil(data?.totalItems / 20));
