@@ -8,7 +8,7 @@ import colorStyle from "../utils/styleReactSelect";
 
 const Filter = (props) => {
   const [uploadedData, setUploadedData] = useState([]);
-
+  const { queryParams, set } = props;
   // const [cuisines, setCuisine] = useState([]);
   // const [dishType, setDishType] = useState("");
   // const [diet, setDiet] = useState("");
@@ -19,10 +19,10 @@ const Filter = (props) => {
     setUploadedData(data.data);
   };
   useEffect(() => {
-    props.setCuisine("");
-    props.setDiet("");
-    props.setMaxReadyTime();
-    props.setDishType("");
+    // props.setCuisine("");
+    // props.setDiet("");
+    // props.setMaxReadyTime();
+    // props.setDishType("");
     uploadingDietsDishTypesCuisines();
   }, []);
   return (
@@ -30,7 +30,7 @@ const Filter = (props) => {
       <div className="flex justify-end">
         <IoMdClose
           className="cursor-pointer text-gray-600 text-xl"
-          onClick={props.onClose}
+          onClick={() => props.onClose()}
         />
       </div>
 
@@ -75,6 +75,7 @@ const Filter = (props) => {
             onWheel={(e) => e.target.blur()}
             name="time"
             id="time"
+            value={props.maxReadyTime}
             className=" border-[#1FB137] bg-black border w-full py-2 pl-4 pr-10"
             onChange={(e) => props.setMaxReadyTime(e.target.value)}
           />

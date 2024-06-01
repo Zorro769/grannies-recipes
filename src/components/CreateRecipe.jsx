@@ -51,16 +51,13 @@ const CreateRecipe = ({ onClose }) => {
     formData.append("dishTypes", JSON.stringify(data.dishtype));
     formData.append("diets", JSON.stringify(data.diet));
     formData.append("instructions", data.instructions);
+    console.log(data);
+    if (payment) formData.append("price", data.price);
     formData.append(
       "extendedIngredients",
       JSON.stringify(data.extendedIngredients)
     );
     formData.append("readyInMinutes", data.totalmin);
-
-    if (stripeID !== undefined && price !== 0) {
-      formData.append("stripeAccountId", stripeID);
-      formData.append("price", price);
-    }
 
     if (selectedFile) {
       formData.append("image", selectedFile);
@@ -217,7 +214,7 @@ const CreateRecipe = ({ onClose }) => {
                   <input
                     type="radio"
                     name="payment"
-                    checked
+                    checked={!payment}
                     className="radio-input"
                     onChange={() => setPayment(false)}
                   />
@@ -227,40 +224,27 @@ const CreateRecipe = ({ onClose }) => {
                   <input
                     type="radio"
                     name="payment"
+                    checked={payment}
                     className="radio-input"
                     onChange={() => setPayment(true)}
                   />
                   <span className="label-text">Paid</span>
                 </label>
-                {/* {payment && (
-                  <>
-                    <label className="text-[#1FB137] text-base font-bold inline-block w-full mt-5">
-                      Stripe ID:
-                      <br />
-                      <input
-                        type="text"
-                        name="stripe-id"
-                        placeholder="Your stripe accound ID"
-                        required
-                        maxLength={50}
-                        className=" border-[#1FB137] bg-black border w-full py-2 pl-4 pr-10"
-                        onChange={(e) => setStripeID(e.target.value)}
-                      />
-                    </label>
-                    <label className="text-[#1FB137] text-base font-bold inline-block w-full mt-5">
-                      Price:
-                      <br />
-                      <input
-                        type="number"
-                        name="price"
-                        placeholder="Price for the recipe"
-                        required
-                        className="border-[#1FB137] bg-black border w-full py-2 pl-4 pr-10"
-                        onChange={(e) => setPrice(e.target.value)}
-                      />
-                    </label>
-                  </>
-                )} */}
+                {payment ? (
+                  <label className="text-[#1FB137] text-base font-bold inline-block w-full mt-5">
+                    Price:
+                    <br />
+                    <input
+                      type="number"
+                      name="price"
+                      placeholder="Price for the recipe"
+                      required
+                      className="border-[#1FB137] bg-black border w-full py-2 pl-4 pr-10"
+                      {...register("price")}
+                    />
+                  </label>
+                ) : null}
+
                 <label className="text-[#1FB137] text-base font-bold inline-block mt-5 w-full radio-container">
                   Pick an image
                 </label>

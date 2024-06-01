@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { fetchRecipe, fetchRecommendRecipes } from "../utils";
 import Loading from "../components/Loading";
 import Header from "../components/Header";
@@ -15,6 +15,7 @@ const RecipeDetail = () => {
   const [loading, setLoading] = useState(false);
   const [containsLI, setContainsLI] = useState(false);
   const axiosPrivate = useAxiosPrivate();
+  const navigate = useNavigate();
   const recipesRef = useRef();
   const { id } = useParams();
   const containsLIValue =
@@ -27,15 +28,16 @@ const RecipeDetail = () => {
     }
   }, [loading]);
   const handlePayment = async () => {
-    const response = await axiosPrivate.get(
+    const response = await axiosPrivate.post(
       `${
         process.env.REACT_APP_SERVER_URL
-      }/recipes/${id}/create-checkout-session?language=${localStorage.getItem(
-        "language"
-      )}&currency=${localStorage.getItem("currencyCode")}`
+      }/recipes/create-payment-intent?currency=${localStorage.getItem(
+        "currencyCode"
+      )}`,
+      { recipeId: id }
     );
-    console.log(response.data);
-    window.location.replace(`${response.data}`);
+    const clientSecret = response.data;
+    navigate("/payment", { state: { clientSecret } });
   };
   useEffect(() => {
     const getRecipe = async () => {
@@ -90,7 +92,7 @@ const RecipeDetail = () => {
           </div>
 
           <div className="flex flex-col justify-center">
-            <span className="text-white text-center border border-gray-500 py-1.5 rounded-full mb-2">
+            <span className="text-white text-center border border-gray-500 py-1.5 rounded-full mb-2 p-2">
               {recipe?.readyInMinutes}
             </span>
             <p className="text-neutral-100 text-[12px] md:text-md">
@@ -143,12 +145,12 @@ const RecipeDetail = () => {
           <p className="text-green-500 text-2xl underline mt-10">
             Instructions
           </p>
-          <ol className="relative">
+          <ol className="relative text-white">
             <div
               className={
-                recipe?.paymentStatus
-                  ? "text-white text-xl"
-                  : "absolute top-0 left-0 w-full h-full text-white bg-gradient-to-b from-transparent to-50% to-black"
+                recipe?.paymentStatus !== false || !recipe?.paymentStatus
+                  ? " text-xl"
+                  : "absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-50% to-black"
               }
             ></div>
             {recipe?.instructions?.length > 0 &&
@@ -190,12 +192,15 @@ const RecipeDetail = () => {
                     return null;
                   }))}
           </ol>
-          <button
-            onClick={handlePayment}
-            className="bg-[#166534] w-[150px] text-center p-3 rounded-3xl text-white text-xl "
-          >
-            Buy a recipe
-          </button>
+          {recipe?.paymentStatus == false && (
+            <button
+              onClick={handlePayment}
+              className="bg-[#166534] w-[150px] text-center p-3 rounded-3xl text-white text-xl "
+            >
+              Buy a recipe
+            </button>
+          )}
+
           <div className="w-full pr-1 mt-10">
             <div className="flex flex-col gap-5"></div>
             {recipes?.length > 0 && (

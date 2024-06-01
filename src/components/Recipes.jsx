@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, { useEffect, useState, useRef, useCallback } from "react";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { BiSearchAlt2 } from "react-icons/bi";
 import { FaFilter } from "react-icons/fa";
 import Pagination from "@mui/material/Pagination";
@@ -8,33 +8,36 @@ import colorStyle from "../utils/styleReactSelect";
 
 import Loading from "./Loading";
 import RecipeCard from "./RecipeCard";
-import { fetchRandomRecipes, fetchRecipes, fetchSortedRecipe } from "../utils";
+import {
+  fetchRandomRecipes,
+  fetchRecipes,
+} from "../utils";
 import CreateRecipe from "./CreateRecipe";
 import Dialog from "@mui/material/Dialog";
 import InfoDialog from "./InfoDialog";
 import Filter from "./Filter";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import usePersistState from "../hooks/usePersistState";
 import i18n from "../i18n/i18n";
 
 const Recipes = () => {
   const recipesRef = useRef(null);
+  const prevCountRef = useRef(false);
   const axiosPrivate = useAxiosPrivate();
-
-  const [cuisine, setCuisine] = useState("");
-  const [type, setDishType] = useState("");
-  const [diet, setDiet] = useState("");
-  const [maxReadyTime, setMaxReadyTime] = useState();
-  const [shouldScroll, setShouldScroll] = useState(false);
+  const [cuisine, setCuisine] = usePersistState("cuisine", "");
+  const [type, setDishType] = usePersistState("type", "");
+  const [diet, setDiet] = usePersistState("diet", "");
+  const [maxReadyTime, setMaxReadyTime] = usePersistState("maxReadyTime", 1000);
   const [recipes, setRecipes] = useState([]);
-  const [query, setQuery] = useState("Dessert,Vegan");
-  const [page, setPage] = useState(1);
+  const [query, setQuery] = usePersistState("query", "");
+  const [page, setPage] = usePersistState("page", 1);
   const [loading, setLoading] = useState(false);
   const [recipeLoading, setRecipeLoading] = useState(false);
   const [itemsCount, setItemsCount] = useState(5);
   const [openDialog, setOpenDialog] = useState(false);
   const [infoDialog, setInfoDialog] = useState(false);
   const [filterDialog, setFilterDialog] = useState(false);
-  const [recipeFlag, setRecipeFlag] = useState("random");
+  const isInitialMount = useRef(false);
 
   const sorts = [
     { value: ["popularity", "desc"], label: "Most Popular" },
@@ -43,78 +46,60 @@ const Recipes = () => {
     { value: ["time", "asc"], label: "Less Time" },
     { value: ["time", "desc"], label: "Most Time" },
   ];
-  const [sortType, setSortType] = useState();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const currentPage = parseInt(queryParams.get("page")) || 1;
+  const [sortType, setSortType] = usePersistState("sort", sorts[0]);
+
   useEffect(() => {
     if (!loading && recipesRef.current) {
       recipesRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [loading]);
-  const handleFilterSubmit = async (e, page = 1) => {
-    setRecipeFlag("filter");
+  const handleFilterSubmit = async (e) => {
     setLoading(true);
+    if (prevCountRef.current) {
+      setPage(1); 
+      prevCountRef.current = false;
+    }
     const response = await fetchRecipes({
       limit: 10,
+      query: query,
+      sort: sortType,
       type: JSON.stringify(type),
       diet: JSON.stringify(diet),
       cuisine: JSON.stringify(cuisine),
       maxReadyTime: maxReadyTime,
-      page: page,
+      page: page || 1,
     });
     setLoading(false);
     setRecipes(response?.results);
     setItemsCount(Math.ceil(response?.totalItems / 20));
   };
-  const handleChange = (e) => {
-    setQuery(e.target.value);
-  };
 
-  const handlePageChange = (event, value = currentPage) => {
-    setPage(value);
+  useEffect(() => {
     setLoading(true);
+    console.log(sessionStorage.getItem("url") && query != "");
+    if (sessionStorage.getItem("url") && query != "") handleFilterSubmit();
+    else fetchRecipe();
+    scrollToElement();
+  }, [page]);
 
-    switch (recipeFlag) {
-      case "random":
-        fetchRecipe(value);
-        break;
-      case "search":
-        handleSearchedRecipe(event, value);
-        break;
-      case "filter":
-        handleFilterSubmit(event, value);
-        break;
-      case "sort":
-        handleSortTypeChange(sortType, value);
-    }
-
-    const searchParams = new URLSearchParams(location.search);
-    searchParams.set("page", value);
-    navigate({ search: searchParams.toString() });
-  };
   const closeDialog = (reason) => {
     if (reason && reason !== "backdropClick") return;
+    setFilterDialog(false);
     setOpenDialog(false);
     setInfoDialog(false);
-    setFilterDialog(false);
   };
   const openCreateRecipeDialog = () => {
     setOpenDialog(true);
   };
-  const fetchRecipe = async (page) => {
+
+  const fetchRecipe = async () => {
     try {
-      setSortType(sorts[0]);
       setLoading(true);
-      await axiosPrivate.get("/recipes");
-      const data = await fetchRandomRecipes({ page });
+      const data = await fetchRandomRecipes({ page: page });
       setItemsCount(Math.ceil(data?.totalItems / 20));
       setRecipes(data?.results);
-      setShouldScroll(true);
-      await scrollToElement();
     } catch (error) {
-      const data = await fetchRandomRecipes({ page });
+      const data = await fetchRandomRecipes(page);
       setItemsCount(Math.ceil(data?.totalItems / 20));
       setRecipes(data?.results);
       console.log(error);
@@ -128,65 +113,25 @@ const Recipes = () => {
       current.scrollIntoView({ behavior: "smooth" });
     }
   };
-  const handleSearchTypeChanged = () => {
-    const searchParams = new URLSearchParams(location.search);
-    searchParams.set("page", 1);
-    navigate({ search: searchParams.toString() });
-  };
   const handleFilterClick = async () => {
-    handleSearchTypeChanged();
     setFilterDialog(true);
-    // setLoading(true);
   };
-  const handleSearchedRecipe = async (e, page) => {
-    try {
-      console.log('hello');
-      setSortType(sorts[0]);
-      setLoading(true);
-      handleSearchTypeChanged();
-      setRecipeFlag("search");
-      e?.preventDefault();
-      const data = await fetchRecipes({ query, page });
-      setRecipes(data?.results);
-      setItemsCount(Math.ceil(data?.totalItems / 20));
-      setRecipeLoading(false);
-      const queryParams = new URLSearchParams(location.search);
-      queryParams.set("query", query);
-      const currentPage = queryParams.get("query");
-      console.log(currentPage);
-      const newUrl = `${window.location.pathname}?${queryParams.toString()}`;
-      window.history.replaceState(null, null, newUrl);
-    } catch (err) {
-      console.log(err);
+  
+  useEffect(() => {
+    prevCountRef.current = true;
+  }, [query, sortType, maxReadyTime, diet, type, cuisine]);
+  useEffect(() => {
+    if (isInitialMount.current) {
+      handleFilterSubmit();
+      return;
     }
-    setLoading(false);
-  };
-  const handleSortTypeChange = async (option, page) => {
-    setLoading(true);
-    handleSearchTypeChanged();
-    setSortType(option);
-    const response = await fetchSortedRecipe({ value: option, page: page });
-    setRecipeFlag("sort");
-    setRecipes(response?.results);
-    setRecipeLoading(false);
-    setItemsCount(Math.ceil(response?.totalItems / 20));
-    setLoading(false);
-  };
+    isInitialMount.current = true;
+  }, [sortType]);
   useEffect((e) => {
-    localStorage.setItem("language", i18n.language.toLowerCase());
-    // setLoading(true);
-
-    if (queryParams.get("query")) {
-      setQuery(queryParams.get("query"));
-      handleSearchedRecipe(e, currentPage);
-    } else {
-      fetchRecipe();
-    }
-    window.addEventListener("storage", handlePageChange);
-
-    return () => {
-      window.removeEventListener("storage", handlePageChange);
-    };
+    // axiosPrivate.get("/recipes");
+    localStorage.setItem("language", "en");
+    if (sessionStorage.getItem("url") && query != "") handleFilterSubmit();
+    else fetchRecipe();
   }, []);
 
   if (loading) {
@@ -197,20 +142,20 @@ const Recipes = () => {
       <div className="w-full flex items-center justify-center pt-10 pb-5 px-0 md:px-10">
         <form
           className="min-w-[600px] lg:w-2/4"
-          onSubmit={handleSearchedRecipe}
         >
           <div className="relative">
             <input
               type="text"
               placeholder="Eg. Cake, Vegan, Chicken"
-              onChange={handleChange}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
               className="bg-black border border-4 border-gray-800 text-gray-300 text-md rounded-full focus:ring-1 focus:ring-slate-800 focus:border-slate-800 block w-full p-2.5 outline-none px-5 placeholder:text-sm shadow-xl"
             />
 
             <div className="absolute inset-y-0 right-0 flex items-center pr-4 cursor-pointer">
               <BiSearchAlt2
                 className="text-gray-600 text-2xl"
-                onClick={handleSearchedRecipe}
+                onClick={handleFilterSubmit}
               />
             </div>
           </div>
@@ -249,7 +194,7 @@ const Recipes = () => {
               background: "black",
             }),
           }}
-          onChange={(option) => handleSortTypeChange(option)}
+          onChange={(option) => setSortType(option)}
         />
       </div>
       <div
@@ -275,7 +220,7 @@ const Recipes = () => {
                   count={Number(itemsCount)}
                   variant="outlined"
                   shape="rounded"
-                  page={currentPage}
+                  page={page}
                   defaultPage={1}
                   sx={{
                     color: "green",
@@ -295,7 +240,7 @@ const Recipes = () => {
                       },
                     },
                   }}
-                  onChange={handlePageChange}
+                  onChange={(event, value) => setPage(value)}
                 />
               </div>
             </div>
