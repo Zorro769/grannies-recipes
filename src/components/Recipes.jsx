@@ -8,10 +8,7 @@ import colorStyle from "../utils/styleReactSelect";
 
 import Loading from "./Loading";
 import RecipeCard from "./RecipeCard";
-import {
-  fetchRandomRecipes,
-  fetchRecipes,
-} from "../utils";
+import { fetchRandomRecipes, fetchRecipes } from "../utils";
 import CreateRecipe from "./CreateRecipe";
 import Dialog from "@mui/material/Dialog";
 import InfoDialog from "./InfoDialog";
@@ -40,11 +37,13 @@ const Recipes = () => {
   const isInitialMount = useRef(false);
 
   const sorts = [
+    { value: ["", ""], label: "Random" },
     { value: ["popularity", "desc"], label: "Most Popular" },
     { value: ["price", "asc"], label: "Less Price" },
     { value: ["price", "desc"], label: "Most Price" },
     { value: ["time", "asc"], label: "Less Time" },
     { value: ["time", "desc"], label: "Most Time" },
+    
   ];
   const [sortType, setSortType] = usePersistState("sort", sorts[0]);
 
@@ -56,7 +55,7 @@ const Recipes = () => {
   const handleFilterSubmit = async (e) => {
     setLoading(true);
     if (prevCountRef.current) {
-      setPage(1); 
+      setPage(1);
       prevCountRef.current = false;
     }
     const response = await fetchRecipes({
@@ -74,13 +73,7 @@ const Recipes = () => {
     setItemsCount(Math.ceil(response?.totalItems / 20));
   };
 
-  useEffect(() => {
-    setLoading(true);
-    console.log(sessionStorage.getItem("url") && query != "");
-    if (sessionStorage.getItem("url") && query != "") handleFilterSubmit();
-    else fetchRecipe();
-    scrollToElement();
-  }, [page]);
+  
 
   const closeDialog = (reason) => {
     if (reason && reason !== "backdropClick") return;
@@ -116,21 +109,38 @@ const Recipes = () => {
   const handleFilterClick = async () => {
     setFilterDialog(true);
   };
-  
+
   useEffect(() => {
     prevCountRef.current = true;
   }, [query, sortType, maxReadyTime, diet, type, cuisine]);
   useEffect(() => {
-    if (isInitialMount.current) {
-      handleFilterSubmit();
-      return;
-    }
-    isInitialMount.current = true;
-  }, [sortType]);
+    setLoading(true);
+    console.log(sessionStorage.getItem("url") && query != "");
+    if (
+      sessionStorage.getItem("url") &&
+      query.length != 0 ||
+      diet.length != 0 ||
+      cuisine.length != 0 ||
+      type.length != 0 ||
+      sortType.label.length != 0 ||
+      maxReadyTime != 0
+    ) handleFilterSubmit();
+    else fetchRecipe();
+    scrollToElement();
+  }, [page]);
   useEffect((e) => {
     // axiosPrivate.get("/recipes");
     localStorage.setItem("language", "en");
-    if (sessionStorage.getItem("url") && query != "" && diet != "" && cuisine != "" && type != "" && sortType != "") handleFilterSubmit();
+    if (
+      sessionStorage.getItem("url") &&
+      query.length != 0 ||
+      diet.length != 0 ||
+      cuisine.length != 0 ||
+      type.length != 0 ||
+      sortType.label.length != 0 ||
+      maxReadyTime != 0
+    )
+      handleFilterSubmit();
     else fetchRecipe();
   }, []);
 
@@ -140,9 +150,7 @@ const Recipes = () => {
   return (
     <div className="w-full text-center" ref={recipesRef}>
       <div className="w-full flex items-center justify-center pt-10 pb-5 px-0 md:px-10">
-        <form
-          className="min-w-[600px] lg:w-2/4"
-        >
+        <form className="min-w-[600px] lg:w-2/4">
           <div className="relative">
             <input
               type="text"
