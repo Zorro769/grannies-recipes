@@ -42,6 +42,7 @@ const Filter = (props) => {
             options={uploadedData?.cuisines}
             isMulti
             isClearable
+            value={props.cuisine}
             styles={colorStyle}
             onChange={(option) => props.setCuisine(option)}
           />
@@ -52,6 +53,7 @@ const Filter = (props) => {
             options={uploadedData?.dishTypes}
             isMulti
             isClearable
+            value={props.type}
             styles={colorStyle}
             onChange={(option) => props.setDishType(option)}
           />
@@ -62,6 +64,7 @@ const Filter = (props) => {
             options={uploadedData?.diets}
             isMulti
             isClearable
+            value={props.diet}
             styles={colorStyle}
             onChange={(option) => props.setDiet(option)}
           />

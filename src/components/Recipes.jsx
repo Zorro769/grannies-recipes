@@ -130,7 +130,7 @@ const Recipes = () => {
   useEffect((e) => {
     // axiosPrivate.get("/recipes");
     localStorage.setItem("language", "en");
-    if (sessionStorage.getItem("url") && query != "") handleFilterSubmit();
+    if (sessionStorage.getItem("url") && query != "" && diet != "" && cuisine != "" && type != "" && sortType != "") handleFilterSubmit();
     else fetchRecipe();
   }, []);
 
