@@ -43,7 +43,6 @@ const Recipes = () => {
     { value: ["price", "desc"], label: "Most Price" },
     { value: ["time", "asc"], label: "Less Time" },
     { value: ["time", "desc"], label: "Most Time" },
-    
   ];
   const [sortType, setSortType] = usePersistState("sort", sorts[0]);
 
@@ -73,8 +72,26 @@ const Recipes = () => {
     setItemsCount(Math.ceil(response?.totalItems / 20));
   };
 
-  
-
+  const handleSearch = () => {
+    console.log(
+      (sessionStorage.getItem("url") && query.length != 0) ||
+        diet.length != 0 ||
+        cuisine.length != 0 ||
+        type.length != 0 ||
+        sortType.label != "Random" ||
+        maxReadyTime != 1000
+    );
+    if (
+      (sessionStorage.getItem("url") && query.length != 0) ||
+      diet.length != 0 ||
+      cuisine.length != 0 ||
+      type.length != 0 ||
+      sortType.label.length != 0 ||
+      maxReadyTime != 1000
+    )
+      handleFilterSubmit();
+    else fetchRecipe();
+  };
   const closeDialog = (reason) => {
     if (reason && reason !== "backdropClick") return;
     setFilterDialog(false);
@@ -114,34 +131,24 @@ const Recipes = () => {
     prevCountRef.current = true;
   }, [query, sortType, maxReadyTime, diet, type, cuisine]);
   useEffect(() => {
+    if (sortType.label == "Random") {
+      setQuery("");
+      setDiet("");
+      setDishType("");
+      setCuisine("");
+      setMaxReadyTime(1000);
+    }
+    fetchRecipe();
+  }, [sortType]);
+  useEffect(() => {
     setLoading(true);
-    console.log(sessionStorage.getItem("url") && query != "");
-    if (
-      sessionStorage.getItem("url") &&
-      query.length != 0 ||
-      diet.length != 0 ||
-      cuisine.length != 0 ||
-      type.length != 0 ||
-      sortType.label.length != 0 ||
-      maxReadyTime != 0
-    ) handleFilterSubmit();
-    else fetchRecipe();
+    handleSearch();
     scrollToElement();
   }, [page]);
   useEffect((e) => {
     // axiosPrivate.get("/recipes");
     localStorage.setItem("language", "en");
-    if (
-      sessionStorage.getItem("url") &&
-      query.length != 0 ||
-      diet.length != 0 ||
-      cuisine.length != 0 ||
-      type.length != 0 ||
-      sortType.label.length != 0 ||
-      maxReadyTime != 0
-    )
-      handleFilterSubmit();
-    else fetchRecipe();
+    handleSearch();
   }, []);
 
   if (loading) {
@@ -163,7 +170,7 @@ const Recipes = () => {
             <div className="absolute inset-y-0 right-0 flex items-center pr-4 cursor-pointer">
               <BiSearchAlt2
                 className="text-gray-600 text-2xl"
-                onClick={handleFilterSubmit}
+                onClick={handleSearch}
               />
             </div>
           </div>
