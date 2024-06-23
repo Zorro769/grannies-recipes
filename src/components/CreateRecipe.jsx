@@ -6,7 +6,7 @@ import Dialog from "@mui/material/Dialog";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Select from "react-select";
-import colorStyle from "../utils/styleReactSelect";
+import colorStyle from "../helpers/styleReactSelect";
 import Loading from "./Loading";
 
 const CreateRecipe = ({ onClose }) => {

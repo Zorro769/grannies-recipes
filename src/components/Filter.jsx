@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
-import { fetchRecipes } from "../utils/index";
-import { cuisines, dishTypes, diets } from "../utils/recipeData";
+import { fetchRecipes } from "../utils/fetchRecipesData";
 import { axiosPrivate } from "../api/axios";
 import Select from "react-select";
-import colorStyle from "../utils/styleReactSelect";
+import colorStyle from "../helpers/styleReactSelect";
 
-const Filter = (props) => {
+const Filter = ({onClose,values, handleFilterSubmit, handleChange}) => {
   const [uploadedData, setUploadedData] = useState([]);
-  const { queryParams, set } = props;
-  // const [cuisines, setCuisine] = useState([]);
-  // const [dishType, setDishType] = useState("");
-  // const [diet, setDiet] = useState("");
 
   const uploadingDietsDishTypesCuisines = async () => {
     const data = await axiosPrivate.get("/recipes/data");
@@ -30,7 +25,7 @@ const Filter = (props) => {
       <div className="flex justify-end">
         <IoMdClose
           className="cursor-pointer text-gray-600 text-xl"
-          onClick={() => props.onClose()}
+          onClick={() => onClose()}
         />
       </div>
 
@@ -42,9 +37,10 @@ const Filter = (props) => {
             options={uploadedData?.cuisines}
             isMulti
             isClearable
-            value={props.cuisine}
+            name="cuisine"
+            value={values.cuisine}
             styles={colorStyle}
-            onChange={(option) => props.setCuisine(option)}
+            onChange={handleChange}
           />
         </label>
         <label className="text-[#1FB137] text-base font-bold inline-block mt-5 w-full">
@@ -52,10 +48,11 @@ const Filter = (props) => {
           <Select
             options={uploadedData?.dishTypes}
             isMulti
+            name="type"
             isClearable
-            value={props.type}
+            value={values.type}
             styles={colorStyle}
-            onChange={(option) => props.setDishType(option)}
+            onChange={handleChange}
           />
         </label>
         <label className="text-[#1FB137] text-base font-bold inline-block mt-5 w-full">
@@ -64,9 +61,10 @@ const Filter = (props) => {
             options={uploadedData?.diets}
             isMulti
             isClearable
-            value={props.diet}
+            name="diet"
+            value={values.diet}
             styles={colorStyle}
-            onChange={(option) => props.setDiet(option)}
+            onChange={handleChange}
           />
         </label>
         <label className="text-[#1FB137] text-base font-bold inline-block mt-5 w-full">
@@ -77,10 +75,9 @@ const Filter = (props) => {
             placeholder="Enter total time"
             onWheel={(e) => e.target.blur()}
             name="time"
-            id="time"
-            value={props.maxReadyTime}
+            value={values.maxReadyTime}
             className=" border-[#1FB137] bg-black border w-full py-2 pl-4 pr-10"
-            onChange={(e) => props.setMaxReadyTime(e.target.value)}
+            onChange={handleChange}
           />
         </label>
         <div className="text-right">
@@ -88,8 +85,8 @@ const Filter = (props) => {
             type="button"
             className="mt-7 bg-[#166534] w-[130px] h-[45px]  rounded-3xl text-white text-xl self-right"
             onClick={(e) => {
-              props.handleFilterSubmit(e);
-              props.onClose();
+              handleFilterSubmit(e);
+              onClose();
             }}
           >
             Filter

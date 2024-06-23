@@ -1,11 +1,11 @@
 import { axiosPrivate } from "../api/axios";
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 import useRefreshToken from "./useRefreshToken";
 
 const useAxiosPrivate = () => {
     const refreshToken = useRefreshToken();
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const requestIntercept = axiosPrivate.interceptors.request.use(
             (config) => {
                 config.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`;

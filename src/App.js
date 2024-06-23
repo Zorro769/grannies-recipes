@@ -1,8 +1,8 @@
 import RecipeDetail from './pages/RecipeDetail';
 import Layout from "./components/Layout.jsx";
 import { Route, Routes } from 'react-router-dom';
-import Favourites from './components/Favourites.jsx';
-import MyRecipes from './components/MyRecipes.jsx';
+import Favourites from './pages/Favourites.jsx';
+import MyRecipes from './pages/MyRecipes.jsx';
 import Home from "./pages/Home";
 import CreateRecipe from './components/CreateRecipe';
 import PaymentForm from './pages/Payment'

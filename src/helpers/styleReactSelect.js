@@ -2,7 +2,7 @@ const colorStyle = {
   control: (baseStyles, state) => ({
     ...baseStyles,
     borderColor: '#1FB137',
-    backgroundColor: 'black'
+    backgroundColor: 'black',
   }),
   option: (styles, { data, isDisabled, isFocused, isSelected }) => {
     return {

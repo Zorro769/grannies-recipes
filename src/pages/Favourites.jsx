@@ -1,10 +1,9 @@
 import { useEffect, useState, useCallback, useRef } from "react";
-import { fetchRecipe, fetchSortedRecipe } from "../utils";
 import Pagination from "@mui/material/Pagination";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import RecipeCard from "./RecipeCard";
-import Loading from "./Loading";
-import Header from "../components/Header";
+import RecipeCard from "../components/RecipeCard";
+import Loading from "../components/Loading";
+import Header from "components/Shared/Header";
 
 const Favourites = () => {
   const axiosPrivate = useAxiosPrivate();
@@ -25,7 +24,9 @@ const Favourites = () => {
       const pageSize = Math.min(totalItems, 20);
 
       const response = await axiosPrivate.get(
-        `/recipes/favourite?page=${page}&size=${pageSize}&language=${localStorage.getItem('language')}&currency=${localStorage.getItem('currencyCode')}`
+        `/recipes/favourite?page=${page}&size=${pageSize}&language=${localStorage.getItem(
+          "language"
+        )}&currency=${localStorage.getItem("currencyCode")}`
       );
       console.log(response?.data?.totalItems);
       setItemsCount(Math.ceil(response?.data?.totalItems / 20));

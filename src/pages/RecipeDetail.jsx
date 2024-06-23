@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchRecipe, fetchRecommendRecipes } from "../utils";
+import { fetchRecipe, fetchRecommendRecipes } from "utils/fetchRecipesData";
 import Loading from "../components/Loading";
-import Header from "../components/Header";
+import Header from "components/Shared/Header";
 import axios from "axios";
 
 import { AiFillPushpin } from "react-icons/ai";

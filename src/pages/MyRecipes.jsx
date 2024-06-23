@@ -1,11 +1,10 @@
 import React from "react";
 import { useEffect, useState, useRef } from "react";
 import Pagination from "@mui/material/Pagination";
-import { fetchRecipe } from "../utils";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import RecipeCard from "./RecipeCard";
-import Header from "../components/Header";
-import Loading from "./Loading";
+import RecipeCard from "../components/RecipeCard";
+import Header from "components/Shared/Header";
+import Loading from "../components/Loading";
 import { faL } from "@fortawesome/free-solid-svg-icons";
 
 const MyRecipes = ({ onClose }) => {
@@ -21,9 +20,7 @@ const MyRecipes = ({ onClose }) => {
       setLoading(true);
       const {
         data: { totalItems },
-      } = await axiosPrivate.get(
-        `/recipes?page=${page}&size=1`
-      );
+      } = await axiosPrivate.get(`/recipes?page=${page}&size=1`);
       const pageSize = Math.min(totalItems, 20);
       const response = await axiosPrivate.get(
         `/recipes?page=${page}&size=${pageSize}&language=${localStorage.getItem(
