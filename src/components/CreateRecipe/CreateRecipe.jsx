@@ -1,13 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import InfoDialog from "./InfoDialog";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import InfoDialog from "../InfoDialog";
 import Dialog from "@mui/material/Dialog";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Select from "react-select";
-import colorStyle from "../helpers/styleReactSelect";
-import Loading from "./Loading";
+import colorStyle from "../../helpers/styleReactSelect";
+import Loading from "../Shared/Loading";
 
 const CreateRecipe = ({ onClose }) => {
   const axiosPrivate = useAxiosPrivate();
@@ -82,26 +82,18 @@ const CreateRecipe = ({ onClose }) => {
   }, []);
   return (
     <>
-      <div className="w-full h-full relative create-recipe-dialog ">
-        <div className="bg-gradient-to-l contain from-transparent  to-black to-65% w-[1190px] h-[710px] top-[36px] fixed top-0 z-8 flex flex-col items-start justify-start pt-40 2xl:pt-20 px-4 left-[258px] rounded-[45px]"></div>
-        <div className="bg-gradient-to-l  contain from-transparent to-black to-65% w-[1190px] h-[710px] top-[36px] fixed top-0 z-8 flex flex-col items-start justify-start pt-40 2xl:pt-20 px-4 rounded-[45px]"></div>
-        <div className="h-screen w-full relative py-10 pb-5 bg  -transparent">
-          <div
-            className="text-white right-[280px] fixed top-[50px] cursor-pointer"
-            onClick={() => onClose()}
-          >
-            <FontAwesomeIcon icon={faX} color={"gray"} fontSize={25 + "px"} />
-          </div>
+      <div className="w-full h-full mt-20 create-recipe">
+        <div className="h-full w-full py-10 pb-5 bg-transparent flex justify-center">
           {loading ? (
             <Loading />
           ) : (
-            <div className="h-full w-[400px] z-20 text-center flex flex-col items-center rounded-[45px]">
+            <div className="h-full w-[400px] text-center flex flex-col items-center justify-center rounded-[45px]">
               <span className="text-white font-Nunito text-xl font-bold">
                 Granny's<span className="text-[#166534] text-2xl">Recipes</span>
               </span>
               <form
                 onSubmit={handleSubmit(onSubmit)}
-                className="text-[#1FB137] text-left w-[340px] mt-10 py-5"
+                className="text-[#1FB137] text-left w-[340px] mt-5 py-5"
               >
                 <label className="text-[#1FB137] text-base font-bold ">
                   Name of recipe:

@@ -1,17 +1,19 @@
 import React from "react";
+import paginationStyle from "helpers/stylePagination";
+import { Pagination } from "@mui/material";
 
-const Pagination = ({count, page, paginationStyle, handleChange}) => {
+const SharedPagination = ({count, page, handleChange}) => {
   return (
     <Pagination
-      count={Number(itemsCount)}
+      count={Number(count)}
       variant="outlined"
       shape="rounded"
       page={page}
       defaultPage={1}
       sx={paginationStyle}
-      onChange={(event, value) => setPage(value)}
+      onChange={(event, value) => handleChange(value)}
     />
   );
 };
 
-export default Pagination;
+export default SharedPagination;

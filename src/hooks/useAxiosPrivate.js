@@ -4,6 +4,7 @@ import useRefreshToken from "./useRefreshToken";
 
 const useAxiosPrivate = () => {
     const refreshToken = useRefreshToken();
+    console.log('Everything is bad...');
 
     useLayoutEffect(() => {
         const requestIntercept = axiosPrivate.interceptors.request.use(
@@ -38,6 +39,7 @@ const useAxiosPrivate = () => {
             axiosPrivate.interceptors.response.eject(responseIntercept);
         };
     }, [refreshToken]);
+    console.log('Everything is good...');
 
     return axiosPrivate;
 };

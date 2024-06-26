@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import BackGround from "../images/login-image.jpg";
-import { registerUser } from "../utils/auth.js";
-import InfoDialog from "./InfoDialog";
+import BackGround from "images/login-image.jpg";
+import { registerUser } from "../../utils/auth.js";
+import InfoDialog from "../InfoDialog";
 import Dialog from "@mui/material/Dialog";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -32,7 +32,6 @@ const Register = (props) => {
         const accessToken = response?.data?.accessToken;
 
         setInfoDialog(true);
-        // localStorage.setItem("accessToken", accessToken);
       } catch (err) {
         setErrMsg(err.response.data.message);
       }
@@ -43,19 +42,13 @@ const Register = (props) => {
       <img
         src={BackGround}
         alt="login"
-        className="w-full h-full object-cover"
+        className="w-full h-[100vh] object-cover"
       />
 
       <div className="absolute inset-0 bg-black opacity-40"></div>
 
-      <div className="object-cover bg-gradient-to-r from-transparent to-black to-65% absolute w-full h-full top-0 z-8 flex flex-col items-end justify-start pt-40 2xl:pt-20 px-4">
-        <div
-          className="absolute text-white right-[20px] top-[20px] cursor-pointer"
-          onClick={closeDialog}
-        >
-          <FontAwesomeIcon icon={faX} color={"gray"} fontSize={25 + "px"} />
-        </div>
-        <div className="h-full w-[400px] z-20 text-center flex flex-col items-center">
+      <div className="object-cover bg-gradient-to-r from-transparent to-black to-65% absolute w-full h-full top-0 z-8 flex justify-end pt-40 2xl:pt-20 px-4">
+        <div className="h-full z-20 text-center flex flex-col items-center mr-20">
           <span className="text-white font-Nunito text-2xl font-bold">
             Granny's<span className="text-[#166534] text-2xl">Recipes</span>
           </span>

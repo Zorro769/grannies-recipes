@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
-import { fetchRecipes } from "../utils/fetchRecipesData";
-import { axiosPrivate } from "../api/axios";
+import { fetchRecipes } from "../../../utils/fetchRecipesData";
+import { axiosPrivate } from "../../../api/axios";
 import Select from "react-select";
-import colorStyle from "../helpers/styleReactSelect";
+import colorStyle from "../../../helpers/styleReactSelect";
 
-const Filter = ({onClose,values, handleFilterSubmit, handleChange}) => {
+const Filter = ({ onClose, values, handleFilterSubmit, handleChange }) => {
   const [uploadedData, setUploadedData] = useState([]);
 
   const uploadingDietsDishTypesCuisines = async () => {

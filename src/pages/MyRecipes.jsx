@@ -2,9 +2,9 @@ import React from "react";
 import { useEffect, useState, useRef } from "react";
 import Pagination from "@mui/material/Pagination";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import RecipeCard from "../components/RecipeCard";
+import RecipeCard from "../components/Shared/RecipeCard";
 import Header from "components/Shared/Header";
-import Loading from "../components/Loading";
+import Loading from "../components/Shared/Loading";
 import { faL } from "@fortawesome/free-solid-svg-icons";
 
 const MyRecipes = ({ onClose }) => {

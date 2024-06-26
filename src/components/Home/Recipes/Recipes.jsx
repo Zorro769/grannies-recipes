@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, Suspense } from "react";
 import { FaFilter } from "react-icons/fa";
 import Select from "react-select";
-import Loading from "../../Loading";
+import Loading from "../../Shared/Loading";
 import SearchBar from "components/Shared/SearchBar";
 import sorts from "helpers/filterData";
 import CreateRecipeButton from "./CreateRecipeButton";
@@ -152,10 +152,6 @@ const Recipes = () => {
   useEffect(() => {
     scrollToElement();
   }, [loading]);
-
-  if (loading) {
-    return <Loading ref={recipesRef} />;
-  }
 
   return (
     <div className="w-full text-center" ref={recipesRef}>

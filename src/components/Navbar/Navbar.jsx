@@ -114,9 +114,9 @@ const Navbar = ({ loginOpened }) => {
           />
         </a>
 
-        <LinksSection/>
+        <LinksSection />
         <div className="text-white ml-auto relative flex gap-6 inline-block justify-between">
-          <div className="text-left text-[#1FB137] max-w-[70px] mr-20">
+          <div className="text-left text-[#1FB137] max-w-[200px] mr-20">
             <NavbarSelect
               options={currency}
               defaultValue={{
@@ -133,7 +133,7 @@ const Navbar = ({ loginOpened }) => {
             </button>
           </div>
           <div
-            className="text-left text-[#1FB137] max-w-[60px] cursor-pointer"
+            className="text-left text-[#1FB137] max-w-[200px] mr-5 cursor-pointer"
             onClick={() => {}}
           >
             <NavbarSelect

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import BackGround from "../images/login-image.jpg";
-import { loginUser } from "../utils/auth.js";
-import ForgotPassword from "./ForgotPassword";
+import BackGround from "images/login-image.jpg";
+import { loginUser } from "../../utils/auth.js";
+import ForgotPassword from "pages/ForgotPassword";
 import Dialog from "@mui/material/Dialog";
-import Loading from "./Loading";
-import Register from "./Register.jsx";
-import getGoogleOAuthURL from "../utils/getGoogleUrl";
-import InfoDialog from "./InfoDialog";
+import Loading from "../Shared/Loading";
+import Register from "../Register/Register.jsx";
+import getGoogleOAuthURL from "../../utils/getGoogleUrl";
+import InfoDialog from "../InfoDialog";
 import { useForm } from "react-hook-form";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -29,7 +29,7 @@ const Login = ({ onClose, handleButtonClick }) => {
   };
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
-      event.preventDefault(); // Prevent the default behavior
+      event.preventDefault();
     }
   };
   const handleDialogClose = () => {
@@ -56,7 +56,7 @@ const Login = ({ onClose, handleButtonClick }) => {
       handleButtonClick();
 
       localStorage.setItem("accessToken", accessToken);
-      
+
       setEmail("");
       setPassword("");
     } catch (err) {
@@ -64,21 +64,11 @@ const Login = ({ onClose, handleButtonClick }) => {
     }
   };
   return (
-    <div className="relative h-full w-full">
-      <img
-        src={BackGround}
-        alt="login"
-        className="w-full h-full object-cover"
-      />
-      <div className="absolute inset-0 bg-black opacity-40"></div>
-      <div className="object-cover bg-gradient-to-r from-transparent to-black to-65% absolute w-full h-full top-0 z-8 flex flex-col items-end justify-start pt-40 2xl:pt-20 px-4">
-        <div
-          className="absolute text-white right-[20px] top-[20px] cursor-pointer"
-          onClick={() => onClose()}
-        >
-          <FontAwesomeIcon icon={faX} color={"gray"} fontSize={25 + "px"} />
-        </div>
-        <div className="h-full w-[400px] z-20 text-center flex flex-col items-center">
+    <div>
+      <img src={BackGround} className="h-[100vh]" alt="login" />
+      {/* <div className="absolute inset-0 bg-black opacity-40"></div> */}
+      <div className="object-cover bg-gradient-to-r from-transparent to-black to-65% absolute w-full h-full top-0 z-8 flex justify-end pt-40 2xl:pt-20 px-4">
+        <div className="h-full z-20 text-center flex flex-col items-center mr-20">
           <span className="text-white font-Nunito text-2xl font-bold">
             Granny's<span className="text-[#166534] text-2xl">Recipes</span>
           </span>
@@ -182,7 +172,7 @@ const Login = ({ onClose, handleButtonClick }) => {
           sx: { borderRadius: "50px" },
         }}
       >
-        <Register  onClose={handleDialogClose}/>
+        <Register onClose={handleDialogClose} />
       </Dialog>
       <Dialog
         open={infoDialog}
@@ -192,7 +182,9 @@ const Login = ({ onClose, handleButtonClick }) => {
         PaperProps={{ style: { height: "100px", borderradius: "50%" } }}
       >
         <InfoDialog
-          reload={() => {window.location.reload(false)}}
+          reload={() => {
+            window.location.reload(false);
+          }}
           info={"You have been logged in successfully"}
           onClose={closeDialog}
         />

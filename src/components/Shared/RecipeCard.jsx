@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import InfoDialog from "./InfoDialog";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import InfoDialog from "../InfoDialog";
 import Dialog from "@mui/material/Dialog";
-import defaultImage from "../images/default_recipe.jpg";
+import defaultImage from "images/default_recipe.jpg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as faHeartBorder } from "@fortawesome/free-regular-svg-icons";
 import { faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons";
@@ -15,7 +15,8 @@ const RecipeCard = ({
   onClose,
   shouldCallOnClose = false,
 }) => {
-  const { id, image, title, readyInMinutes, dishTypes, cuisines, diets } = recipe;
+  const { id, image, title, readyInMinutes, dishTypes, cuisines, diets } =
+    recipe;
   const [flagFavourite, setFlag] = useState(flag);
   const axiosPrivate = useAxiosPrivate();
   const [infoDialog, setInfoDialog] = useState(false);
@@ -50,7 +51,7 @@ const RecipeCard = ({
               alt={title}
               className="rounded-lg h-[200px] md:h-[150px] w-full"
             />
-            <div className="absolute content flex gap-2 flex-wrap justify-center">
+            <div className="absolute recipe-card-content flex gap-2 flex-wrap justify-center">
               <span className="px-2 py-1 text-[12px] capitalize bg-black shadow-xl rounded-full text-green-500">
                 {readyInMinutes}
               </span>
@@ -61,23 +62,22 @@ const RecipeCard = ({
                 >
                   {dishTypes[0]}
                 </span>
-              ) : (
-                cuisines?.length > 0 ? (
-                  <span
+              ) : cuisines?.length > 0 ? (
+                <span
                   key={0}
                   className="px-2 py-1 text-[12px] capitalize bg-black shadow-xl rounded-full text-green-500"
                 >
                   {cuisines[0]}
                 </span>
-                ) :
-               diets?.length > 0 && (
-                <span
-                  key={0}
-                  className="px-2 py-1 text-[12px] capitalize bg-black shadow-xl rounded-full text-green-500"
-                >
-                  {diets[0]}
-                </span>
-               )
+              ) : (
+                diets?.length > 0 && (
+                  <span
+                    key={0}
+                    className="px-2 py-1 text-[12px] capitalize bg-black shadow-xl rounded-full text-green-500"
+                  >
+                    {diets[0]}
+                  </span>
+                )
               )}
             </div>
           </div>

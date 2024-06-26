@@ -1,8 +1,8 @@
 import React from "react";
-import CreateRecipe from "../../CreateRecipe";
+import CreateRecipe from "../../CreateRecipe/CreateRecipe";
 import Dialog from "@mui/material/Dialog";
 import InfoDialog from "../../InfoDialog";
-import Filter from "../../Filter";
+import Filter from "./Filter";
 
 const Dialogs = ({
   openDialog,

@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchRecipe, fetchRecommendRecipes } from "utils/fetchRecipesData";
-import Loading from "../components/Loading";
+import Loading from "../components/Shared/Loading";
 import Header from "components/Shared/Header";
 import axios from "axios";
 
 import { AiFillPushpin } from "react-icons/ai";
-import RecipeCard from "../components/RecipeCard";
+import RecipeCard from "../components/Shared/RecipeCard";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 const RecipeDetail = () => {
