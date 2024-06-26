@@ -4,17 +4,20 @@ import useRefreshToken from "./useRefreshToken";
 
 const useAxiosPrivate = () => {
     const refreshToken = useRefreshToken();
-    console.log('Everything is bad...');
-
     useLayoutEffect(() => {
         const requestIntercept = axiosPrivate.interceptors.request.use(
             (config) => {
-                config.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`;
+                config.headers.Authorization =
+                    !config._retry && localStorage.getItem('accessToken')
+                        ? `Bearer ${localStorage.getItem('accessToken')}`
+                        : config.headers.Authorization;
                 return config;
-            },
-            (error) => Promise.reject(error)
-        );
-
+            });
+        return () => {
+            axiosPrivate.interceptors.request.eject(requestIntercept);
+        };
+    }, [localStorage.getItem('accessToken')]);
+    useLayoutEffect(() => {
         const responseIntercept = axiosPrivate.interceptors.response.use(
             (response) => response,
             async (error) => {
@@ -32,13 +35,13 @@ const useAxiosPrivate = () => {
                 }
                 return Promise.reject(error);
             }
-        );
 
+        );
         return () => {
-            axiosPrivate.interceptors.request.eject(requestIntercept);
             axiosPrivate.interceptors.response.eject(responseIntercept);
-        };
+        }
     }, [refreshToken]);
+
     console.log('Everything is good...');
 
     return axiosPrivate;
