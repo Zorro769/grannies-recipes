@@ -11,6 +11,7 @@ const Dialogs = ({
   filterDialog,
   handleFilterSubmit,
   handleFilterChange,
+  handleTimeChange,
   searchParams,
 }) => {
   return (
@@ -55,7 +56,8 @@ const Dialogs = ({
         <Filter
           onClose={closeDialog}
           handleFilterSubmit={handleFilterSubmit}
-          handleChange={handleFilterChange}
+          handleTimeChange={handleTimeChange}
+          handleFilterChange={handleFilterChange}
           values={searchParams}
         />
       </Dialog>

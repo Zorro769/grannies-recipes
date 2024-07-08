@@ -82,7 +82,7 @@ const CreateRecipe = ({ onClose }) => {
   }, []);
   return (
     <>
-      <div className="w-full h-full mt-20 create-recipe">
+      <div className="w-full h-full mt-20">
         <div className="h-full w-full py-10 pb-5 bg-transparent flex justify-center">
           {loading ? (
             <Loading />
@@ -93,7 +93,7 @@ const CreateRecipe = ({ onClose }) => {
               </span>
               <form
                 onSubmit={handleSubmit(onSubmit)}
-                className="text-[#1FB137] text-left w-[340px] mt-5 py-5"
+                className="text-left w-[340px] mt-5 py-5"
               >
                 <label className="text-[#1FB137] text-base font-bold ">
                   Name of recipe:
@@ -101,7 +101,7 @@ const CreateRecipe = ({ onClose }) => {
                   <input
                     {...register("title")}
                     placeholder="Enter title of recipe"
-                    className=" border-[#1FB137] bg-black border w-full py-2 pl-4 pr-10"
+                    className=" border-[#1FB137] text-[#1FB137] bg-black border w-full p-2 pr-10"
                   />
                 </label>
                 <label className="text-[#1FB137] text-base font-bold inline-block mt-5 w-full">

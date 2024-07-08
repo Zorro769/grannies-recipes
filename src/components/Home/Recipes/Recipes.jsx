@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, Suspense } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { FaFilter } from "react-icons/fa";
 import Select from "react-select";
 import Loading from "../../Shared/Loading";
@@ -8,86 +8,104 @@ import CreateRecipeButton from "./CreateRecipeButton";
 import { fetchRandomRecipes, fetchRecipes } from "utils/fetchRecipesData";
 import Dialogs from "./Dialogs";
 import usePersistState from "../../../hooks/usePersistState";
+import { useQuery } from "react-query";
 import colorStyle from "helpers/styleReactSelect";
 import RecipeList from "./RecipeList";
+import { Navigate, useNavigate, createSearchParams } from "react-router-dom";
 
 const Recipes = () => {
   const recipesRef = useRef(null);
-  const [recipes, setRecipes] = useState([]);
-  const [page, setPage] = usePersistState("page", 1);
-  const [loading, setLoading] = useState(false);
-  const [itemsCount, setItemsCount] = useState(5);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [infoDialog, setInfoDialog] = useState(false);
-  const [filterDialog, setFilterDialog] = useState(false);
-  const isInitialMount = useRef(true);
-  const [searchParams, setSearchParams] = usePersistState("searchParams", {
+  const [searchParams, setSearchParams] = useState({
     query: "",
     cuisine: "",
     type: "",
     diet: "",
     maxReadyTime: 1000,
-    sort: sorts[0],
+    sorts: sorts[0],
   });
-  const fetchRecipe = async () => {
-    setLoading(true);
-    try {
-      const data = await fetchRandomRecipes({ page: page });
-      setItemsCount(Math.ceil(data?.totalItems / 20));
-      setRecipes(data?.results);
-    } catch (error) {
-      const data = await fetchRandomRecipes(page);
-      setItemsCount(Math.ceil(data?.totalItems / 20));
-      setRecipes(data?.results);
-      console.log(error);
-    }
-    setLoading(false);
+  const [page, setPage] = usePersistState("page", 1);
+  const fetchRecipesData = () => {
+    return fetchRandomRecipes(page);
   };
+
+  const { data, isLoading } = useQuery(["recipes", page], fetchRecipesData, {
+    keepPreviousData: true,
+    staleTime: Infinity,
+    onSuccess: (data) => {
+      setItemsCount(data.totalPages);
+    },
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [itemsCount, setItemsCount] = useState(5);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [infoDialog, setInfoDialog] = useState(false);
+  const [filterDialog, setFilterDialog] = useState(false);
+  const navigate = useNavigate();
+  const isInitialMount = useRef(true);
+
+  // const fetchRecipe = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const data = await fetchRandomRecipes({ page: page });
+  //     setItemsCount(Math.ceil(data?.totalItems / 20));
+  //     // setRecipes(data?.results);
+  //   } catch (error) {
+  //     const data = await fetchRandomRecipes(page);
+  //     setItemsCount(Math.ceil(data?.totalItems / 20));
+  //     // setRecipes(data?.results);
+  //     console.log(error);
+  //   }
+  //   setLoading(false);
+  // };
+
   const handleFilterSubmit = async () => {
-    setLoading(true);
-    console.log(searchParams);
-    const response = await fetchRecipes({
+    setSearchParams({
       limit: 10,
       ...searchParams,
-      type: JSON.stringify(searchParams.type),
-      diet: JSON.stringify(searchParams.diet),
-      cuisine: JSON.stringify(searchParams.cuisine),
       page: page || 1,
     });
-    setLoading(false);
-    setRecipes(response?.results);
-    setItemsCount(Math.ceil(response?.totalItems / 20));
+    handleSearch();
   };
-
-  const handleSearch = async () => {
-    if (
-      searchParams.sort.label === "Random" &&
-      (searchParams.query.length !== 0 ||
-        searchParams.diet.length !== 0 ||
-        searchParams.cuisine.length !== 0 ||
-        searchParams.type.length !== 0 ||
-        searchParams.maxReadyTime !== 1000)
-    ) {
-      await handleFilterSubmit();
-    } else {
-      await fetchRecipe();
-    }
-  };
-
   const handleSearchParamsChange = (event) => {
     setSearchParams({
       ...searchParams,
       [event.target.name]: event.target.value,
     });
+    // handleSearch();
   };
-  const hadnleFilterChange = (value, name) => {
-    const simulatedEvent = {
-      target: {
-        value: value,
-        name: name.name,
-      },
-    };
-    handleSearchParamsChange(simulatedEvent);
+  const handleSearch = async (option = sorts[0]) => {
+    const params = createSearchParams({
+      ...(searchParams.query && { query: searchParams.query }),
+      ...(searchParams.diet && { diet: JSON.stringify(searchParams.diet) }),
+      ...(searchParams.type && { type: JSON.stringify(searchParams.type) }),
+      ...(searchParams.cuisine && {
+        cuisine: JSON.stringify(searchParams.cuisine),
+      }),
+      ...(searchParams.maxReadyTime && {
+        maxReadyTime: searchParams.maxReadyTime,
+      }),
+      ...(option && { sorts: JSON.stringify(option) }),
+
+      page: page.toString(),
+    });
+    navigate({
+      pathname: "/search",
+      search: params.toString(),
+    });
+  };
+  const handleSortChanged = (option) => {
+    setSearchParams({
+      ...searchParams,
+      sorts: option,
+    });
+    handleSearch(option);
+  };
+  const handleFilterChange = (value, name) => {
+    setSearchParams((prev) => ({
+      ...prev,
+      [name.name]: value,
+    }));
   };
   const closeDialog = (reason) => {
     if (reason && reason !== "backdropClick") return;
@@ -105,49 +123,13 @@ const Recipes = () => {
   const handlePageChange = (page) => {
     setPage(page);
   };
-  const handleSortChanged = (option) => {
-    if (option.label === "Random") {
-      setSearchParams({
-        query: "",
-        cuisine: "",
-        type: "",
-        diet: "",
-        sort: option,
-        maxReadyTime: 1000,
-      });
-      setPage(1);
-    } else {
-      setSearchParams({
-        ...searchParams,
-        sort: option,
-      });
-    }
-  };
+
   const scrollToElement = () => {
     const { current } = recipesRef;
     if (!loading && current) {
       current.scrollIntoView({ behavior: "smooth" });
     }
   };
-
-  useEffect(() => {
-    const handleEffect = async () => {
-      if (searchParams.sort && searchParams.sort.label === "Random") {
-        await fetchRecipe();
-      } else {
-        await handleFilterSubmit();
-      }
-
-      if (isInitialMount.current) {
-        isInitialMount.current = false;
-        await handleSearch();
-      } else {
-        await handleSearch();
-      }
-    };
-
-    handleEffect();
-  }, [searchParams, page]);
 
   useEffect(() => {
     scrollToElement();
@@ -159,8 +141,9 @@ const Recipes = () => {
         <SearchBar
           placeholder="Eg. Cake, Vegan, Chicken"
           value={searchParams.query}
-          handleInputChange={handleSearchParamsChange}
-          handleSearchRecipe={handleSearch}
+          onSubmit={handleSearch}
+          onChange={handleSearchParamsChange}
+          // handleSearchRecipe={handleSearch}
         />
         <FaFilter
           className="cursor-pointer inline text-gray-600 ml-4 text-2xl"
@@ -173,7 +156,7 @@ const Recipes = () => {
       <div className="text-left max-w-[200px] font-bold text-[#1FB137]">
         <Select
           options={sorts}
-          value={searchParams.sort}
+          value={searchParams.sorts}
           name="sort"
           defaultValue={sorts[0]}
           styles={colorStyle}
@@ -181,17 +164,15 @@ const Recipes = () => {
         />
       </div>
       <div
-        className="flex justify-center duration-0.7"
+        className="flex justify-center duration-0.7 "
         style={{ backgroundColor: "black" }}
       >
-        <Suspense fallback={<Loading />}>
-          <RecipeList
-            recipes={recipes}
-            count={itemsCount}
-            page={page}
-            handlePageChange={handlePageChange}
-          />
-        </Suspense>
+        <RecipeList
+          recipes={data?.results}
+          count={itemsCount}
+          page={page}
+          handlePageChange={handlePageChange}
+        />
       </div>
       <Dialogs
         closeDialog={closeDialog}
@@ -199,7 +180,8 @@ const Recipes = () => {
         infoDialog={infoDialog}
         filterDialog={filterDialog}
         handleFilterSubmit={handleFilterSubmit}
-        handleFilterChange={hadnleFilterChange}
+        handleFilterChange={handleFilterChange}
+        handleTimeChange={handleSearchParamsChange}
         searchParams={searchParams}
       />
     </div>

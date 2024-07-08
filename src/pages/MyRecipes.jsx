@@ -5,6 +5,7 @@ import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import RecipeCard from "../components/Shared/RecipeCard";
 import Header from "components/Shared/Header";
 import Loading from "../components/Shared/Loading";
+import wrapPromise from "utils/suspender";
 import { faL } from "@fortawesome/free-solid-svg-icons";
 
 const MyRecipes = ({ onClose }) => {
@@ -14,7 +15,13 @@ const MyRecipes = ({ onClose }) => {
   const [itemsCount, setItemsCount] = useState(5);
   const [loading, setLoading] = useState(true);
   const recipesRef = useRef(null);
-
+  const fetchFavouritesResource = (axiosPrivate, page = 1) => {
+    return wrapPromise(axiosPrivate.get(
+      `/recipes/favourite?page=${page}&size=${20}&language=en`
+    )
+    );
+  };
+  fetchFavouritesResource(axiosPrivate, 1);
   const fetchMyRecipes = async (event, page = 1) => {
     try {
       setLoading(true);

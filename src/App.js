@@ -1,42 +1,43 @@
-import RecipeDetail from './pages/RecipeDetail';
-import Layout from "./components/Layout.jsx";
+import React, { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import Favourites from './pages/Favourites.jsx';
-import MyRecipes from './pages/MyRecipes.jsx';
-import Home from "./pages/Home";
-import CreateRecipe from './components/CreateRecipe/CreateRecipe';
-import PaymentForm from './pages/Payment'
-import Checkout from './components/RecipeInstructions.jsx'
-import ForgotPassword from 'pages/ForgotPassword';
-import ChangePassword from 'pages/ChangePassword';
-import Login from 'components/Login/Login';
-import Register from 'components/Register/Register';
+import Layout from './components/Layout.jsx';
+import Loading from './components/Shared/Loading';
+import SearchRecipe from 'pages/SearchRecipe.jsx';
+
+const Home = lazy(() => import('./pages/Home'));
+const Favourites = lazy(() => import('./pages/Favourites.jsx'));
+const MyRecipes = lazy(() => import('./pages/MyRecipes.jsx'));
+const CreateRecipe = lazy(() => import('./components/CreateRecipe/CreateRecipe'));
+const ChangePassword = lazy(() => import('./pages/ChangePassword'));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const Login = lazy(() => import('./components/Login/Login'));
+const Register = lazy(() => import('./components/Register/Register'));
+// const SearchRecipe = lazy(() => import('./pages/SearchRecipe'));
+const PaymentForm = lazy(() => import('./pages/Payment'));
+const RecipeDetail = lazy(() => import('./pages/RecipeDetail'));
 
 function App() {
   return (
     <div className='layout'>
       <div className='main-content'>
-
         <Routes>
           <Route path='/' element={<Layout />}>
-            <Route index element={<Home flag={false} />} />
-            <Route path='/new-password' element={<Home flag={true} />} />
-            <Route path='favourites' element={<Favourites />} />
-            <Route path='my-recipes' element={<MyRecipes />} />
-            <Route path='create-recipe' element={<CreateRecipe />} />
-            <Route path='change-password' element={<ChangePassword />} />
-            <Route path='forgot-password' element={<ForgotPassword />} />
-            <Route path='/payment' element={<PaymentForm />} />
-            <Route path='recipes/:id' >
-              <Route index element={<RecipeDetail />} />
-            </Route>
+            <Route index element={<Suspense fallback={<Loading />}><Home flag={false} /></Suspense>} />
+            <Route path='/new-password' element={<Suspense fallback={<Loading />}><Home flag={true} /></Suspense>} />
+            <Route path='/favourites' element={<Suspense fallback={<Loading />}><Favourites /></Suspense>} />
+            <Route path='/my-recipes' element={<Suspense fallback={<Loading />}><MyRecipes /></Suspense>} />
+            <Route path='/create-recipe' element={<Suspense fallback={<Loading />}><CreateRecipe /></Suspense>} />
+            <Route path='/change-password' element={<Suspense fallback={<Loading />}><ChangePassword /></Suspense>} />
+            <Route path='/forgot-password' element={<Suspense fallback={<Loading />}><ForgotPassword /></Suspense>} />
+            <Route path='/payment' element={<Suspense fallback={<Loading />}><PaymentForm /></Suspense>} />
+            <Route path='/search' element={<SearchRecipe />} />
+            <Route path='/recipes/:id' element={<Suspense fallback={<Loading />}><RecipeDetail /></Suspense>} />
           </Route>
-          <Route path='login' element={<Login />} />
-          <Route path='register' element={<Register />} />
+          <Route path='/login' element={<Suspense fallback={<Loading />}><Login /></Suspense>} />
+          <Route path='/register' element={<Suspense fallback={<Loading />}><Register /></Suspense>} />
         </Routes>
       </div>
     </div>
-
   );
 }
 

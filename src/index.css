@@ -93,11 +93,12 @@ body,
     box-shadow: 0 0 0 0 rgba(178, 212, 252, 0.7);
   }
 }
-option span {
+/* option span {
   color: #3e4753;
-}
+}*/
 ::placeholder {
-  color: #3e4753;
+  color: #1fb137 !important;
+  font-weight: 700 !important;
 }
 /* MuiDialog-container MuiDialog-scrollPaper css-hz1bth-MuiDialog-container::-webkit-scrollbar-thumb {
     background-color: #1FB137;
@@ -205,26 +206,11 @@ img,
 .recipe-card-content {
   transition: 0.7s all;
 }
-/* .create-recipe {
-  background-image: url("./images/create-recipe.jpg");
-  background-attachment: fixed;
-} */
 .custom-page {
   color: green !important;
 }
 * {
   scroll-behavior: smooth;
-}
-body
-  > div.MuiDialog-root.create-recipe-dialog.MuiModal-root.css-zw3mfo-MuiModal-root-MuiDialog-root
-  > div.MuiDialog-container.MuiDialog-scrollPaper.css-hz1bth-MuiDialog-container
-  > div {
-  background: url("./images/create-recipe.jpg") !important;
-  background-size: cover !important;
-  background-repeat: no-repeat !important;
-  background-attachment: fixed !important;
-  height: 750px !important; /* Adjust height as needed */
-  border-radius: 50px !important;
 }
 .card__number {
   column-gap: 15px;

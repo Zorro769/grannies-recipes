@@ -45,9 +45,8 @@ const Login = ({ onClose, handleButtonClick }) => {
     setErrMsg("");
   }, [email, password]);
 
-  const handleFormSubmit = async (data) => {
+  const handleFormSubmit = async () => {
     // e.preventDefault();
-    console.log(data);
     try {
       const response = await loginUser(email, password);
       setErrMsg(response.data.message);

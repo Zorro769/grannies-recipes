@@ -4,9 +4,9 @@ import SharedPagination from "../../Shared/Pagination";
 
 const RecipeList = ({ recipes, count, page, handlePageChange }) => {
   // return recipes?.length > 0 ? (
-    return (
+  return (
     <>
-      <div className="w-full flex items-start justify-center flex-wrap gap-10 py-10">
+      <div className="w-full flex items-start justify-center flex-wrap gap-10 ">
         {recipes?.map((item, index) => (
           <RecipeCard recipe={item} key={index} flag={item.isFavourite} />
         ))}
@@ -18,7 +18,8 @@ const RecipeList = ({ recipes, count, page, handlePageChange }) => {
           />
         </div>
       </div>
-    </>)
+    </>
+  );
   // ) : (
   //   <div className="text-white w-full items-center justify-center py-10">
   //     <p className="text-center">No Recipe Found</p>
@@ -26,4 +27,4 @@ const RecipeList = ({ recipes, count, page, handlePageChange }) => {
   // );
 };
 
-export default memo(RecipeList);
+export default RecipeList;

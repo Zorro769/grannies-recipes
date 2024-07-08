@@ -29,6 +29,7 @@
     "react-hook-form": "^7.50.1",
     "react-i18next": "^14.0.5",
     "react-icons": "^4.10.1",
+    "react-query": "^3.39.3",
     "react-router-dom": "^6.13.0",
     "react-scripts": "5.0.1",
     "react-select": "^5.8.0",

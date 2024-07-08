@@ -16,7 +16,7 @@ const useAxiosPrivate = () => {
         return () => {
             axiosPrivate.interceptors.request.eject(requestIntercept);
         };
-    }, [localStorage.getItem('accessToken')]);
+    }, []);
     useLayoutEffect(() => {
         const responseIntercept = axiosPrivate.interceptors.response.use(
             (response) => response,
@@ -41,9 +41,6 @@ const useAxiosPrivate = () => {
             axiosPrivate.interceptors.response.eject(responseIntercept);
         }
     }, [refreshToken]);
-
-    console.log('Everything is good...');
-
     return axiosPrivate;
 };
 

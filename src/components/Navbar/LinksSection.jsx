@@ -1,6 +1,5 @@
 import React from "react";
-import {Link} from "react-router-dom";
-
+import { Link } from "react-router-dom";
 
 const LinksSection = () => {
   return (
@@ -13,7 +12,7 @@ const LinksSection = () => {
           <Link to="/favourites">Favourites</Link>
         </li>
         <li>
-          <Link to="/myrecipes">My recipes</Link>
+          <Link to="/my-recipes">My recipes</Link>
         </li>
       </ul>
     </>

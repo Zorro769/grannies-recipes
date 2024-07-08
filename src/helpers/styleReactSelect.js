@@ -3,6 +3,15 @@ const colorStyle = {
     ...baseStyles,
     borderColor: '#1FB137',
     backgroundColor: 'black',
+    color: '#1FB137',
+  }),
+  singleValue: (provided) => ({
+    ...provided,
+    color: '#1FB137',
+  }),
+  placeholder: (provided) => ({
+    ...provided,
+    color: '#1fb137',
   }),
   option: (styles, { data, isDisabled, isFocused, isSelected }) => {
     return {
