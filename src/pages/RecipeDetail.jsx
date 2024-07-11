@@ -8,7 +8,8 @@ import axios from "axios";
 import { AiFillPushpin } from "react-icons/ai";
 import RecipeCard from "../components/Shared/RecipeCard";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-
+import Comments from "../components/Comments";
+import { SocketProvider } from "../context/SocketContext";
 const RecipeDetail = () => {
   const [recipe, setRecipe] = useState(null);
   const [recipes, setRecipes] = useState([]);
@@ -156,7 +157,7 @@ const RecipeDetail = () => {
             {recipe?.instructions?.length > 0 &&
               (containsLI
                 ? recipe?.instructions
-                    .split(/\n|<\/li>|<\/ol>|<\/p>|<p>/)
+                    .split(/<\/li>|<\/ol>/)
                     .map((item, index) => {
                       const cleanedInstruction = item
                         .replace(/<li>|<ol>/g, "")
@@ -200,7 +201,12 @@ const RecipeDetail = () => {
               Buy a recipe
             </button>
           )}
-
+          <SocketProvider>
+            <div className="App">
+              <h1>Recipe Comments</h1>
+              <Comments recipeId={id} />
+            </div>
+          </SocketProvider>
           <div className="w-full pr-1 mt-10">
             <div className="flex flex-col gap-5"></div>
             {recipes?.length > 0 && (
@@ -209,7 +215,11 @@ const RecipeDetail = () => {
 
                 <div className="flex flex-wrap gap-5 px-1 pt-3">
                   {recipes?.map((item, index) => (
-                    <RecipeCard recipe={item} index={index} />
+                    <RecipeCard
+                      recipe={item}
+                      index={index}
+                      flag={item.isFavourite}
+                    />
                   ))}
                 </div>
               </>

@@ -28,7 +28,6 @@ const RecipeCard = ({
     try {
       setFlag(!flagFavourite);
       flag = !flagFavourite;
-      console.log(flag);
       await axiosPrivate.get(`/recipes/favourite/${id}`);
       if (shouldCallOnClose) {
         onClose();
