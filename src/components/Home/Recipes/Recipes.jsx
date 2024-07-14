@@ -1,17 +1,16 @@
 import React, { useEffect, useState, useRef } from "react";
 import { FaFilter } from "react-icons/fa";
 import Select from "react-select";
-import Loading from "../../Shared/Loading";
 import SearchBar from "components/Shared/SearchBar";
 import sorts from "helpers/filterData";
 import CreateRecipeButton from "./CreateRecipeButton";
-import { fetchRandomRecipes, fetchRecipes } from "utils/fetchRecipesData";
+import { fetchRandomRecipes } from "utils/fetchRecipesData";
 import Dialogs from "./Dialogs";
 import usePersistState from "../../../hooks/usePersistState";
 import { useQuery } from "react-query";
 import colorStyle from "helpers/styleReactSelect";
 import RecipeList from "./RecipeList";
-import { Navigate, useNavigate, createSearchParams } from "react-router-dom";
+import { useNavigate, createSearchParams } from "react-router-dom";
 
 const Recipes = () => {
   const recipesRef = useRef(null);
@@ -25,39 +24,29 @@ const Recipes = () => {
   });
   const [page, setPage] = usePersistState("page", 1);
   const fetchRecipesData = () => {
-    return fetchRandomRecipes(page);
+    console.log(page);
+    return fetchRandomRecipes({ page });
   };
-
+  const [itemsCount, setItemsCount] = useState(5);
+  const scrollToElement = () => {
+    const { current } = recipesRef;
+    if (current) {
+      current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
   const { data, isLoading } = useQuery(["recipes", page], fetchRecipesData, {
     keepPreviousData: true,
     staleTime: Infinity,
     onSuccess: (data) => {
       setItemsCount(data.totalPages);
+      scrollToElement();
     },
   });
 
-  const [loading, setLoading] = useState(false);
-  const [itemsCount, setItemsCount] = useState(5);
   const [openDialog, setOpenDialog] = useState(false);
   const [infoDialog, setInfoDialog] = useState(false);
   const [filterDialog, setFilterDialog] = useState(false);
   const navigate = useNavigate();
-  const isInitialMount = useRef(true);
-
-  // const fetchRecipe = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const data = await fetchRandomRecipes({ page: page });
-  //     setItemsCount(Math.ceil(data?.totalItems / 20));
-  //     // setRecipes(data?.results);
-  //   } catch (error) {
-  //     const data = await fetchRandomRecipes(page);
-  //     setItemsCount(Math.ceil(data?.totalItems / 20));
-  //     // setRecipes(data?.results);
-  //     console.log(error);
-  //   }
-  //   setLoading(false);
-  // };
 
   const handleFilterSubmit = async () => {
     setSearchParams({
@@ -67,13 +56,14 @@ const Recipes = () => {
     });
     handleSearch();
   };
+
   const handleSearchParamsChange = (event) => {
     setSearchParams({
       ...searchParams,
       [event.target.name]: event.target.value,
     });
-    // handleSearch();
   };
+
   const handleSearch = async (option = sorts[0]) => {
     const params = createSearchParams({
       ...(searchParams.query && { query: searchParams.query }),
@@ -86,14 +76,14 @@ const Recipes = () => {
         maxReadyTime: searchParams.maxReadyTime,
       }),
       ...(option && { sorts: JSON.stringify(option) }),
-
-      page: page.toString(),
+      page: (1).toString(),
     });
     navigate({
       pathname: "/search",
       search: params.toString(),
     });
   };
+
   const handleSortChanged = (option) => {
     setSearchParams({
       ...searchParams,
@@ -101,12 +91,14 @@ const Recipes = () => {
     });
     handleSearch(option);
   };
+
   const handleFilterChange = (value, name) => {
     setSearchParams((prev) => ({
       ...prev,
       [name.name]: value,
     }));
   };
+
   const closeDialog = (reason) => {
     if (reason && reason !== "backdropClick") return;
     setFilterDialog(false);
@@ -114,26 +106,14 @@ const Recipes = () => {
     setInfoDialog(false);
   };
 
-  const openCreateRecipeDialog = () => {
-    setOpenDialog(true);
-  };
   const handleFilterClick = () => {
     setFilterDialog(true);
   };
-  const handlePageChange = (page) => {
-    setPage(page);
-  };
 
-  const scrollToElement = () => {
-    const { current } = recipesRef;
-    if (!loading && current) {
-      current.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
-  useEffect(() => {
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
     scrollToElement();
-  }, [loading]);
+  };
 
   return (
     <div className="w-full text-center" ref={recipesRef}>
@@ -143,7 +123,6 @@ const Recipes = () => {
           value={searchParams.query}
           onSubmit={handleSearch}
           onChange={handleSearchParamsChange}
-          // handleSearchRecipe={handleSearch}
         />
         <FaFilter
           className="cursor-pointer inline text-gray-600 ml-4 text-2xl"
@@ -151,7 +130,7 @@ const Recipes = () => {
         />
       </div>
       <div className="flex justify-end text-right">
-        <CreateRecipeButton handleClick={openCreateRecipeDialog} />
+        <CreateRecipeButton />
       </div>
       <div className="text-left max-w-[200px] font-bold text-[#1FB137]">
         <Select
@@ -163,10 +142,7 @@ const Recipes = () => {
           onChange={handleSortChanged}
         />
       </div>
-      <div
-        className="flex justify-center duration-0.7 "
-        style={{ backgroundColor: "black" }}
-      >
+      <div className="flex justify-center duration-0.7 bg-black mt-10">
         <RecipeList
           recipes={data?.results}
           count={itemsCount}

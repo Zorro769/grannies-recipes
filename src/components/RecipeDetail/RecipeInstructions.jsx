@@ -79,3 +79,41 @@
 // };
 
 // export default Checkout;
+
+import React from "react";
+import { AiFillPushpin } from "react-icons/ai";
+
+const RecipeInstructions = ({ data }) => {
+  return (
+    <>
+      <p className="text-green-500 text-2xl underline mt-10">Instructions</p>
+      <ol className="relative text-white">
+        <div
+          className={
+            data?.paymentStatus !== false || !data?.paymentStatus
+              ? " text-xl"
+              : "absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-50% to-black"
+          }
+        ></div>
+        {data?.instructions.split(/<\/li>|<\/ol>/).map((item, index) => {
+          const cleanedInstruction = item.replace(/<li>|<ol>/g, "").trim();
+          if (cleanedInstruction !== "") {
+            return (
+              <li key={index} className="flex items-center mt-5">
+                <div className="h-full inline-block">
+                  <AiFillPushpin className="text-green-800 text-xl mr-2 inline-block" />
+                </div>
+                <div className="h-full text-white inline-block">
+                  {cleanedInstruction}
+                </div>
+              </li>
+            );
+          }
+          return null;
+        })}
+      </ol>
+    </>
+  );
+};
+
+export default RecipeInstructions;

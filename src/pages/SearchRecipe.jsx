@@ -3,11 +3,10 @@ import SearchBar from "components/Shared/SearchBar";
 import { useQuery } from "react-query";
 import RecipeList from "../components/Home/Recipes/RecipeList";
 import { json, useSearchParams } from "react-router-dom";
-import { fetchRecipes } from "utils/fetchRecipesData";
+import { fetchRecipes, fetchRandomRecipes } from "utils/fetchRecipesData";
 import SearchFilters from "components/SearchRecipes/SearchFilters";
 
 const SearchRecipe = () => {
-  const [itemsCount, setItemsCount] = useState(5);
   const [searchParams, setSearchParams] = useSearchParams();
   const [sort, setSort] = useState({});
 
@@ -49,10 +48,9 @@ const SearchRecipe = () => {
 
   const { data, refetch } = useQuery(["recipes", params], fetchRecipesData, {
     staleTime: Infinity,
-    onSuccess: (data) => {
-      setItemsCount(data.totalPages);
-    },
   });
+
+  const [itemsCount, setItemsCount] = useState(data?.totalPages || 1);
   const handleSortChanged = (option) => {
     if (option.label === "Random") {
       setLocalSearchParams({

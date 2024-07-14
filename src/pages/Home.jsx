@@ -1,6 +1,8 @@
-import React from "react";
+import React, { Suspense } from "react";
 import Header from "../components/Shared/Header";
-import Recipes from "../components/Home/Recipes/Recipes";
+import Loading from "components/Shared/Loading";
+
+const Recipes = React.lazy(() => import("../components/Home/Recipes/Recipes"));
 
 const Home = () => {
   return (
@@ -15,7 +17,9 @@ const Home = () => {
         type="home"
       />
       <section id="recipes" className="md:max-w-[1440px] mx-auto px-4 md:px-20">
-        <Recipes />
+        <Suspense fallback={<Loading />}>
+          <Recipes />
+        </Suspense>
       </section>
     </main>
   );

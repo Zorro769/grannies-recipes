@@ -2,7 +2,7 @@ import React, { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import Layout from './components/Layout.jsx';
 import Loading from './components/Shared/Loading';
-import SearchRecipe from 'pages/SearchRecipe.jsx';
+// import SearchRecipe from 'pages/SearchRecipe.jsx';
 
 const Home = lazy(() => import('./pages/Home'));
 const Favourites = lazy(() => import('./pages/Favourites.jsx'));
@@ -12,7 +12,7 @@ const ChangePassword = lazy(() => import('./pages/ChangePassword'));
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
 const Login = lazy(() => import('./components/Login/Login'));
 const Register = lazy(() => import('./components/Register/Register'));
-// const SearchRecipe = lazy(() => import('./pages/SearchRecipe'));
+const SearchRecipe = lazy(() => import('./pages/SearchRecipe'));
 const PaymentForm = lazy(() => import('./pages/Payment'));
 const RecipeDetail = lazy(() => import('./pages/RecipeDetail'));
 
@@ -30,7 +30,7 @@ function App() {
             <Route path='/change-password' element={<Suspense fallback={<Loading />}><ChangePassword /></Suspense>} />
             <Route path='/forgot-password' element={<Suspense fallback={<Loading />}><ForgotPassword /></Suspense>} />
             <Route path='/payment' element={<Suspense fallback={<Loading />}><PaymentForm /></Suspense>} />
-            <Route path='/search' element={<SearchRecipe />} />
+            <Route path='/search' element={<Suspense fallback={<Loading />}><SearchRecipe /></Suspense>} />
             <Route path='/recipes/:id' element={<Suspense fallback={<Loading />}><RecipeDetail /></Suspense>} />
           </Route>
           <Route path='/login' element={<Suspense fallback={<Loading />}><Login /></Suspense>} />
