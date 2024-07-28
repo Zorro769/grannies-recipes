@@ -90,7 +90,7 @@ const RecipeInstructions = ({ data }) => {
       <ol className="relative text-white">
         <div
           className={
-            data?.paymentStatus !== false || !data?.paymentStatus
+            data?.paymentStatus === true
               ? " text-xl"
               : "absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-50% to-black"
           }

@@ -2,7 +2,6 @@ import React, { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import Layout from './components/Layout.jsx';
 import Loading from './components/Shared/Loading';
-// import SearchRecipe from 'pages/SearchRecipe.jsx';
 
 const Home = lazy(() => import('./pages/Home'));
 const Favourites = lazy(() => import('./pages/Favourites.jsx'));

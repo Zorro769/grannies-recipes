@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { buyRecipe } from "utils/services";
 import useFetchRecipeDetail from "hooks/useFetchRecipeDetail";
+import { addRecipeToFavourite } from "utils/services";
 
 import Header from "components/Shared/Header";
 import RecommendedRecipes from "components/RecipeDetail/RecommendedRecipes";
@@ -22,6 +23,10 @@ const RecipeDetail = () => {
     const clientSecret = await buyRecipe({ id });
     navigate("/payment", { state: { clientSecret } });
   };
+
+  const handleFavouriteClick = async() => {
+    await addRecipeToFavourite({id});
+  }
   return (
     <div className="w-full" ref={recipesRef}>
       <Header label={data?.title || "Default Title"} />
@@ -33,6 +38,7 @@ const RecipeDetail = () => {
             image={data?.image}
             alt={data?.title}
             isFavourite={data?.isFavourite}
+            handleFavouriteClick={handleFavouriteClick}
           />
           <Ingredients data={data?.extendedIngredients} />
         </div>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLocation } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 import { loadStripe } from "@stripe/stripe-js";
 import {
   Elements,
@@ -7,7 +7,6 @@ import {
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
-
 
 const stripePromise = loadStripe(`${process.env.REACT_APP_STRIPE_KEY}`);
 
@@ -49,7 +48,7 @@ const PaymentForm = () => {
   };
 
   return (
-    <form id="payment-form" onSubmit={handleSubmit}>
+    <form id="payment-form" className="text-white" onSubmit={handleSubmit} style={{color:'white'}}>
       <input
         type="text"
         id="cardholder-name"

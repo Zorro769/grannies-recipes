@@ -75,8 +75,9 @@ const Filters = ({
           />
         </label>
         <button
-          onClick={handleSubmit}
-          className="bg-[#166534] rounded-3xl text-white text-2xl text-center cursor-pointer mt-2 inline-block ml-3 px-2 py-1"
+          type="button"
+          className="mt-10 bg-[#166534] w-[130px] h-[45px]  rounded-3xl text-white text-xl self-right"
+          onClick={handleFilterSubmit}
         >
           Filter
         </button>

@@ -1,63 +1,76 @@
 import React, { useState, useEffect } from "react";
 import BackGround from "images/login-image.jpg";
 import { loginUser } from "../../utils/auth.js";
-import ForgotPassword from "pages/ForgotPassword";
-import Dialog from "@mui/material/Dialog";
-import Loading from "../Shared/Loading";
-import Register from "../Register/Register.jsx";
 import getGoogleOAuthURL from "../../utils/getGoogleUrl";
-import InfoDialog from "../InfoDialog";
+import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
-import { faX } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 
-const Login = ({ onClose, handleButtonClick }) => {
-  const [openForgotPassword, setOpenForgotPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errMsg, setErrMsg] = useState("");
-  const [regDialog, setRegDialog] = useState(false);
-  const [infoDialog, setInfoDialog] = useState(false);
+  const navigate = useNavigate();
   const { register, handleSubmit } = useForm();
-  const closeDialog = () => {
-    setInfoDialog(false);
-    onClose();
-  };
-  const handleForgotPassword = () => {
-    setOpenForgotPassword(!openForgotPassword);
+  const handleToastClose = (t) => {
+    navigate({
+      pathname: "/",
+    });
+    toast.dismiss(t.id);
   };
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
     }
   };
-  const handleDialogClose = () => {
-    onClose();
-    setRegDialog(false);
-    setLoading(false);
-  };
-  const handleSignUp = (e) => {
-    handleButtonClick();
-    setRegDialog(true);
-  };
+
   useEffect(() => {
     setErrMsg("");
   }, [email, password]);
 
-  const handleFormSubmit = async () => {
-    // e.preventDefault();
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
     try {
-      const response = await loginUser(email, password);
-      setErrMsg(response.data.message);
-      const accessToken = response?.data?.accessToken;
-      setInfoDialog(true);
-      handleButtonClick();
-
-      localStorage.setItem("accessToken", accessToken);
-
-      setEmail("");
-      setPassword("");
+      await loginUser(email, password);
+      // setEmail("");
+      // setPassword("");
+      toast.custom((t) => (
+        <div
+          className={`${
+            t.visible ? "animate-enter" : "animate-leave"
+          } max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
+        >
+          <div className="flex-1 w-0 p-4">
+            <div className="flex items-start">
+              <div className="flex-shrink-0 pt-0.5">
+                <FontAwesomeIcon
+                  icon={faCheckCircle}
+                  className="h-10 w-10 text-green-500"
+                />
+              </div>
+              <div className="ml-3 flex-1">
+                <p className="text-sm font-medium text-gray-900">
+                  You have been logged in succesfully
+                </p>
+                <p className="mt-1 text-sm text-gray-500">
+                  You will be navigated to home page
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="flex border-l border-gray-200">
+            <button
+              onClick={() => handleToastClose(t)}
+              className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              Home
+            </button>
+          </div>
+        </div>
+      ));
     } catch (err) {
       setErrMsg(err.response.data.message);
     }
@@ -65,7 +78,6 @@ const Login = ({ onClose, handleButtonClick }) => {
   return (
     <div>
       <img src={BackGround} className="h-[100vh]" alt="login" />
-      {/* <div className="absolute inset-0 bg-black opacity-40"></div> */}
       <div className="object-cover bg-gradient-to-r from-transparent to-black to-65% absolute w-full h-full top-0 z-8 flex justify-end pt-40 2xl:pt-20 px-4">
         <div className="h-full z-20 text-center flex flex-col items-center mr-20">
           <span className="text-white font-Nunito text-2xl font-bold">
@@ -75,7 +87,7 @@ const Login = ({ onClose, handleButtonClick }) => {
             Sign in with your email address and password
           </p>
           <form
-            onSubmit={handleSubmit(handleFormSubmit)}
+            onSubmit={(e) => handleSubmit(handleFormSubmit(e))}
             className="text-left w-[340px] mt-10"
           >
             <label className="text-[#1FB137] text-xl font-bold">
@@ -104,12 +116,12 @@ const Login = ({ onClose, handleButtonClick }) => {
                 onKeyPress={handleKeyPress}
               />
             </label>
-            <button
+            <Link
               className="text-[#1FB137] underline mt-3 text-base font-bold block ml-auto flex gap-6 inline-block text-base"
-              onClick={handleForgotPassword}
+              to="/forgot-password"
             >
               Forgot password?
-            </button>
+            </Link>
             <div className="text-left text-orange-900 mt-5">{errMsg}</div>
             <div className="flex justify-center mt-12">
               <button
@@ -132,62 +144,15 @@ const Login = ({ onClose, handleButtonClick }) => {
                 Continue with google
               </a>
             </button>
-            {/* </a> */}
-
-            <button
-              onClick={handleSignUp}
+            <Link
+              to="/register"
               className="text-[#1FB137] underline mt-3 text-lg font-bold block ml-auto flex gap-6 inline-block text-sm"
             >
               Don’t have an account?Sign up
-            </button>
+            </Link>
           </div>
         </div>
       </div>
-      <Dialog
-        open={openForgotPassword}
-        onClose={handleForgotPassword}
-        fullWidth
-        maxWidth="xs"
-        PaperProps={{ style: { height: "250px" } }}
-      >
-        <ForgotPassword onClose={handleForgotPassword} />
-      </Dialog>
-      <Dialog
-        open={loading}
-        onClose={handleDialogClose}
-        fullWidth
-        maxWidth="lg"
-        PaperProps={{ style: { height: "800px" } }}
-      >
-        <Loading />
-      </Dialog>
-      <Dialog
-        open={regDialog}
-        onClose={handleDialogClose}
-        fullWidth
-        maxWidth="lg"
-        PaperProps={{
-          style: { height: "800px", border: "5px solid gray" },
-          sx: { borderRadius: "50px" },
-        }}
-      >
-        <Register onClose={handleDialogClose} />
-      </Dialog>
-      <Dialog
-        open={infoDialog}
-        onClose={closeDialog}
-        fullWidth
-        maxWidth="xs"
-        PaperProps={{ style: { height: "100px", borderradius: "50%" } }}
-      >
-        <InfoDialog
-          reload={() => {
-            window.location.reload(false);
-          }}
-          info={"You have been logged in successfully"}
-          onClose={closeDialog}
-        />
-      </Dialog>
     </div>
   );
 };

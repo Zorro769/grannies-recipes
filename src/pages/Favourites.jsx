@@ -1,26 +1,53 @@
-import FavouritesData from "components/Favourites/FavouritesData";
-import Loading from "components/Shared/Loading";
-import { Suspense, useState, useEffect } from "react";
-import useAxiosPrivate from "hooks/useAxiosPrivate";
-import fetchFavouritesResource from "utils/fetchFavouriteRecipes";
+import React, { useRef, useState } from "react";
+import {
+  fetchFavouritesRecipes,
+  removeRecipeFromFavourites,
+} from "utils/services";
+import { useQuery } from "react-query";
+import { useScroll } from "hooks/useScroll";
+import usePersistState from "hooks/usePersistState";
+
+import Header from "components/Shared/Header";
+import RecipeList from "components/Home/Recipes/RecipeList";
 
 const Favourites = () => {
-  const axiosPrivate = useAxiosPrivate();
-  const [initialResource, setInitialResource] = useState();
+  const [page, setPage] = usePersistState("page", 1);
+  const recipesRef = useRef(null);
+  const scroll = useScroll(recipesRef);
 
-  useEffect(() => {
-    const resource = fetchFavouritesResource(axiosPrivate, 1);
-    setInitialResource(resource);
-  }, [axiosPrivate]);
+  const { data, refetch } = useQuery(
+    "favourites",
+    () => fetchFavouritesRecipes({ page }),
+    {
+      staleTime: Infinity,
+    }
+  );
+  const [recipes, setRecipes] = useState(data.results);
+  const handlePageChange = (page) => {
+    setPage(page);
+    scroll();
+    refetch();
+  };
 
-  if (!initialResource) {
-    return <Loading />;
-  }
-
+  const handleSetRecipes = ({ newRecipes }) => {
+    console.log(newRecipes);
+    setRecipes(newRecipes);
+  };
   return (
-    <Suspense fallback={<Loading />}>
-      <FavouritesData initialResource={initialResource} />
-    </Suspense>
+    <div className="w-full">
+      <Header label={"Favourites"} />
+      <div className="flex-grow overflow-y-auto p-20" ref={recipesRef}>
+        <RecipeList
+          recipes={recipes}
+          count={data.itemsCount}
+          page={page}
+          handlePageChange={handlePageChange}
+          handleFavouriteClick={removeRecipeFromFavourites}
+          onFavouriteRemove={true}
+          handleSetRecipes={handleSetRecipes}
+        />
+      </div>
+    </div>
   );
 };
 

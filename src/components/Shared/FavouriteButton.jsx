@@ -4,43 +4,40 @@ import { faHeart as faHeartBorder } from "@fortawesome/free-regular-svg-icons";
 import { faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons";
 import { addRecipeToFavourite } from "utils/services";
 
-const FavouriteButton = ({ id, flag }) => {
-  const [isFavourite, setIsFavourite] = useState(flag);
+const FavouriteButton = ({ id, flag, handleFavouriteClick }) => {
+  const [isFavourite, setIsFavourite] = useState(flag || false);
 
   const handleClick = () => {
-    addRecipeToFavourite({ id });
+    handleFavouriteClick();
     setIsFavourite(!isFavourite);
   };
+
   return (
-    <>
+    <button onClick={handleClick} key={id + flag}>
       {isFavourite ? (
-        <button onClick={handleClick}>
-          <span className="fa-layers">
-            <FontAwesomeIcon
-              icon={faHeartSolid}
-              color="#9c1616"
-              fontSize={"30px"}
-            />
-          </span>
-        </button>
+        <span className="fa-layers">
+          <FontAwesomeIcon
+            icon={faHeartSolid}
+            color="#9c1616"
+            fontSize={"30px"}
+          />
+        </span>
       ) : (
-        <button onClick={handleClick}>
-          <span className="fa-layers text-center">
-            <FontAwesomeIcon
-              icon={faHeartSolid}
-              color={"white"}
-              fontSize={"28px"}
-              style={{ left: 1 + "px" }}
-            />
-            <FontAwesomeIcon
-              icon={faHeartBorder}
-              color={"red"}
-              fontSize={"30px"}
-            />
-          </span>
-        </button>
+        <span className="fa-layers text-center">
+          <FontAwesomeIcon
+            icon={faHeartSolid}
+            color={"white"}
+            fontSize={"28px"}
+            style={{ left: 1 + "px" }}
+          />
+          <FontAwesomeIcon
+            icon={faHeartBorder}
+            color={"red"}
+            fontSize={"30px"}
+          />
+        </span>
       )}
-    </>
+    </button>
   );
 };
 

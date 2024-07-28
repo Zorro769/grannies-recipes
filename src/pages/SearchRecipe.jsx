@@ -1,15 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import SearchBar from "components/Shared/SearchBar";
 import { useQuery } from "react-query";
 import RecipeList from "../components/Home/Recipes/RecipeList";
 import { json, useSearchParams } from "react-router-dom";
 import { fetchRecipes, fetchRandomRecipes } from "utils/fetchRecipesData";
+import { useScroll } from "hooks/useScroll";
 import SearchFilters from "components/SearchRecipes/SearchFilters";
 
 const SearchRecipe = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [sort, setSort] = useState({});
 
+  const recipesRef = useRef(null);
+  const scroll = useScroll(recipesRef);
   const fetchRecipesData = () => {
     return fetchRecipes({
       ...localSearchParams,
@@ -44,13 +46,15 @@ const SearchRecipe = () => {
     }),
   });
   const page = parseInt(params.page);
-  // const [query, setQuery] = useState(params.query);
 
   const { data, refetch } = useQuery(["recipes", params], fetchRecipesData, {
     staleTime: Infinity,
+    onSuccess: () => {
+      scroll();
+    },
   });
 
-  const [itemsCount, setItemsCount] = useState(data?.totalPages || 1);
+  const itemsCount = data?.totalPages || 1;
   const handleSortChanged = (option) => {
     if (option.label === "Random") {
       setLocalSearchParams({
@@ -74,12 +78,35 @@ const SearchRecipe = () => {
   const handlePageChange = (page) => {
     setSearchParams({
       ...localSearchParams,
-      sorts: JSON.stringify(localSearchParams.sorts),
-      page: page,
+      ...(localSearchParams.diet && {
+        diet: JSON.stringify(localSearchParams.diet),
+      }),
+      ...(localSearchParams.type && {
+        type: JSON.stringify(localSearchParams.type),
+      }),
+      ...(localSearchParams.cuisine && {
+        cuisine: JSON.stringify(localSearchParams.cuisine),
+      }),
+      ...(localSearchParams.sorts && {
+        sorts: JSON.stringify(localSearchParams.sorts),
+      }),
+      page,
     });
-    refetch();
-  };
+    scroll();
 
+  };
+  const handleSearchParamsChange = (event) => {
+    setLocalSearchParams((prev) => ({
+      ...prev,
+      [event.target.name]: event.target.value,
+    }));
+  };
+  const handleFilterChange = (value, name) => {
+    setLocalSearchParams((prev) => ({
+      ...prev,
+      [name.name]: value,
+    }));
+  };
   const handleFilterSubmit = async () => {
     setSearchParams({
       ...localSearchParams,
@@ -99,20 +126,8 @@ const SearchRecipe = () => {
     });
   };
 
-  const handleSearchParamsChange = (event) => {
-    setLocalSearchParams((prev) => ({
-      ...prev,
-      [event.target.name]: event.target.value,
-    }));
-  };
-  const handleFilterChange = (value, name) => {
-    setLocalSearchParams((prev) => ({
-      ...prev,
-      [name.name]: value,
-    }));
-  };
   return (
-    <div className="w-full text-center px-2 mt-10">
+    <div className="w-full text-center px-2 mt-10" ref={recipesRef}>
       <div className="w-full flex items-center justify-center pt-10 pb-5 px-0 md:px-10">
         <SearchBar
           placeholder="Eg. Cake, Vegan, Chicken"

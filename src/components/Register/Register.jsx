@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from "react";
 import BackGround from "images/login-image.jpg";
 import { registerUser } from "../../utils/auth.js";
-import InfoDialog from "../InfoDialog";
-import Dialog from "@mui/material/Dialog";
-import { faX } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Register = (props) => {
   const [username, setUsername] = useState("");
@@ -12,12 +8,8 @@ const Register = (props) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errMsg, setErrMsg] = useState("");
-  const [infoDialog, setInfoDialog] = useState(false);
 
-  const closeDialog = () => {
-    setInfoDialog(false);
-    props.onClose();
-  };
+
   useEffect(() => {
     setErrMsg("");
   }, [email, password]);
@@ -28,10 +20,7 @@ const Register = (props) => {
       setErrMsg("Password and confirm password must be the same");
     } else {
       try {
-        const response = await registerUser(username, email, password);
-        const accessToken = response?.data?.accessToken;
-
-        setInfoDialog(true);
+        await registerUser(username, email, password);
       } catch (err) {
         setErrMsg(err.response.data.message);
       }
@@ -118,23 +107,6 @@ const Register = (props) => {
           </form>
         </div>
       </div>
-      <Dialog
-        open={infoDialog}
-        onClose={closeDialog}
-        fullWidth
-        maxWidth="xs"
-        PaperProps={{ style: { height: "150px", borderradius: "50%" } }}
-      >
-        <InfoDialog
-          reload={() => {
-            window.location.reload(false);
-          }}
-          info={
-            "We have sent you an activation email.Please click the link in the email to activate your account"
-          }
-          onClose={closeDialog}
-        />
-      </Dialog>
     </div>
   );
 };
