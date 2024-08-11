@@ -1,16 +1,18 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState, useRef } from "react";
+import { useNavigate, createSearchParams } from "react-router-dom";
+import { useQuery } from "react-query";
+import { fetchRandomRecipes } from "utils/fetchRecipesData";
+import usePersistState from "../../../hooks/usePersistState";
+
 import { FaFilter } from "react-icons/fa";
 import Select from "react-select";
 import SearchBar from "components/Shared/SearchBar";
 import sorts from "helpers/filterData";
 import CreateRecipeButton from "./CreateRecipeButton";
-import { fetchRandomRecipes } from "utils/fetchRecipesData";
 import Dialogs from "./Dialogs";
-import usePersistState from "../../../hooks/usePersistState";
-import { useQuery } from "react-query";
 import colorStyle from "helpers/styleReactSelect";
 import RecipeList from "./RecipeList";
-import { useNavigate, createSearchParams } from "react-router-dom";
+
 
 const Recipes = () => {
   const recipesRef = useRef(null);

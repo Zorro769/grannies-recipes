@@ -21,7 +21,7 @@ const RecipeDetail = () => {
 
   const handlePayment = async () => {
     const clientSecret = await buyRecipe({ id });
-    navigate("/payment", { state: { clientSecret } });
+    navigate("/payment", { state: { clientSecret, data, } });
   };
 
   const handleFavouriteClick = async() => {

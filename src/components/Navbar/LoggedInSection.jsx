@@ -1,6 +1,23 @@
 import React from "react";
+import { logoutUser } from "utils/auth.js";
+import toast from "react-hot-toast";
 
-const LoggedInSection = ({ isVisible, handleLogOut }) => {
+import SuccessAuthToast from "components/Toasts/SuccessAuthToast";
+
+const LoggedInSection = ({ isVisible }) => {
+  const handleLogOut = async () => {
+    await logoutUser();
+    toast.custom(
+      (t) => (
+        <SuccessAuthToast
+          t={t}
+          title={"You have been logged out succesfully"}
+          subtitle={"Your page will be reloaded"}
+        />
+      ),
+      { duration: 5000 }
+    );
+  };
   return (
     <div
       id="dropdown"

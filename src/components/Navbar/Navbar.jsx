@@ -3,7 +3,7 @@ import LinksSection from "./LinksSection.jsx";
 import Logo from "images/logo.png";
 import UserSection from "./UserSection.jsx";
 
-const Navbar = memo(() => {
+const Navbar = () => {
   return (
     <header className="w-full fixed z-10 bg-black opacity-90 object-cover">
       <nav className="relative flex w-full py-2 md:py-3 px-4 md:px-9 items-center">
@@ -24,6 +24,6 @@ const Navbar = memo(() => {
       </nav>
     </header>
   );
-});
+};
 
 export default Navbar;

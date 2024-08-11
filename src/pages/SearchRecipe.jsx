@@ -2,8 +2,8 @@ import React, { useState, useRef } from "react";
 import SearchBar from "components/Shared/SearchBar";
 import { useQuery } from "react-query";
 import RecipeList from "../components/Home/Recipes/RecipeList";
-import { json, useSearchParams } from "react-router-dom";
-import { fetchRecipes, fetchRandomRecipes } from "utils/fetchRecipesData";
+import { useSearchParams } from "react-router-dom";
+import { fetchRecipes } from "utils/fetchRecipesData";
 import { useScroll } from "hooks/useScroll";
 import SearchFilters from "components/SearchRecipes/SearchFilters";
 
@@ -47,7 +47,7 @@ const SearchRecipe = () => {
   });
   const page = parseInt(params.page);
 
-  const { data, refetch } = useQuery(["recipes", params], fetchRecipesData, {
+  const { data } = useQuery(["recipes", params], fetchRecipesData, {
     staleTime: Infinity,
     onSuccess: () => {
       scroll();

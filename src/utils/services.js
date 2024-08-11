@@ -39,6 +39,14 @@ export const fetchFavouritesRecipes = async ({ page }) => {
     return response.data;
 }
 
+export const fetchUserRecipes = async ({ page }) => {
+    const url = `/recipes?page=${page}&size=20&language=${localStorage.getItem("language")}&currency=${localStorage.getItem("currencyCode")}`;
+
+    const response = await axiosPrivate.get(url);
+    console.log(response);
+    return response.data;
+}
+
 export const loadCurrencyAndLanguage = async () => {
     const response = await axios.get("/recipes/load-currency-languages");
     if (localStorage.getItem("currencyCode") === null) {
@@ -51,5 +59,10 @@ export const loadCurrencyAndLanguage = async () => {
             response?.data?.currencyData[0].label
         );
     }
+    return response?.data;
+}
+export const loadRecipesCategories = async () => {
+    const response = await axios.get("/recipes/data");
+
     return response?.data;
 }

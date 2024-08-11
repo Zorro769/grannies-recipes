@@ -100,25 +100,6 @@ body,
   color: #1fb137 !important;
   font-weight: 700 !important;
 }
-/* MuiDialog-container MuiDialog-scrollPaper css-hz1bth-MuiDialog-container::-webkit-scrollbar-thumb {
-    background-color: #1FB137;
-    border-radius: 6px;
-  } 
-  .contain::-webkit-scrollbar-thumb {
-    background-color: #1FB137;
-    border-radius: 6px;
-  }
-  .MuiPaper-root::-webkit-scrollbar-thumb {
-    background-color: #1FB137;
-    border-radius: 6px;
-  }
-  .MuiDialog-container::-webkit-scrollbar-thumb {
-    background-color: #1FB137;
-    border-radius: 6px;
-  } */
-.MuiDialog-root {
-  overflow: hidden;
-}
 div::-webkit-scrollbar {
   display: none;
 }
@@ -252,4 +233,123 @@ img,
   display: flex;
   flex-direction: column;
   background-color: black;
+}
+.countdown-timer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+
+.countdown-svg {
+  transform: rotate(-90deg);
+}
+
+.countdown-circle {
+  transition: stroke-dashoffset 1s linear;
+}
+
+.countdown-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 20px;
+  color: green;
+}
+.StripeElement {
+  background-color: #f8f8f8;
+  padding: 10px;
+  max-width: 90%;
+  border: 2px solid #e0dddd;
+}
+
+.StripeElement--empty {
+  border-bottom-color: #b22222;
+}
+
+.StripeElement--focus {
+  border-bottom-color: #008000;
+}
+
+.StripeElement--invalid {
+  background-color: #ffd90080;
+  border-color: #b22222;
+}
+
+.StripeElement--complete {
+  background-color: #00800015;
+}
+
+form.pmpro_form #pmpro_payment_information_fields div#AccountNumber {
+  max-width: 270px;
+}
+
+form.pmpro_form #pmpro_payment_information_fields div#Expiry {
+  max-width: 110px;
+}
+
+form.pmpro_form #pmpro_payment_information_fields div#CVV {
+  max-width: 110px;
+}
+#card-element input {
+  color: white;
+}
+
+[class*="complete"] {
+  color: white !important;
+}
+.CardField-input-wrapper,
+.InputElement .is-complete .Input {
+  color: white !important;
+}
+#card-element div {
+  max-width: 100% !important;
+}
+.card-entry {
+  margin-bottom: 15px;
+}
+
+.expiry-cvc-entry {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+.card-entry {
+  width: 100%;
+}
+
+.card-entry .StripeElement {
+  padding: 10px;
+  background-color: #1b1b1b;
+  color: #1fb137;
+  border-radius: 5px;
+  border: 1px solid #1fb137;
+  max-width: 100% !important;
+  box-sizing: border-box;
+}
+
+.StripeElement--focus {
+  border-color: #166534;
+}
+
+.StripeElement--invalid {
+  border-color: #fa755a;
+}
+
+.StripeElement--webkit-autofill {
+  background-color: #fefde5 !important;
+}
+
+.cardholder-name::placeholder {
+  color: white;
+}
+
+@media (max-width: 600px) {
+  .card-entry .StripeElement {
+    font-size: 14px;
+    padding: 8px;
+  }
 }

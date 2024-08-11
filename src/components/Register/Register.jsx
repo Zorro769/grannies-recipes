@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
-import BackGround from "images/login-image.jpg";
 import { registerUser } from "../../utils/auth.js";
+import toast from "react-hot-toast";
 
-const Register = (props) => {
+import BackGround from "images/login-image.jpg";
+import SuccessAuthToast from "components/Toasts/SuccessAuthToast.jsx";
+
+const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errMsg, setErrMsg] = useState("");
-
 
   useEffect(() => {
     setErrMsg("");
@@ -21,6 +23,16 @@ const Register = (props) => {
     } else {
       try {
         await registerUser(username, email, password);
+        toast.custom(
+          (t) => (
+            <SuccessAuthToast
+              t={t}
+              title={"You have been logged out succesfully"}
+              subtitle={"Your page will be reloaded"}
+            />
+          ),
+          { duration: 5000 }
+        );
       } catch (err) {
         setErrMsg(err.response.data.message);
       }

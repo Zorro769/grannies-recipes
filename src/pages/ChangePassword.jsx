@@ -1,26 +1,24 @@
 import React, { useState } from "react";
 import axiosPrivate from "../api/axios";
 import { useNavigate } from "react-router-dom";
-const ChangePassword = ({ onClose }) => {
+import toast from "react-hot-toast";
+const ChangePassword = () => {
   const [password, setPassword] = useState("");
-  const [errMsg, setErrMsg] = useState("");
-
   const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axiosPrivate.post(
+      await axiosPrivate.post(
         "/users/change-password",
         { email: localStorage.getItem("email"), password: password },
         { headers: { "Content-Type": "application/json" } }
       );
 
-      if (response.data === "Password changed successfully") {
-        onClose();
-        navigate("/", { state: { showLoginDialog: false }, replace: true });
-      }
+      localStorage.removeItem("email");
+      navigate("/");
     } catch (err) {
-      setErrMsg(err.message);
+      toast.error(err.response.data.message);
     }
   };
   return (
@@ -50,7 +48,6 @@ const ChangePassword = ({ onClose }) => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </label>
-          <div className="text-left text-orange-900 mt-5">{errMsg}</div>
           <p className="text-[#1FB137] text-base bold mt-3">
             We will change your old password to new password
           </p>

@@ -1,113 +1,84 @@
 import React from "react";
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef } from "react";
+import { fetchUserRecipes } from "utils/services";
+import { useScroll } from "hooks/useScroll";
+
 import Pagination from "@mui/material/Pagination";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import RecipeCard from "../components/Shared/RecipeCard";
 import Header from "components/Shared/Header";
-import Loading from "../components/Shared/Loading";
-import { faL } from "@fortawesome/free-solid-svg-icons";
+import { useQuery } from "react-query";
 
 const MyRecipes = ({ onClose }) => {
-  const axiosPrivate = useAxiosPrivate();
-  const [recipes, setRecipes] = useState([]);
-  const [myRecipes, setMyRecipes] = useState([]);
-  const [itemsCount, setItemsCount] = useState(5);
-  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
   const recipesRef = useRef(null);
-  const fetchFavouritesResource = (axiosPrivate, page = 1) => {
-    // return wrapPromise(axiosPrivate.get(
-    //   `/recipes/favourite?page=${page}&size=${20}&language=en`
-    // )
-    // );
-  };
-  fetchFavouritesResource(axiosPrivate, 1);
-  const fetchMyRecipes = async (event, page = 1) => {
-    try {
-      setLoading(true);
-      const {
-        data: { totalItems },
-      } = await axiosPrivate.get(`/recipes?page=${page}&size=1`);
-      const pageSize = Math.min(totalItems, 20);
-      const response = await axiosPrivate.get(
-        `/recipes?page=${page}&size=${pageSize}&language=${localStorage.getItem(
-          "language"
-        )}&currency=${localStorage.getItem("currencyCode")}`
-      );
-      setItemsCount(Math.ceil(response?.data?.totalItems / 20));
-      const fetchedMyRecipes = response?.data.results;
-      setMyRecipes(fetchedMyRecipes);
-      setLoading(false);
-    } catch (error) {
-      // setLoading(false);
-      console.error("Error fetching data:", error);
+  const scroll = useScroll(recipesRef);
+  const { data } = useQuery(
+    ["userRecipes", page],
+    () => fetchUserRecipes({ page }),
+    {
+      staleTime: Infinity,
+      onSuccess: () => {
+        scroll();
+      },
     }
-  };
+  );
   const handlePageChange = (event, value) => {
-    fetchMyRecipes(value);
-    recipesRef.current.scrollIntoView();
+    setPage(value);
+    setTimeout(() => {
+      scroll();
+    }, 500);
   };
-  useEffect(() => {
-    fetchMyRecipes();
-    window.addEventListener("storage", fetchMyRecipes);
 
-    return () => {
-      window.removeEventListener("storage", fetchMyRecipes);
-    };
-  }, []);
   return (
     <div className="w-full">
-      <Header label={"My Recipes"} />
-      {loading ? (
-        <Loading />
-      ) : (
-        <div className="flex-grow overflow-y-auto p-20" ref={recipesRef}>
-          {myRecipes?.length > 0 ? (
-            <>
-              <div className="w-full justify-center flex flex-wrap gap-10 px-0 lg:px-10 py-10">
-                {myRecipes?.map((item, index) => (
-                  <RecipeCard
-                    recipe={item}
-                    key={index}
-                    favouriteFlag={false}
-                    onClose={onClose}
-                  />
-                ))}
-                <div className="flex justify-center mt-10 w-full bg-black">
-                  <Pagination
-                    count={itemsCount}
-                    variant="outlined"
-                    shape="rounded"
-                    defaultPage={1}
-                    sx={{
-                      color: "green",
-                      backgroundColor: "black",
-                      padding: 5 + "px",
-                      border: "none ",
-                      "& .MuiPaginationItem-page": {
-                        border: "2px solid green",
-                        color: "green !important",
-                        "&:hover": {
-                          backgroundColor: "darkgreen",
-                          color: "white !important",
-                        },
-                        "&.Mui-selected": {
-                          backgroundColor: "darkgreen",
-                          color: "white !important",
-                        },
+      <Header label={"My Recipes"}  />
+      <div className="flex-grow overflow-y-auto p-20" ref={recipesRef}>
+        {data?.results.length > 0 ? (
+          <>
+            <div className="w-full justify-center flex flex-wrap gap-10 px-0 lg:px-10 py-10">
+              {data?.results.map((item, index) => (
+                <RecipeCard
+                  recipe={item}
+                  key={index}
+                  favouriteFlag={false}
+                  onClose={onClose}
+                />
+              ))}
+              <div className="flex justify-center mt-10 w-full bg-black">
+                <Pagination
+                  count={data.totalPages}
+                  variant="outlined"
+                  shape="rounded"
+                  defaultPage={1}
+                  sx={{
+                    color: "green",
+                    backgroundColor: "black",
+                    padding: 5 + "px",
+                    border: "none ",
+                    "& .MuiPaginationItem-page": {
+                      border: "2px solid green",
+                      color: "green !important",
+                      "&:hover": {
+                        backgroundColor: "darkgreen",
+                        color: "white !important",
                       },
-                    }}
-                    onChange={handlePageChange}
-                  />
-                </div>
+                      "&.Mui-selected": {
+                        backgroundColor: "darkgreen",
+                        color: "white !important",
+                      },
+                    },
+                  }}
+                  onChange={handlePageChange}
+                />
               </div>
-            </>
-          ) : (
-            <div className="text-white w-full items-center justify-center py-10">
-              <p className="text-center">No Recipe Found</p>
             </div>
-          )}
-        </div>
-      )}
+          </>
+        ) : (
+          <div className="text-white w-full items-center justify-center py-10">
+            <p className="text-center">No Recipe Found</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

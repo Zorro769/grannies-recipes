@@ -1,15 +1,10 @@
 import React, { useState } from "react";
 import axiosPrivate from "../api/axios";
-import InfoDialog from "../components/InfoDialog";
-import Dialog from "@mui/material/Dialog";
+import toast from "react-hot-toast";
 
-const ForgotPassword = ({ onClose }) => {
+const ForgotPassword = () => {
   const [email, setEmail] = useState("");
-  const [infoDialog, setInfoDialog] = useState(false);
 
-  const closeDialog = () => {
-    onClose();
-  };
   const handleSubmit = async (e) => {
     if (e) {
       e.preventDefault();
@@ -24,8 +19,10 @@ const ForgotPassword = ({ onClose }) => {
           headers: { "Content-Type": "application/json" },
         }
       );
-      setInfoDialog(true);
-    } catch (err) {}
+      toast.success("We have sent you an email.Please check you mailbox");
+    } catch (err) {
+      toast.error(err.response.data.message);
+    }
   };
 
   return (
@@ -58,18 +55,6 @@ const ForgotPassword = ({ onClose }) => {
         </form>
       </div>
       <div className="text-center mt-5"></div>
-      <Dialog
-        open={infoDialog}
-        onClose={closeDialog}
-        fullWidth
-        maxWidth="xs"
-        PaperProps={{ style: { height: "100px", borderradius: "50%" } }}
-      >
-        <InfoDialog
-          info={"We have sent you an email.Please check you mailbox"}
-          onClose={closeDialog}
-        />
-      </Dialog>
     </div>
   );
 };

@@ -1,19 +1,17 @@
-// Header.js
 import React from "react";
 import { Banner1 } from "../../images";
 import { useTranslation } from "react-i18next";
-import i18n from "../../i18n/i18n";
 
 const images = [Banner1];
 
 const Header = ({ label, image, type }) => {
-  const { t } = useTranslation(); // No need to pass initReactI18next here
+  const { t } = useTranslation();
   return (
     <div className="w-full h-[100vh]">
       <div className="relative w-full h-full">
         <img
           src={image ?? images[Math.floor(Math.random() * images.length)]}
-          alt="Hero Image"
+          alt="Hero"
           className="w-full h-full object-cover"
         />
       </div>
